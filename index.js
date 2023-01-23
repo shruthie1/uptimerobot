@@ -51,10 +51,16 @@ app.get('/', async (req, res, next) => {
 });
 
 app.get('/receive', async (req, res) => {
-    const userName = req.query.userName;
-    const { url } = userMap.get(userName);
-    userMap.set(userName, { url: url, timeStamp: Date.now() });
-    console.log(userName, 'Ping!! Received!!')
+    try {
+        const userName = req.query.userName;
+        const data = userMap.get(userName);
+        if (!data) {
+            userMap.set(userName, { ...data, timeStamp: Date.now() });
+            console.log(userName, 'Ping!! Received!!')
+        }
+    } catch (error) {
+        console.log(error);
+    }
     res.send('Hello World!');
 });
 
