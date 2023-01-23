@@ -54,7 +54,7 @@ app.get('/receive', async (req, res) => {
     try {
         const userName = req.query.userName;
         const data = userMap.get(userName);
-        if (!data) {
+        if (data) {
             userMap.set(userName, { ...data, timeStamp: Date.now() });
             console.log(userName, 'Ping!! Received!!')
         }
