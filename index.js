@@ -12,7 +12,7 @@ userMap.set('ArpithaRed3', { url: 'https://arpitha.cleverapps.io/', timeStamp: D
 userMap.set('SnehaRed', { url: 'https://teleNde-Sneha.saishetty.repl.co/', timeStamp: Date.now() })
 userMap.set('Shruthiee', { url: 'https://teleNde3.saishetty.repl.co/', timeStamp: Date.now() })
 userMap.set('RamyaRed3', { url: 'https://teleNde-Ramya.saishetty.repl.co/', timeStamp: Date.now() })
-userMap.set('LasyaRed', { url: 'https://lasya.saishetty.repl.co/', timeStamp: Date.now() })
+userMap.set('LasyaRed', { url: 'https://lasya.cleverapps.io/', timeStamp: Date.now() })
 
 
 async function fetchWithTimeout(resource, options = {}) {
