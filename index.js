@@ -1,7 +1,8 @@
 // const express = require('express');
 // const fetch = require('node-fetch');
 import fetch from 'node-fetch';
-import express from 'express'
+import express from 'express';
+import { AbortController } from "node-abort-controller";
 
 const app = express();
 
