@@ -8,7 +8,7 @@ const app = express();
 const port = 8080;
 const userMap = new Map();
 
-userMap.set('ArpithaRed', { url: 'https://arpitha.saishetty.repl.co/', timeStamp: Date.now() })
+// userMap.set('ArpithaRed3', { url: 'https://arpitha.cleverapps.io/', timeStamp: Date.now() })
 userMap.set('SnehaRed', { url: 'https://teleNde-Sneha.saishetty.repl.co/', timeStamp: Date.now() })
 userMap.set('Shruthiee', { url: 'https://teleNde3.saishetty.repl.co/', timeStamp: Date.now() })
 userMap.set('RamyaRed3', { url: 'https://teleNde-Ramya.saishetty.repl.co/', timeStamp: Date.now() })
@@ -51,10 +51,16 @@ app.get('/', async (req, res, next) => {
 });
 
 app.get('/receive', async (req, res) => {
-    const userName = req.query.userName;
-    const { url } = userMap.get(userName);
-    userMap.set(userName, { url: url, timeStamp: Date.now() });
-    console.log(userName, 'Ping!! Received!!')
+    try {
+        const userName = req.query.userName;
+        const data = userMap.get(userName);
+        if (data) {
+            userMap.set(userName, { ...data, timeStamp: Date.now() });
+            console.log(userName, 'Ping!! Received!!')
+        }
+    } catch (error) {
+        console.log(error);
+    }
     res.send('Hello World!');
 });
 
@@ -94,6 +100,7 @@ class checkerclass {
             userMap.forEach(async (val, key) => {
                 if (val.timeStamp + 230000 < Date.now()) {
                     try {
+                        // await fetchWithTimeout(`${process.env.repl}/resptopaid`, { timeout: 3000 });
                         await fetchWithTimeout(`${ppplbot}&text=${key} is DOWN!!`);
                         await fetchWithTimeout(`${val.url}`);
                         await fetchWithTimeout(`${val.url}star`);
