@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const schedule = require('node-schedule-tz');
 const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
+const DB = require('./dbservice');
 
 const app = express();
 const port = 8080;
@@ -104,7 +105,19 @@ app.get('/exitacc', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
+  //
+});
 
+app.post('/channels', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const channels = req.body;
+  console.log(channels);
+  const db = DB.getinstance();
+  channels.forEach((channel) => {
+    db.insertChannel(channel);
+  })
   //
 });
 
