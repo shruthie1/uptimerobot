@@ -1,131 +1,375 @@
-// const express = require('express');
-// const fetch = require('node-fetch');
-import fetch from 'node-fetch';
-import express from 'express';
-import { AbortController } from "node-abort-controller";
+const express = require('express');
+const fetch = require('node-fetch');
+const axios = require('axios');
+const schedule = require('node-schedule-tz');
+const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 
 const app = express();
-
 const port = 8080;
 const userMap = new Map();
+let count = 0;
+const ppplbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001801844217`;
+const pingerbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001703065531`;
+
+const apiResp = {
+  INSTANCE_NOT_EXIST: "INSTANCE_NOT_EXIST",
+  CLIENT_NOT_EXIST: "CLIENT_NOT_EXIST",
+  CONNECTION_NOT_EXIST: "CONNECTION_NOT_EXIST",
+  ALL_GOOD: "ALL_GOOD",
+  DANGER: "DANGER",
+  WAIT: "WAIT"
+};
 
 // userMap.set('ArpithaRed3', { url: 'https://arpitha.cleverapps.io/', timeStamp: Date.now() })
-userMap.set('SnehaRed', { url: 'https://teleNde-Sneha.saishetty.repl.co/', timeStamp: Date.now() })
-userMap.set('Shruthiee', { url: 'https://teleNde3.saishetty.repl.co/', timeStamp: Date.now() })
-userMap.set('RamyaRed3', { url: 'https://teleNde-Ramya.saishetty.repl.co/', timeStamp: Date.now() })
-userMap.set('LasyaRed', { url: 'https://lasya.saishetty.repl.co', timeStamp: Date.now() })
+userMap.set('snehared3', { url: 'https://snehareddy.onrender.com/', timeStamp: Date.now() })
+userMap.set('arpithared7', { url: 'https://arpithared.onrender.com/', timeStamp: Date.now() })
+userMap.set('shruthiee', { url: 'https://shruthie.onrender.com/', timeStamp: Date.now() })
+userMap.set('ramyared7', { url: 'https://ramyaaa.onrender.com/', timeStamp: Date.now() })
+userMap.set('meghanared', { url: 'https://meghana-reddy.onrender.com/', timeStamp: Date.now() })
 
+try {
+  schedule.scheduleJob('test', ' 10 1,3,5,7,10,13,16,19,22,23,0 * * * ', 'Asia/Kolkata', async () => {
+    console.log("Promoting.....")
+    Array.from(userMap.values()).map(async (value) => {
+      const res = await fetchWithTimeout(`${value.url}promote`);
+    })
+  })
+  schedule.scheduleJob('test', ' 0 7,14 * * * ', 'Asia/Kolkata', async () => {
+    Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}resptopaid`);
+    })
+  })
+  schedule.scheduleJob('test', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
+    Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}resetunpaid`);
+      await fetchWithTimeout(`${value.url}resetunppl`);
+      await fetchWithTimeout(`${value.url}getstats`);
+      const now = new Date();
+      if (now.getUTCDate() % 3 === 1) {
+        setTimeout(async () => {
+          await fetchWithTimeout(`${value.url}getchannels`);
+        }, 30000);
+      }
+      setTimeout(async () => {
+        await fetchWithTimeout(`${value.url}resetstats`);
+      }, 10000);
+    })
+  })
+} catch (error) {
+  console.log(error);
+}
 
 async function fetchWithTimeout(resource, options = {}) {
-    const timeout = options?.timeout | 15000;
+  const timeout = options?.timeout | 15000;
 
-    // console.log(timeout);
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-    try {
-        const response = await fetch(resource, {
-            ...options,
-            signal: controller.signal
-        });
-        clearTimeout(id);
-        return response;
-    } catch (error) {
-        return undefined
-    }
+  // console.log(timeout);
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(resource, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    return undefined
+  }
 }
 const sites = [
-    'https://teleNde3.saishetty.repl.co/',
-    'https://arpitha.saishetty.repl.co/',
-    'https://teleNde-Sneha.saishetty.repl.co/',
-    'https://teleNde-Ramya.saishetty.repl.co/',
-    'https://lasya.saishetty.repl.co/'
+  'https://teleNde3.saishetty.repl.co/',
+  'https://arpitha.saishetty.repl.co/',
+  'https://teleNde-Sneha.saishetty.repl.co/',
+  'https://teleNde-Ramya.saishetty.repl.co/',
+  'https://lasya.saishetty.repl.co/'
 ]
 
 app.get('/', async (req, res, next) => {
-    console.log("REQ")
-    checkerclass.getinstance()
-    res.send('Hello World!');
-    next();
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
 }, async (req, res) => {
 
-    //
+  //
 });
 
-app.get('/receive', async (req, res) => {
-    try {
-        const userName = req.query.userName;
-        const data = userMap.get(userName);
-        if (data) {
-            userMap.set(userName, { ...data, timeStamp: Date.now() });
-            console.log(userName, 'Ping!! Received!!')
-        }
-    } catch (error) {
-        console.log(error);
+app.get('/exitacc', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+
+  //
+});
+
+app.get('/getdata', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}getstats`);
+  })
+});
+
+app.get('/getchannels', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}getchannels`);
+  })
+});
+
+app.get('/restart', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const userName = req.query.userName;
+  const checker = checkerclass.getinstance()
+  checker.restart(userName.toLowerCase());
+  //
+});
+app.get('/fetch', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+
+  fetch('https://shruthiee.onrender.com/getProcessId')
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+
+});
+
+
+app.get('/receiveNumber/:num', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const userName = req.query.userName;
+    const num = parseInt(req.params.num);
+    const data = userMap.get(userName.toLowerCase());
+    if (data) {
+      await axios.get(`${data.url}receiveNumber/${num}`, { timeout: 7000 });
     }
-    res.send('Hello World!');
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get('/tgclientoff/:num', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const userName = req.query.userName;
+    const processId = req.params.num;
+    console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'Req receved from: ', userName, ' - ', processId)
+    // try {
+    //   //await axios.get(`${val.url}exit`, { timeout: 7000 });
+    //   console.log('Other Instance Exist');
+    // } catch (e) {
+    //   console.log('No Other Instance Exist');
+    // }
+    // await axios.get(`${ppplbot}&text=${userName.toUpperCase()}:  TG_CLIENT Seems OFF`);
+    //console.log(`userName.toUpperCase()}:  TG_CLIENT Seems OFF`,'\nRestarting Service')
+    // const checker = checkerclass.getinstance()
+    // checker.restart(userName, processId);
+    try {
+      const data = userMap.get(userName.toLowerCase());
+      const url = data?.url;
+      if (url) {
+        const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get('/receive', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const userName = req.query.userName;
+    const data = userMap.get(userName.toLowerCase());
+    if (data) {
+      userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now() });
+
+
+      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), userName, 'Ping!! Received!!')
+    } else {
+      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
+    }
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
-const ppplbot = "https://api.telegram.org/bot5807856562:AAHaYJo1TnEPHWw8BUdQJzc-YUOOJKyc8EM/sendMessage?chat_id=-1001877978683"
-const pingerbot = "https://api.telegram.org/bot5807856562:AAHaYJo1TnEPHWw8BUdQJzc-YUOOJKyc8EM/sendMessage?chat_id=-1001703065531"
 
 class checkerclass {
-    static instance = undefined;
+  static instance = undefined;
 
-    constructor() {
-        this.main();
-    };
+  constructor() {
+    this.main();
+  };
 
-    static getinstance() {
-        if (!checkerclass.instance) {
-            console.log('creating instance-------')
-            checkerclass.instance = new checkerclass();
+  static getinstance() {
+    if (!checkerclass.instance) {
+      console.log('creating instance-------')
+      checkerclass.instance = new checkerclass();
+    }
+    return checkerclass.instance;
+  }
+  main() {
+    // setInterval(async () => {
+    //     console.log('--------------------------------------------');
+    //     userMap.forEach(async (val, key) => {
+    //         try {
+    //             const resp = await axios.get(`${val.url}checkHealth`, { timeout: 10000 });
+    //             if (resp.status === 200 || resp.status === 201) {
+    //                 if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
+    //                     console.log(resp.data.userName, ': All good');
+    //                 } else {
+    //                     console.log(resp.data.userName, ': DIAGNOSE - Checking Connection - ', resp.data.status);
+    //                     await axios.get(`${ppplbot}&text=${(resp.data.userName).toUpperCase()}:healthCheckError${resp.data.status}`);
+    //                     try {
+    //                         const connectResp = await axios.get(`${val.url}tryToConnect`, { timeout: 10000 });
+    //                         console.log(connectResp.data.userName, ': CONNECTION CHECK RESP - ', connectResp.data.status);
+    //                         await axios.get(`${ppplbot}&text=${(connectResp.data.userName).toUpperCase()}:retryResponse -${connectResp.data.status}`);
+    //                     } catch (e) {
+    //                         console.log(val.url, `CONNECTION RESTART FAILED!!`);
+    //                     }
+    //                 }
+    //             } else {
+    //                 console.log(val.url, `is unreachable!!`);
+    //             }
+    //         } catch (e) {
+    //             console.log(val.url, `is unreachable!!`);
+    //             //console.log(e)
+    //         }
+    //     })
+    // }, 120000);
+
+    setInterval(async () => {
+      count++;
+      if (count % 2) {
+        console.log(`-------------------------------------------------------------`)
+      }
+      userMap.forEach(async (val, key) => {
+        try {
+          const resp = await axios.get(`${val.url}`, { timeout: 10000 });
         }
-        return checkerclass.instance;
+        catch (e) {
+          console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable`);
+        }
+      })
+      try {
+        const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 10000 });
+      }
+      catch (e) {
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
+      }
+      try {
+        const resp = await axios.get(`https://tgsignup.onrender.com/`, { timeout: 10000 });
+      }
+      catch (e) {
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
+      }
+
+    }, 60000);
+
+    // setInterval(async () => {
+    //   userMap.forEach(async (val, key) => {
+    //     if (val.timeStamp + 230000 < Date.now()) {
+    //       userMap.set(key, { ...val, timeStamp: Date.now() });
+    //       try {
+    //         await axios.get(`${ ppplbot } & text=${ key } is DOWN!!`, { timeout: 10000 });
+    //         await axios.get(`${ val.url }`, { timeout: 10000 });
+    //         try {
+    //           const resp = await axios.get(`${ val.url }checkHealth`, { timeout: 10000 });
+    //           if (resp.status === 200 || resp.status === 201) {
+    //             if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
+    //               console.log(resp.data.userName, ': All good');
+    //             } else {
+    //               console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
+    //               await axios.get(`${ ppplbot } & text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${ resp.data.status } `);
+    //               try {
+    //                 const connectResp = await axios.get(`${ val.url } tryToConnect`, { timeout: 10000 });
+    //                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
+    //                 await axios.get(`${ ppplbot }& text=${ (connectResp.data.userName).toUpperCase() }: RetryResponse - ${ connectResp.data.status } `);
+    //               } catch (e) {
+    //                 s
+    //                 console.log(val.url, `CONNECTION RESTART FAILED!!`);
+    //               }
+    //             }
+    //           } else {
+    //             console.log(val.url, `is unreachable!!`);
+    //           }
+    //         } catch (e) {
+    //           console.log(val.url, `is unreachable!!`);
+    //           //console.log(e)
+    //         }
+    //       } catch (e) {
+    //         console.log(e)
+    //       }
+    //     }
+    //   })
+    // }, 50000);
+  }
+
+  async restart(userName, processId) {
+    const data = userMap.get(userName);
+    console.log(data, userName);
+    const url = data?.url;
+    if (url) {
+      userMap.set(userName, { ...data, timeStamp: Date.now() });
+      try {
+        //await axios.get(`${ ppplbot }& text=${ userName } is DOWN!!`, { timeout: 10000 });
+        //await axios.get(`${ url } `, { timeout: 10000 });
+        try {
+          console.log('Checking Health')
+          const resp = await axios.get(`${url} checkHealth`, { timeout: 10000 });
+          if (resp.status === 200 || resp.status === 201) {
+            if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
+              console.log(resp.data.userName, ': All good');
+            } else {
+              console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
+              await axios.get(`${ppplbot}& text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${resp.data.status} `);
+              try {
+                const connectResp = await axios.get(`${url} tryToConnect / ${processId} `, { timeout: 10000 });
+                console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
+                await axios.get(`${ppplbot}& text=${(connectResp.data.userName).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
+              } catch (e) {
+                console.log(url, `CONNECTION RESTART FAILED!!`);
+              }
+            }
+          } else {
+            console.log(url, `is unreachable!!`);
+          }
+        } catch (e) {
+          console.log(url, `is unreachable!!`);
+          //console.log(e)
+        }
+      }
+      catch (e) {
+        console.log(e)
+      }
     }
-    main() {
-        setInterval(async () => {
-            userMap.forEach(async (val, key) => {
-                try {
-                    const resp = await fetchWithTimeout(`${val.url}`);
-                    if (!resp) {
-                        console.log(val.url, `is unreachable!!`);
-                    }
-                } catch (e) {
-                    console.log(e)
-                }
-            })
-        }, 30000);
-        setInterval(async () => {
-            await fetch(`${pingerbot}&text=ping`);
-            userMap.forEach(async (val, key) => {
-                if (val.timeStamp + 230000 < Date.now()) {
-                    try {
-                        // await fetchWithTimeout(`${process.env.repl}/resptopaid`, { timeout: 3000 });
-                        await fetchWithTimeout(`${ppplbot}&text=${key} is DOWN!!`);
-                        await fetchWithTimeout(`${val.url}`);
-                        await fetchWithTimeout(`${val.url}star`);
-                    } catch (e) {
-                        console.log(e)
-                    }
-                }
-            })
-        }, 50000);
-        setInterval(async () => {
-            userMap.forEach(async (val, key) => {
-                if (val.timeStamp + 230000 < Date.now()) {
-                    console.log(key, val.timeStamp + 230000, Date.now())
-                    try {
-                        await fetchWithTimeout(`${val.url}`)
-                        await fetchWithTimeout(`${ppplbot}&text=${key} is DOWN!!`);
-                        await fetchWithTimeout(`${val.url}star`);
-                    } catch (e) {
-                        console.log(e)
-                    }
-                }
-            })
-        }, 120000);
+    else {
+      console.log('url is undefined');
     }
+  }
 }
-
-
