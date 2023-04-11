@@ -1,5 +1,5 @@
-const uri = process.env.mongodburi;
-import { MongoClient, ServerApiVersion } from 'mongodb';
+const uri = "mongodb+srv://ssk:Ajtdmwajt@cluster0.iucpdpe.mongodb.net/?retryWrites=true&w=majority";
+const { MongoClient, ServerApiVersion } = require('mongodb')
 
 export class UserDataDtoCrud {
     static instance;
