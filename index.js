@@ -2,10 +2,15 @@ const express = require('express');
 const axios = require('axios');
 const schedule = require('node-schedule-tz');
 const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
-const { ChannelService } = require('./dbservice');
+const ChannelService = require('./dbservice');
+const bodyParser = require('body-parser');
+
+
+// parse JSON request bodies
 
 const app = express();
-const port = 8080;
+const port = 8000;
+ChannelService.getInstance().connect()
 const userMap = new Map();
 let count = 0;
 const ppplbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001801844217`;
@@ -90,6 +95,7 @@ const sites = [
   'https://teleNde-Ramya.saishetty.repl.co/',
   'https://lasya.saishetty.repl.co/'
 ]
+app.use(bodyParser.json());
 
 app.get('/', async (req, res, next) => {
   checkerclass.getinstance()
@@ -112,9 +118,8 @@ app.post('/channels', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
-  const channels = req.body;
-  console.log(channels);
-  const db = ChannelService.getinstance();
+  const channels = req.body.channels;
+  const db = ChannelService.getInstance();
   channels.forEach((channel) => {
     db.insertChannel(channel);
   })

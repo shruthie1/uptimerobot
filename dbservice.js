@@ -11,17 +11,17 @@ class ChannelService {
     }
 
     static getInstance() {
-        if (!UserDataDtoCrud.instance) {
-            UserDataDtoCrud.instance = new UserDataDtoCrud();
+        if (!ChannelService.instance) {
+            ChannelService.instance = new ChannelService();
         }
-        return UserDataDtoCrud.instance;
+        return ChannelService.instance;
     }
     static isInstanceExist() {
-        return !!UserDataDtoCrud.instance;
+        return !!ChannelService.instance;
     }
 
     async connect() {
-        if (!UserDataDtoCrud.mongoClinet) {
+        if (!ChannelService.mongoClinet) {
             console.log('trying to connect to DB......')
             try {
                 const client = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -49,14 +49,14 @@ class ChannelService {
         } = channelData
         const cannotSendMsgs = channelData.defaultBannedRights?.sendMessages
         const filter = { channelId: id.toString() };
-        const chat = await this.db.findOne(filter);
+        const chat = await this.db?.findOne(filter);
         if (!chat && !cannotSendMsgs && !broadcast) {
             await this.db.insertOne({ channelId: id.toString(), title, username, megagroup, participantsCount });
         }
     }
 
     async read(limit) {
-        const result = await this.db.findOne({}).limit(limit).sort({ participantsCount: -1, megagroup: -1 })
+        const result = await this.db?.findOne({}).limit(limit).sort({ participantsCount: -1, megagroup: -1 })
         if (result) {
             return result;
         } else {
