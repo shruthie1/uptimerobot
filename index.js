@@ -1,5 +1,4 @@
 const express = require('express');
-const fetch = require('node-fetch');
 const axios = require('axios');
 const schedule = require('node-schedule-tz');
 const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
@@ -59,23 +58,30 @@ try {
   console.log(error);
 }
 
-async function fetchWithTimeout(resource, options = {}) {
-  const timeout = options?.timeout | 15000;
 
-  // console.log(timeout);
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
+async function fetchWithTimeout(resource, options = {}) {
+  const timeout = options?.timeout || 15000;
+
+  const source = axios.CancelToken.source();
+  const id = setTimeout(() => source.cancel(), timeout);
   try {
-    const response = await fetch(resource, {
+    const response = await axios({
       ...options,
-      signal: controller.signal
+      url: resource,
+      cancelToken: source.token
     });
     clearTimeout(id);
     return response;
   } catch (error) {
-    return undefined
+    if (axios.isCancel(error)) {
+      console.log('Request canceled:', error.message);
+    } else {
+      console.log('Error:', error.message);
+    }
+    return undefined;
   }
 }
+
 const sites = [
   'https://teleNde3.saishetty.repl.co/',
   'https://arpitha.saishetty.repl.co/',
