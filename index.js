@@ -116,15 +116,15 @@ app.get('/exitacc', async (req, res, next) => {
 
 app.post('/channels', async (req, res, next) => {
   res.send('Hello World!');
+  console.log(req.body);
   next();
 }, async (req, res) => {
-  const channels = req.body.channels;
-  console.log(channels);
+  const channels = req.body?.channels;
+  console.log(channels, req.body);
   const db = ChannelService.getInstance();
-  channels.forEach((channel) => {
-    db.insertChannel(channel);
+  channels?.forEach(async (channel) => {
+    await db.insertChannel(channel);
   })
-  //
 });
 
 app.get('/getdata', async (req, res, next) => {

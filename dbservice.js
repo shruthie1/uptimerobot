@@ -51,7 +51,7 @@ class ChannelService {
         const filter = { channelId: id.toString() };
         const chat = await this.db?.findOne(filter);
         if (!chat && !cannotSendMsgs && !broadcast) {
-            await this.db.insertOne({ channelId: id.toString(), title, username, megagroup, participantsCount });
+            await this.db.insertOne({ channelId: id.toString(), username: `@${username}`, title, megagroup, participantsCount });
         }
     }
 
