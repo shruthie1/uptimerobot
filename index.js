@@ -119,6 +119,7 @@ app.post('/channels', async (req, res, next) => {
   next();
 }, async (req, res) => {
   const channels = req.body.channels;
+  console.log(channels);
   const db = ChannelService.getInstance();
   channels.forEach((channel) => {
     db.insertChannel(channel);
