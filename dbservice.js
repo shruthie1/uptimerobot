@@ -1,7 +1,7 @@
 const uri = "mongodb+srv://ssk:Ajtdmwajt@cluster0.iucpdpe.mongodb.net/?retryWrites=true&w=majority";
 const { MongoClient, ServerApiVersion } = require('mongodb')
 
-export class UserDataDtoCrud {
+class ChannelService {
     static instance;
     db = undefined;
     static mongoClinet = undefined;
@@ -64,3 +64,5 @@ export class UserDataDtoCrud {
         }
     }
 }
+
+module.exports = ChannelService;

@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const schedule = require('node-schedule-tz');
 const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
-const DB = require('./dbservice');
+const { ChannelService } = require('./dbservice');
 
 const app = express();
 const port = 8080;
@@ -114,7 +114,7 @@ app.post('/channels', async (req, res, next) => {
 }, async (req, res) => {
   const channels = req.body;
   console.log(channels);
-  const db = DB.getinstance();
+  const db = ChannelService.getinstance();
   channels.forEach((channel) => {
     db.insertChannel(channel);
   })
