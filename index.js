@@ -127,6 +127,16 @@ app.post('/channels', async (req, res, next) => {
   })
 });
 
+app.post('/users', async (req, res, next) => {
+  res.send('Hello World!');
+  console.log(req.body);
+  next();
+}, async (req, res) => {
+  const user = req.body;
+  const db = ChannelService.getInstance();
+  await db.insertUser(user);
+});
+
 app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');

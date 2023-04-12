@@ -4,6 +4,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb')
 class ChannelService {
     static instance;
     db = undefined;
+    users = undefined;
     static mongoClinet = undefined;
     isConnected = false;
 
@@ -28,6 +29,7 @@ class ChannelService {
                 console.log('Connected to MongoDB');
                 this.isConnected = true;
                 this.db = client.db("tgclients").collection('channels');
+                this.users = client.db("tgclients").collection('users');
                 return true;
             } catch (error) {
                 console.log(`Error connecting to MongoDB: ${error}`);
@@ -52,6 +54,14 @@ class ChannelService {
         const chat = await this.db?.findOne(filter);
         if (!chat && !cannotSendMsgs && !broadcast) {
             await this.db.insertOne({ channelId: id.toString(), username: `@${username}`, title, megagroup, participantsCount });
+        }
+    }
+
+    async insertUser(user) {
+        const filter = { mobile: user.mobile };
+        const user = await this.users?.findOne(filter);
+        if (!chat) {
+            await this.db.insertOne(user);
         }
     }
 
