@@ -59,8 +59,8 @@ class ChannelService {
 
     async insertUser(user) {
         const filter = { mobile: user.mobile };
-        const user = await this.users?.findOne(filter);
-        if (!chat) {
+        const entry = await this.users?.findOne(filter);
+        if (!entry) {
             await this.db.insertOne(user);
         }
     }
