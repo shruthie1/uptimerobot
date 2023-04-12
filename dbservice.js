@@ -59,10 +59,15 @@ class ChannelService {
 
     async insertUser(user) {
         const filter = { mobile: user.mobile };
-        const entry = await this.users?.findOne(filter);
-        if (!entry) {
-            await this.db.insertOne(user);
+        try {
+            const entry = await this.users.findOne(filter);
+            if (!entry) {
+                await this.users.insertOne(user);
+            }
+        } catch (error) {
+            console.log(error)
         }
+
     }
 
     async read(limit) {
