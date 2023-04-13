@@ -142,10 +142,8 @@ app.get('/getdata', async (req, res, next) => {
 app.get('/connectclient/:number', async (req, res) => {
 
   const number = req.params?.number;
-  // const db = ChannelService.getInstance();
-  const user = {
-    session: "1BQANOTEuMTA4LjU2LjE5NAG7eVZpEtbyuYfss3gIOheM75QUjQaa1KIjZGT3Hkty8ZgJnjyHEBN2I8zCruoQ/rh+8c7YOnobs9ZsaVop8CKDb509LJtpWL8XSsTM88r7Qz+QE4VaQdSfZuSVKzT9cu5pXry7dtIkFveio/GmwfxCry3ow+CQDBZGwww20Wzbma5LcBgqL5iHaY/itxBh6sfOW0jYbemjGa3eiFg06kme22Kv4moXxA6b6YLsApUA0l8mQX+l9knZtS7/M2BcIyWEjuFXoB6nRkObxmzS51TVyXyIJoEvKd9eqEfvu9CkyCcZw/qDJNcDl8C35tHGAP8wzDOhcFZmTAFIzNVoqll+cA==",
-    mobile:"917893776373"}//await db.getUser({ mobile: number });
+  const db = ChannelService.getInstance();
+  const user = await db.getUser({ mobile: number });
   if (!hasClient(user.mobile)) {
     await createClient(user.mobile, user.session)
     res.send("client created");
