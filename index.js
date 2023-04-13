@@ -143,7 +143,7 @@ app.get('/connectclient/:number', async (req, res) => {
   const number = req.params?.number;
   const db = ChannelService.getInstance();
   const user = await db.getUser({ mobile: number });
-  if (clients.has(user.mobile)) {
+  if (!clients.has(user.mobile)) {
     const client = new TelegramManager(user.session, user.mobile);
     clients.set(user.mobile, client);
     res.send("client created");
