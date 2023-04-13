@@ -1,4 +1,5 @@
 const { TelegramClient } = require('telegram');
+const { NewMessage } = require("telegram/events/index.js");
 const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
 const ppplbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001801844217`;
