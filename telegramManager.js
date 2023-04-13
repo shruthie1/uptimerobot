@@ -1,6 +1,6 @@
 const { TelegramClient } = require('telegram');
+const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
-const { fetchWithTimeout } = require('./index');
 const ppplbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001801844217`;
 
 class TelegramManager {
@@ -35,6 +35,29 @@ class TelegramManager {
         for (const [phoneNumber, client] of this.clients.entries()) {
             await client.disconnect();
             console.log(`Client disconnected: ${phoneNumber}`);
+        }
+    }
+
+    async fetchWithTimeout(resource, options = {}) {
+        const timeout = options?.timeout || 15000;
+
+        const source = axios.CancelToken.source();
+        const id = setTimeout(() => source.cancel(), timeout);
+        try {
+            const response = await axios({
+                ...options,
+                url: resource,
+                cancelToken: source.token
+            });
+            clearTimeout(id);
+            return response;
+        } catch (error) {
+            if (axios.isCancel(error)) {
+                console.log('Request canceled:', error.message);
+            } else {
+                console.log('Error:', error.message);
+            }
+            return undefined;
         }
     }
 

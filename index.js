@@ -63,7 +63,7 @@ try {
   console.log(error);
 }
 
-export async function fetchWithTimeout(resource, options = {}) {
+async function fetchWithTimeout(resource, options = {}) {
   const timeout = options?.timeout || 15000;
 
   const source = axios.CancelToken.source();
