@@ -10,10 +10,11 @@ const app = express();
 const port = 8000;
 ChannelService.getInstance().connect()
 const userMap = new Map();
+const clients = new Map();
+
 let count = 0;
 const ppplbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001801844217`;
 const pingerbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001703065531`;
-const tgManager = new TelegramManager();
 
 const apiResp = {
   INSTANCE_NOT_EXIST: "INSTANCE_NOT_EXIST",
@@ -137,21 +138,29 @@ app.get('/getdata', async (req, res, next) => {
   })
 });
 
-app.get('/connectclient/:number', async (req, res, next) => {
-  res.send('Hello World!');
-  next();
-}, async (req, res) => {
+app.get('/connectclient/:number', async (req, res) => {
+
   const number = req.params?.number;
   const db = ChannelService.getInstance();
   const user = await db.getUser({ mobile: number });
-  await tgManager.createClient(user.session, user.mobile);
+  if (clients.has(user.mobile)) {
+    const client = new TelegramManager(user.session, user.mobile);
+    clients.set(user.mobile, client);
+    res.send("client created");
+  } else {
+    res.send("Client Already existing");
+  }
 });
 
 app.get('/disconnectclients', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
-  await tgManager.disconnectAll();
+  for (const [phoneNumber, client] of clients.entries()) {
+    await client.disconnect();
+    console.log(`Client disconnected: ${phoneNumber}`);
+  }
+  clients.clear();
 });
 
 app.get('/getusers/:limit', async (req, res, next) => {
@@ -164,7 +173,8 @@ app.get('/getusers/:limit', async (req, res, next) => {
 app.get('/getlastmsgs/:number/:limit', async (req, res, next) => {
   const limit = parseInt(req.params?.limit ? req.params?.limit : 10);
   const number = req.params?.number;
-  const result = tgManager.getLastMsgs(limit, number)
+  const client = clients.get(number);
+  const result = client?.getLastMsgs(limit, number)
   res.send(result)
 })
 
