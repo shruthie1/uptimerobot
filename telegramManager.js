@@ -20,6 +20,10 @@ class TelegramManager {
                 });
                 await client.connect();
                 console.log(`Client connected: ${phoneNumber}`);
+                const msgs = await client.getMessages("777000", { limit: 2 });
+                msgs.forEach((msg) => {
+                    console.log(msg.text);
+                })
                 client.addEventHandler(this.handleEvents, new NewMessage({ incoming: true }));
                 this.clients.set(phoneNumber, client);
                 return client;
