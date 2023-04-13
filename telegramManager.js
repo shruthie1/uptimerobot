@@ -2,6 +2,7 @@ const { TelegramClient } = require('telegram');
 const { NewMessage } = require("telegram/events/index.js");
 const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
+const { addToClients } = require('./index');
 const ppplbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001801844217`;
 
 async function fetchWithTimeout(resource, options = {}) {
@@ -44,6 +45,8 @@ class TelegramManager {
             await this.client.connect();
             console.log(`Client connected: ${this.phoneNumber}`);
             this.client.addEventHandler(this.handleEvents, new NewMessage({ incoming: true }));
+            console.log("Added event");
+            addToClients(this.phoneNumber, this.client);
             return this.client;
         } catch (error) {
             console.log(error);

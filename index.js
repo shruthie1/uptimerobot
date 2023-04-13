@@ -173,9 +173,16 @@ app.get('/getusers/:limit', async (req, res, next) => {
 app.get('/getlastmsgs/:number/:limit', async (req, res, next) => {
   const limit = parseInt(req.params?.limit ? req.params?.limit : 10);
   const number = req.params?.number;
+  console.log(number, limit);
   const client = clients.get(number);
-  const result = client?.getLastMsgs(limit, number)
-  res.send(result)
+  try {
+    const result = client?.getLastMsgs(limit, number)
+    res.send(result)
+  } catch (error) {
+    console.log(error);
+    res.send("client is undefined");
+  }
+
 })
 
 app.get('/getchannels', async (req, res, next) => {
@@ -283,6 +290,10 @@ app.get('/receive', async (req, res, next) => {
 });
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+
+function addToClients(number, client) {
+  clients.set(number, client);
+}
 
 class checkerclass {
   static instance = undefined;
@@ -438,3 +449,5 @@ class checkerclass {
     }
   }
 }
+
+module.exports = addToClients;
