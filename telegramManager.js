@@ -10,18 +10,22 @@ class TelegramManager {
     }
 
     async createClient(sessionString, phoneNumber) {
-        try {
-            const session = new StringSession(sessionString);
-            const client = new TelegramClient(session, parseInt(process.env.API_ID), process.env.API_HASH, {
-                connectionRetries: 5,
-            });
-            await client.connect();
-            console.log(`Client connected: ${phoneNumber}`);
-            client.addEventHandler(this.handleEvents, new NewMessage({ incoming: true }));
-            this.clients.set(phoneNumber, client);
-            return client;
-        } catch (error) {
-            console.log(error);
+        if (this.clients.has(phoneNumber)) {
+            console.log("client already connected!");
+        } else {
+            try {
+                const session = new StringSession(sessionString);
+                const client = new TelegramClient(session, parseInt(process.env.API_ID), process.env.API_HASH, {
+                    connectionRetries: 5,
+                });
+                await client.connect();
+                console.log(`Client connected: ${phoneNumber}`);
+                client.addEventHandler(this.handleEvents, new NewMessage({ incoming: true }));
+                this.clients.set(phoneNumber, client);
+                return client;
+            } catch (error) {
+                console.log(error);
+            }
         }
     }
 
@@ -41,6 +45,7 @@ class TelegramManager {
             await client.disconnect();
             console.log(`Client disconnected: ${phoneNumber}`);
         }
+        this.clients.clear();
     }
 
     async fetchWithTimeout(resource, options = {}) {
