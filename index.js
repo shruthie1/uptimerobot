@@ -3,10 +3,8 @@ const axios = require('axios');
 const schedule = require('node-schedule-tz');
 const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 const ChannelService = require('./dbservice');
+const TelegramManager = require('./telegramManager');
 const bodyParser = require('body-parser');
-
-
-// parse JSON request bodies
 
 const app = express();
 const port = 8000;
@@ -15,6 +13,7 @@ const userMap = new Map();
 let count = 0;
 const ppplbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001801844217`;
 const pingerbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001703065531`;
+const tgManager = new TelegramManager();
 
 const apiResp = {
   INSTANCE_NOT_EXIST: "INSTANCE_NOT_EXIST",
@@ -64,8 +63,7 @@ try {
   console.log(error);
 }
 
-
-async function fetchWithTimeout(resource, options = {}) {
+export async function fetchWithTimeout(resource, options = {}) {
   const timeout = options?.timeout || 15000;
 
   const source = axios.CancelToken.source();
@@ -88,15 +86,7 @@ async function fetchWithTimeout(resource, options = {}) {
   }
 }
 
-const sites = [
-  'https://teleNde3.saishetty.repl.co/',
-  'https://arpitha.saishetty.repl.co/',
-  'https://teleNde-Sneha.saishetty.repl.co/',
-  'https://teleNde-Ramya.saishetty.repl.co/',
-  'https://lasya.saishetty.repl.co/'
-]
 app.use(bodyParser.json());
-
 app.get('/', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
@@ -147,6 +137,30 @@ app.get('/getdata', async (req, res, next) => {
   })
 });
 
+app.get('/connectclient/:number', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const number = req.params?.number;
+  const db = ChannelService.getInstance();
+  const user = await db.getUser({ mobile: number });
+  await tgManager.createClient(user.session, user.mobile);
+});
+
+app.get('/disconnectclients', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  await tgManager.disconnectAll();
+});
+
+app.get('/getusers/:limit', async (req, res, next) => {
+  const limit = req.params?.limit;
+  const db = ChannelService.getInstance();
+  const users = await db.getUsers(limit);
+  res.json(users)
+})
+
 app.get('/getchannels', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
@@ -164,8 +178,8 @@ app.get('/restart', async (req, res, next) => {
   const userName = req.query.userName;
   const checker = checkerclass.getinstance()
   checker.restart(userName.toLowerCase());
-  //
 });
+
 app.get('/fetch', async (req, res, next) => {
   res.send('Hello World!');
   next();
@@ -181,7 +195,6 @@ app.get('/fetch', async (req, res, next) => {
     });
 
 });
-
 
 app.get('/receiveNumber/:num', async (req, res, next) => {
   res.send('Hello World!');

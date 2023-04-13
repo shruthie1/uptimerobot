@@ -67,11 +67,21 @@ class ChannelService {
         } catch (error) {
             console.log(error)
         }
-
     }
 
-    async read(limit) {
-        const result = await this.db?.findOne({}).limit(limit).sort({ participantsCount: -1, megagroup: -1 })
+    async getUser(user) {
+        const filter = { mobile: user.mobile };
+        try {
+            const entry = await this.users.findOne(filter);
+            return entry
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    async getUsers(limit) {
+        const result = await this.users?.find({}).sort({ personalChats: 1 }).limit(limit).toArray();
         if (result) {
             return result;
         } else {
