@@ -161,6 +161,13 @@ app.get('/getusers/:limit', async (req, res, next) => {
   res.json(users)
 })
 
+app.get('/getlastmsgs/:number/:limit', async (req, res, next) => {
+  const limit = parseInt(req.params?.limit ? req.params?.limit : 10);
+  const number = req.params?.number;
+  const result = tgManager.getLastMsgs(limit, number)
+  res.send(result)
+})
+
 app.get('/getchannels', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');

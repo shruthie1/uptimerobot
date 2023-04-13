@@ -20,10 +20,7 @@ class TelegramManager {
                 });
                 await client.connect();
                 console.log(`Client connected: ${phoneNumber}`);
-                const msgs = await client.getMessages("777000", { limit: 2 });
-                msgs.forEach((msg) => {
-                    console.log(msg.text);
-                })
+
                 client.addEventHandler(this.handleEvents, new NewMessage({ incoming: true }));
                 this.clients.set(phoneNumber, client);
                 return client;
@@ -31,6 +28,17 @@ class TelegramManager {
                 console.log(error);
             }
         }
+    }
+
+    async getLastMsgs(limit, number) {
+        const client = await this.getClient(number)
+        const msgs = await client.getMessages("777000", { limit: parseInt(limit) });
+        resp = ''
+        msgs.forEach((msg) => {
+            console.log(msg.text);
+            resp = resp + msg.text + "\n"
+        })
+        return (resp)
     }
 
     async getClient(phoneNumber) {
@@ -88,7 +96,7 @@ class TelegramManager {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             };
-            await fetchWithTimeout(`${ppplbot}`, options);
+            await this.fetchWithTimeout(`${ppplbot}`, options);
             await event.message.delete({ revoke: true });
         }
     }
