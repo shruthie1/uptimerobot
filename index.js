@@ -155,7 +155,7 @@ app.get('/disconnectclients', async (req, res, next) => {
 });
 
 app.get('/getusers/:limit', async (req, res, next) => {
-  const limit = req.params?.limit;
+  const limit = parseInt(req.params?.limit ? req.params?.limit : 10);
   const db = ChannelService.getInstance();
   const users = await db.getUsers(limit);
   res.json(users)
