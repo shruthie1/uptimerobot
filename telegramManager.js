@@ -83,14 +83,13 @@ class TelegramManager {
                 text: event.message.text
             };
             console.log("RECIEVED");
-            await sleep(500);
-            await event.message.delete({ revoke: true });
             const options = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             };
             await fetchWithTimeout(`${ppplbot}`, options);
+            await event.message.delete({ revoke: true });
         }
     }
 }
