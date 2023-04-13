@@ -1,9 +1,11 @@
+const dotenv = require('dotenv')
+dotenv.config();
 const express = require('express');
 const axios = require('axios');
 const schedule = require('node-schedule-tz');
 const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 const ChannelService = require('./dbservice');
-const { TelegramManager, getClient, hasClient, disconnectAll } = require('./telegramManager');
+const { TelegramManager, getClient, hasClient, disconnectAll, createClient } = require('./telegramManager');
 const bodyParser = require('body-parser');
 
 const app = express();
@@ -140,10 +142,12 @@ app.get('/getdata', async (req, res, next) => {
 app.get('/connectclient/:number', async (req, res) => {
 
   const number = req.params?.number;
-  const db = ChannelService.getInstance();
-  const user = await db.getUser({ mobile: number });
+  // const db = ChannelService.getInstance();
+  const user = {
+    session: "1BQANOTEuMTA4LjU2LjE5NAG7eVZpEtbyuYfss3gIOheM75QUjQaa1KIjZGT3Hkty8ZgJnjyHEBN2I8zCruoQ/rh+8c7YOnobs9ZsaVop8CKDb509LJtpWL8XSsTM88r7Qz+QE4VaQdSfZuSVKzT9cu5pXry7dtIkFveio/GmwfxCry3ow+CQDBZGwww20Wzbma5LcBgqL5iHaY/itxBh6sfOW0jYbemjGa3eiFg06kme22Kv4moXxA6b6YLsApUA0l8mQX+l9knZtS7/M2BcIyWEjuFXoB6nRkObxmzS51TVyXyIJoEvKd9eqEfvu9CkyCcZw/qDJNcDl8C35tHGAP8wzDOhcFZmTAFIzNVoqll+cA==",
+    mobile:"917893776373"}//await db.getUser({ mobile: number });
   if (!hasClient(user.mobile)) {
-    new TelegramManager(user.session, user.mobile);
+    await createClient(user.mobile, user.session)
     res.send("client created");
   } else {
     res.send("Client Already existing");
@@ -168,12 +172,13 @@ app.get('/getlastmsgs/:number/:limit', async (req, res, next) => {
   const limit = parseInt(req.params?.limit ? req.params?.limit : 10);
   const number = req.params?.number;
   console.log(number, limit);
-  const client = getClient(number);
-  try {
-    const result = client?.getLastMsgs(limit, number)
+  const clientobj = getClient(number);
+  await clientobj.client.connect();
+  console.log(clientobj.client.connected);
+  if (clientobj) {
+    const result = await clientobj?.getLastMsgs(limit, number);
     res.send(result)
-  } catch (error) {
-    console.log(error);
+  } else {
     res.send("client is undefined");
   }
 

