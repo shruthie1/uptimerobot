@@ -32,6 +32,8 @@ userMap.set('arpithared7', { url: 'https://arpithared.onrender.com/', timeStamp:
 userMap.set('shruthiee', { url: 'https://shruthie.onrender.com/', timeStamp: Date.now() })
 userMap.set('ramyared7', { url: 'https://ramyaaa.onrender.com/', timeStamp: Date.now() })
 userMap.set('meghanared', { url: 'https://meghana-reddy.onrender.com/', timeStamp: Date.now() })
+userMap.set('kavyared', { url: 'https://kavyar.onrender.com/', timeStamp: Date.now() })
+
 
 try {
   schedule.scheduleJob('test', ' 10 1,3,5,7,10,13,16,19,22,23,0 * * * ', 'Asia/Kolkata', async () => {
