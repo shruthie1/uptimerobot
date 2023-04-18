@@ -42,12 +42,19 @@ try {
       const res = await fetchWithTimeout(`${value.url}promote`);
     })
   })
-  schedule.scheduleJob('test', ' 0 7,14 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test1', ' 0 7,14 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}resptopaid`);
     })
   })
-  schedule.scheduleJob('test', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
+
+  schedule.scheduleJob('test2', ' 0 12,21 * * * ', 'Asia/Kolkata', async () => {
+    Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}markasread`);
+    })
+  })
+
+  schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       await fetchWithTimeout(`${value.url}resetunppl`);
