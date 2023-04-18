@@ -148,6 +148,17 @@ app.get('/getdata', async (req, res, next) => {
   })
 });
 
+app.get('/markasread', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}markasread`);
+  })
+});
+
+
 app.get('/connectclient/:number', async (req, res) => {
 
   const number = req.params?.number;
