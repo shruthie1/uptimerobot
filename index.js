@@ -42,7 +42,7 @@ try {
       const res = await fetchWithTimeout(`${value.url}promote`);
     })
   })
-  schedule.scheduleJob('test1', ' 0 7,14 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test1', ' 0 23,14 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}resptopaid`);
     })
