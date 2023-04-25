@@ -25,7 +25,6 @@ const apiResp = {
   DANGER: "DANGER",
   WAIT: "WAIT"
 };
-
 // userMap.set('ArpithaRed3', { url: 'https://arpitha.cleverapps.io/', timeStamp: Date.now() })
 userMap.set('snehared3', { url: 'https://snehareddy.onrender.com/', timeStamp: Date.now() })
 userMap.set('arpithared7', { url: 'https://arpithared.onrender.com/', timeStamp: Date.now() })
@@ -34,7 +33,7 @@ userMap.set('ramyared7', { url: 'https://ramyaaa.onrender.com/', timeStamp: Date
 userMap.set('meghanared', { url: 'https://meghana-reddy.onrender.com/', timeStamp: Date.now() })
 userMap.set('kavyared', { url: 'https://kavyar.onrender.com/', timeStamp: Date.now() })
 userMap.set('sowmyared1', { url: 'https://sowmyared.onrender.com/', timeStamp: Date.now() })
-
+userMap.set('nidhired', { url: 'https://nidhired.onrender.com/', timeStamp: Date.now() })
 
 
 try {
