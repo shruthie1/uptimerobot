@@ -195,9 +195,10 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
   users.forEach(async (user) => {
     if (!hasClient(user.mobile)) {
       await createClient(user.mobile, user.session);
-      resp = resp + user.moile + '\n'
+      resp = resp + user.mobile + '\n'
     }
   })
+  console.log(resp)
   res.send(resp);
 });
 

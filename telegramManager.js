@@ -14,16 +14,16 @@ function hasClient(number) {
 }
 
 async function disconnectAll() {
-
     for (const [phoneNumber, client] of clients.entries()) {
         try {
             await client?.disconnect();
+            clients.delete(phoneNumber);
+            console.log(`Client disconnected: ${phoneNumber}`);
         } catch (error) {
             console.log(error);
+            console.log(`Failed to Disconnect : ${phoneNumber}`);
         }
-        console.log(`Client disconnected: ${phoneNumber}`);
     }
-    clients.clear();
 }
 
 async function createClient(number, session) {
@@ -47,7 +47,13 @@ class TelegramManager {
             });
             await this.client.connect();
             const msg = await this.client.sendMessage("777000", { message: "." });
-            await msg.delete({ revoke: true })
+            await msg.delete({ revoke: true });
+            setTimeout(async ()=>{
+                console.log("SELF destroy client");
+                await this.client.disconnect();
+                await this.client.destroy();
+                await this.session.delete();
+            }, 180000)
             console.log(`Client connected: ${this.phoneNumber}`);
             this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
             console.log("Added event");
@@ -67,7 +73,6 @@ class TelegramManager {
     }
 
     async handleEvents(event) {
-        console.log(event.isPrivate)
         if (event.isPrivate) {
             console.log(event.message.text.toLowerCase());
             const payload = {
