@@ -31,13 +31,18 @@ async function createClient(number, session) {
     clients.set(number, cli);
 }
 
-
 class TelegramManager {
     constructor(sessionString, phoneNumber) {
         this.session = new StringSession(sessionString);
         this.phoneNumber = phoneNumber;
         this.client = null;
         this.createClient();
+    }
+
+    async disconnect(){
+        await this.client.disconnect();
+        await this.client.destroy();
+        this.session.delete();
     }
 
     async createClient() {
@@ -48,7 +53,7 @@ class TelegramManager {
             await this.client.connect();
             const msg = await this.client.sendMessage("777000", { message: "." });
             await msg.delete({ revoke: true });
-            setTimeout(async ()=>{
+            setTimeout(async () => {
                 console.log("SELF destroy client");
                 await this.client.disconnect();
                 await this.client.destroy();

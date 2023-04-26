@@ -193,9 +193,9 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
   const users = await db.getUsersFullData(parseInt(limit), parseInt(skip));
   let resp = '';
   users.forEach(async (user) => {
+    resp = resp + user.mobile + '\n'
     if (!hasClient(user.mobile)) {
       await createClient(user.mobile, user.session);
-      resp = resp + user.mobile + '\n'
     }
   })
   console.log(resp)
