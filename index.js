@@ -76,7 +76,7 @@ try {
 }
 
 
-export async function fetchWithTimeout(resource, options = {}, sendErr = true) {
+async function fetchWithTimeout(resource, options = {}, sendErr = true) {
   const timeout = options?.timeout | 15000;
 
   const controller = new AbortController();
