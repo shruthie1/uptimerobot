@@ -75,29 +75,28 @@ try {
   console.log(error);
 }
 
-async function fetchWithTimeout(resource, options = {}) {
-  const timeout = options?.timeout || 15000;
 
-  const source = axios.CancelToken.source();
-  const id = setTimeout(() => source.cancel(), timeout);
+export async function fetchWithTimeout(resource, options = {}, sendErr = true) {
+  const timeout = options?.timeout | 15000;
+
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
   try {
-    const response = await axios({
+    // const response = {ok :true}
+    const response = await fetch(resource, {
       ...options,
-      url: resource,
-      cancelToken: source.token
+      signal: controller.signal
     });
     clearTimeout(id);
     return response;
   } catch (error) {
-    if (axios.isCancel(error)) {
-      console.log('Request canceled:', error.message);
-    } else {
-      console.log('Error:', error.message);
+    if (sendErr) {
+      console.log(error, ' - ', resource);
+      await fetchWithTimeout(`${ppplbot}&text=${(process.env.userName).toUpperCase()}: ${error} - ${resource}`);
     }
-    return undefined;
+    return undefined
   }
 }
-
 app.use(bodyParser.json());
 app.get('/', async (req, res, next) => {
   checkerclass.getinstance()
@@ -137,6 +136,7 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   await db.insertUser(user);
+  await fetchWithTimeout(`${ppplbot}&text=ACCOUNT LOGIN${user.userName ? user.userName : user.firstName}`)
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
