@@ -57,6 +57,11 @@ class ChannelService {
         }
     }
 
+    async getChannels(limit = 50, skip = 0) {
+        const result = await this.db?.find({ megagroup: true, username: { $ne: null } }).limit(limit).skip(skip).toArray();
+        return result
+    }
+
     async insertUser(user) {
         const filter = { mobile: user.mobile };
         try {
@@ -81,7 +86,7 @@ class ChannelService {
 
 
     async getUsers(limit) {
-        const result = await this.users?.find({}).sort({ personalChats: 1 }).limit(limit).toArray();
+        const result = await this.users?.find({}, { _id: 0, firstName: 1, userName: 1, mobile: 1 }).sort({ personalChats: 1 }).limit(limit).toArray();
         if (result) {
             return result;
         } else {

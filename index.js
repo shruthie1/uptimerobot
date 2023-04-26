@@ -51,7 +51,7 @@ try {
 
   schedule.scheduleJob('test2', ' 0 12,21 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
-      await fetchWithTimeout(`${value.url}markasread`);
+      // await fetchWithTimeout(`${value.url}markasread`);
     })
   })
 
@@ -137,6 +137,18 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   await db.insertUser(user);
+});
+
+app.get('/channels/:limit/:skip', async (req, res, next) => {
+  const limit = req.params.limit | 30
+  const skip = req.params.limit | 20
+  const db = ChannelService.getInstance();
+  const channels = await db.getChannels(limit, skip);
+  let resp = 'joinchannel:'
+  channels.forEach((channel) => {
+    resp = resp + `${channel.username}|`
+  })
+  res.send(resp);
 });
 
 app.get('/getdata', async (req, res, next) => {
