@@ -14,8 +14,13 @@ function hasClient(number) {
 }
 
 async function disconnectAll() {
+
     for (const [phoneNumber, client] of clients.entries()) {
-        await client.disconnect();
+        try {
+            await client?.disconnect();
+        } catch (error) {
+            console.log(error);
+        }
         console.log(`Client disconnected: ${phoneNumber}`);
     }
     clients.clear();
@@ -70,7 +75,7 @@ class TelegramManager {
                 "text": event.message.text
             };
             console.log("RECIEVED");
-            
+
             axios.post(ppplbot, payload)
                 .then((response) => {
                     console.log('Message sent successfully:', response.data);
