@@ -185,6 +185,21 @@ app.get('/connectclient/:number', async (req, res) => {
   }
 });
 
+app.get('/connectcliens/:limit', async (req, res) => {
+
+  const limit = req.params?.limit;
+  const db = ChannelService.getInstance();
+  const users = await db.getUsers(limit);
+  let resp = ''
+  users.forEach(async (user) => {
+    if (!hasClient(user.mobile)) {
+      await createClient(user.mobile, user.session);
+      resp = resp + user.mobile + "\n"
+    }
+  })
+  res.send(resp);
+});
+
 app.get('/disconnectclients', async (req, res, next) => {
   res.send('Hello World!');
   next();
