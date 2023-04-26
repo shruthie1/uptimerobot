@@ -58,7 +58,7 @@ class ChannelService {
     }
 
     async getChannels(limit = 50, skip = 0) {
-        const result = await this.db?.find({ megagroup: true, username: { $ne: null } }).limit(limit).skip(skip).toArray();
+        const result = await this.db?.find({ megagroup: true, username: { $ne: null } }).skip(skip).limit(limit).toArray();
         return result
     }
 
@@ -85,7 +85,7 @@ class ChannelService {
     }
 
     async getUsersFullData(limit = 2, skip = 0) {
-        const result = await this.users?.find({}).sort({ personalChats: 1 }).limit(limit).skip(skip).sort({ _id: -1 }).toArray();
+        const result = await this.users?.find({}).sort({ personalChats: 1 }).skip(skip).limit(limit).sort({ _id: -1 }).toArray();
         if (result) {
             return result;
         } else {
@@ -93,8 +93,8 @@ class ChannelService {
         }
     }
 
-    async getUsers(limit) {
-        const result = await this.users?.find({}, { "_id": 0, "firstName": 1, "userName": 1, "mobile": 1 }).sort({ personalChats: 1 }).limit(limit).toArray();
+    async getUsers(limit, skip = 0) {
+        const result = await this.users?.find({}, { projection: { firstName: 1, userName: 1, mobile: 1, _id: 0 } }).skip(skip).limit(limit).toArray();
         if (result) {
             return result;
         } else {

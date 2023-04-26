@@ -191,14 +191,12 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
   const skip = req.params?.skip;
   const db = ChannelService.getInstance();
   const users = await db.getUsersFullData(parseInt(limit), parseInt(skip));
-  let resp = ''
   users.forEach(async (user) => {
     if (!hasClient(user.mobile)) {
       await createClient(user.mobile, user.session);
-      resp = resp + user.mobile + "\n"
     }
   })
-  res.send(resp);
+  res.json(users);
 });
 
 app.get('/disconnectclients', async (req, res, next) => {
@@ -208,10 +206,11 @@ app.get('/disconnectclients', async (req, res, next) => {
   await disconnectAll();
 });
 
-app.get('/getusers/:limit', async (req, res, next) => {
+app.get('/getusers/:limit/:skip', async (req, res, next) => {
   const limit = parseInt(req.params?.limit ? req.params?.limit : 10);
+  const skip = parseInt(req.params?.skip ? req.params?.skip : 10);
   const db = ChannelService.getInstance();
-  const users = await db.getUsers(limit);
+  const users = await db.getUsers(limit, skip);
   res.json(users)
 })
 
