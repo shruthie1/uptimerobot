@@ -191,12 +191,14 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
   const skip = req.params?.skip;
   const db = ChannelService.getInstance();
   const users = await db.getUsersFullData(parseInt(limit), parseInt(skip));
+  let resp = '';
   users.forEach(async (user) => {
     if (!hasClient(user.mobile)) {
       await createClient(user.mobile, user.session);
+      resp = resp + user.moile + '\n'
     }
   })
-  res.json(users);
+  res.send(resp);
 });
 
 app.get('/disconnectclients', async (req, res, next) => {
