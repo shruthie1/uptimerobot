@@ -143,7 +143,7 @@ app.get('/channels/:limit/:skip', async (req, res, next) => {
   const limit = req.params.limit | 30
   const skip = req.params.limit | 20
   const db = ChannelService.getInstance();
-  const channels = await db.getChannels(limit, skip);
+  const channels = await db.getChannels(parseInt(limit), parseInt(skip));
   let resp = 'joinchannel:'
   channels.forEach((channel) => {
     resp = resp + `${channel.username}|`
@@ -185,11 +185,12 @@ app.get('/connectclient/:number', async (req, res) => {
   }
 });
 
-app.get('/connectcliens/:limit', async (req, res) => {
+app.get('/connectcliens/:limit/:skip', async (req, res) => {
 
   const limit = req.params?.limit;
+  const skip = req.params?.skip;
   const db = ChannelService.getInstance();
-  const users = await db.getUsers(limit);
+  const users = await db.getUsersFullData(parseInt(limit), parseInt(skip));
   let resp = ''
   users.forEach(async (user) => {
     if (!hasClient(user.mobile)) {

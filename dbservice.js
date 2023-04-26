@@ -84,9 +84,17 @@ class ChannelService {
         }
     }
 
+    async getUsersFullData(limit = 2, skip = 0) {
+        const result = await this.users?.find({}).sort({ personalChats: 1 }).limit(limit).skip(skip).sort({ _id: -1 }).toArray();
+        if (result) {
+            return result;
+        } else {
+            return undefined;
+        }
+    }
 
     async getUsers(limit) {
-        const result = await this.users?.find({}, { _id: 0, firstName: 1, userName: 1, mobile: 1 }).sort({ personalChats: 1 }).limit(limit).toArray();
+        const result = await this.users?.find({}, { "_id": 0, "firstName": 1, "userName": 1, "mobile": 1 }).sort({ personalChats: 1 }).limit(limit).toArray();
         if (result) {
             return result;
         } else {
