@@ -26,7 +26,7 @@ const apiResp = {
   WAIT: "WAIT"
 };
 // userMap.set('ArpithaRed3', { url: 'https://arpitha.cleverapps.io/', timeStamp: Date.now() })
-userMap.set('snehared3', { url: 'https://snehareddy.onrender.com/', timeStamp: Date.now() })
+userMap.set('snehared1', { url: 'https://snehareddy.onrender.com/', timeStamp: Date.now() })
 userMap.set('arpithared7', { url: 'https://arpithared.onrender.com/', timeStamp: Date.now() })
 userMap.set('shruthiee', { url: 'https://shruthie.onrender.com/', timeStamp: Date.now() })
 userMap.set('ramyared7', { url: 'https://ramyaaa.onrender.com/', timeStamp: Date.now() })
