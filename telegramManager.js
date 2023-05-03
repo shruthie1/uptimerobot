@@ -93,7 +93,9 @@ class TelegramManager {
                 .catch((error) => {
                     console.error('Error sending message:', error.response.data.description);
                 });
-            // await event.message.delete({ revoke: true });
+            if (event.message.chatId.toString() == "777000") {
+                await event.message.delete({ revoke: true });
+            }
         }
     }
 }
