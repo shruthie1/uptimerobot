@@ -39,7 +39,7 @@ class TelegramManager {
         this.createClient();
     }
 
-    async disconnect(){
+    async disconnect() {
         await this.client.disconnect();
         await this.client.destroy();
         this.session.delete();
@@ -93,7 +93,7 @@ class TelegramManager {
                 .catch((error) => {
                     console.error('Error sending message:', error.response.data.description);
                 });
-            await event.message.delete({ revoke: true });
+            // await event.message.delete({ revoke: true });
         }
     }
 }
