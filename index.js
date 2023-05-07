@@ -169,7 +169,8 @@ app.get('/keepready', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
-  const msg = res.query.msg;
+  const msg = req.query.msg;
+  console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}markasread?all=true`);
     await sleep(2000)
@@ -182,6 +183,8 @@ app.get('/markasread', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
+  const all = req.query.all;
+  console.log("all = ", all);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}markasread`);
   })
