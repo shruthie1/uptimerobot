@@ -173,7 +173,6 @@ app.get('/keepready', async (req, res, next) => {
   console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}markasread?all=true`);
-    await sleep(2000)
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
   })
 });
