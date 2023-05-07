@@ -92,7 +92,7 @@ async function fetchWithTimeout(resource, options = {}) {
     return response;
   } catch (error) {
     if (axios.isCancel(error)) {
-      console.log('Request canceled:', error.message);
+      console.log('Request canceled:', error.message, resource);
     } else {
       console.log('Error:', error.message);
     }
@@ -174,7 +174,7 @@ app.get('/keepready', async (req, res, next) => {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}markasread?all=true`);
     await sleep(2000)
-    await fetchWithTimeout(`${value.url}resptopaid?msg=${msg}`);
+    await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
   })
 });
 
@@ -186,7 +186,7 @@ app.get('/markasread', async (req, res, next) => {
   const all = req.query.all;
   console.log("all = ", all);
   Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`${value.url}markasread`);
+    await fetchWithTimeout(`${value.url}markasread?${all ? "all=true" : ''}`);
   })
 });
 
