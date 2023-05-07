@@ -166,14 +166,16 @@ app.get('/getdata', async (req, res, next) => {
 
 app.get('/keepready', async (req, res, next) => {
   checkerclass.getinstance()
-  res.send('Hello World!');
+  res.send(`Responding!!\nMsg = ${req.query.msg}`);
   next();
 }, async (req, res) => {
   const msg = req.query.msg;
   console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`${value.url}markasread?all=true`);
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
+    setTimeout(async () => {
+      await fetchWithTimeout(`${value.url}markasread?all=true`);
+    }, 20000)
   })
 });
 
