@@ -51,7 +51,7 @@ try {
 
   schedule.scheduleJob('test2', ' 0 12,21 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
-      // await fetchWithTimeout(`${value.url}markasread`);
+      await fetchWithTimeout(`${value.url}markasread`);
     })
   })
 
