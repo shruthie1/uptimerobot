@@ -7,6 +7,7 @@ const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 const ChannelService = require('./dbservice');
 const { TelegramManager, getClient, hasClient, disconnectAll, createClient } = require('./telegramManager');
 const bodyParser = require('body-parser');
+const { sleep } = require('telegram/Helpers');
 
 const app = express();
 const port = 8000;
@@ -160,6 +161,19 @@ app.get('/getdata', async (req, res, next) => {
 }, async (req, res) => {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}getstats`);
+  })
+});
+
+app.get('/keepready', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const msg = res.query.msg;
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}markasread?all=true`);
+    await sleep(2000)
+    await fetchWithTimeout(`${value.url}resptopaid?msg=${msg}`);
   })
 });
 
