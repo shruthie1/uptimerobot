@@ -34,6 +34,7 @@ userMap.set('meghanared', { url: 'https://meghana-reddy.onrender.com/', timeStam
 userMap.set('kavyared', { url: 'https://kavyar.onrender.com/', timeStamp: Date.now() })
 userMap.set('sowmyared2', { url: 'https://sowmyared.onrender.com/', timeStamp: Date.now() })
 userMap.set('nidhired', { url: 'https://nidhired.onrender.com/', timeStamp: Date.now() })
+userMap.set('divyasree3', { url: 'https://divya-yuxp.onrender.com/', timeStamp: Date.now() })
 
 
 try {
