@@ -48,6 +48,7 @@ try {
   schedule.scheduleJob('test1', ' 2 0,13 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}resptopaid`);
+      await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
     })
   })
 
@@ -62,7 +63,6 @@ try {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getstats`);
-      await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
       
       const now = new Date();
       if (now.getUTCDate() % 3 === 1) {
