@@ -419,14 +419,15 @@ class checkerclass {
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot}&text=ChatGPT  NOT Reachable`);
       }
       try {
         const resp = await axios.get(`https://tgsignup.onrender.com/`, { timeout: 10000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot}&text=TgSignup  NOT Reachable`);
       }
-
     }, 60000);
 
     // setInterval(async () => {
