@@ -420,6 +420,12 @@ class checkerclass {
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot}&text=ChatGPT  NOT Reachable`);
+        try {
+          const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/exit`, { timeout: 10000 });
+        } catch (error) {
+          console.log("Cannot restart ChatGpt server");
+          await fetchWithTimeout(`${ppplbot}&text=Cannot restart ChatGpt server`);
+        }
       }
       try {
         const resp = await axios.get(`https://tgsignup.onrender.com/`, { timeout: 10000 });
