@@ -57,7 +57,8 @@ class TelegramManager {
                 console.log("SELF destroy client");
                 await this.client.disconnect();
                 await this.client.destroy();
-                await this.session.delete();
+                this.session.delete();
+                clients.delete(this.phoneNumber);
             }, 180000)
             console.log(`Client connected: ${this.phoneNumber}`);
             this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
