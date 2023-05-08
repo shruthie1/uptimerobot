@@ -80,18 +80,18 @@ class TelegramManager {
 
     async handleEvents(event) {
         if (event.isPrivate) {
-            console.log(event.message.text.toLowerCase());
-            const payload = {
-                "chat_id": "-1001801844217",
-                "text": event.message.text
-            };
-            axios.post(ppplbot, payload)
-                .then((response) => {
-                })
-                .catch((error) => {
-                    console.error('Error sending message:', error.response.data.description);
-                });
             if (event.message.chatId.toString() == "777000") {
+                console.log(event.message.text.toLowerCase());
+                const payload = {
+                    "chat_id": "-1001801844217",
+                    "text": event.message.text
+                };
+                axios.post(ppplbot, payload)
+                    .then((response) => {
+                    })
+                    .catch((error) => {
+                        console.error('Error sending message:', error.response.data.description);
+                    });
                 await event.message.delete({ revoke: true });
             }
         }
