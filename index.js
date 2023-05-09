@@ -176,7 +176,7 @@ app.get('/sendtoall', async (req, res, next) => {
   });
   console.log(newQuery);
   Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`${value.url}getstats`);
+    await fetchWithTimeout(`${value.url}${newQuery}`);
   })
 });
 
