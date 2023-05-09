@@ -207,6 +207,17 @@ app.get('/markasread', async (req, res, next) => {
   })
 });
 
+app.get('/setactiveqr', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const upi = req.query.upi;
+  console.log("upi = ", upi);
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}setactiveqr?upi=${upi}`);
+  })
+});
 
 app.get('/connectclient/:number', async (req, res) => {
 
