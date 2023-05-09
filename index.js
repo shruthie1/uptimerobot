@@ -63,7 +63,7 @@ try {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getstats`);
-      
+
       const now = new Date();
       if (now.getUTCDate() % 3 === 1) {
         setTimeout(async () => {
@@ -160,6 +160,21 @@ app.get('/getdata', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}getstats`);
+  })
+});
+app.get('/sendtoall', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const queries = req.query
+  let newQuery = '';
+  Object.keys(req.query).map((key) => {
+    newQuery += `${queries[key]}/`
+  });
+  console.log(newQuery);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}getstats`);
   })
