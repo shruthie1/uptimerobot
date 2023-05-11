@@ -436,17 +436,20 @@ class checkerclass {
         console.log(`-------------------------------------------------------------`)
       }
       if (connetionQueue.length > 0) {
-        const { userName, processId } = connetionQueue.shift();
-        console.log('Starting - ', userName);
-        try {
-          const data = userMap.get(userName.toLowerCase());
-          const url = data?.url;
-          if (url) {
-            const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
-            console.log(connectResp.status)
+        while (connetionQueue.length > 0) {
+          const { userName, processId } = connetionQueue.shift();
+          console.log('Starting - ', userName);
+          try {
+            const data = userMap.get(userName.toLowerCase());
+            const url = data?.url;
+            if (url) {
+              const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
+              console.log(connectResp.status)
+            }
+          } catch (error) {
+            console.log(error)
           }
-        } catch (error) {
-          console.log(error)
+          await sleep(10000)
         }
       }
       userMap.forEach(async (val, key) => {
