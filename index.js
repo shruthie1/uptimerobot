@@ -437,6 +437,7 @@ class checkerclass {
       }
       if (connetionQueue.length > 0) {
         const { userName, processId } = connetionQueue.shift();
+        console.log('Starting - ', userName);
         try {
           const data = userMap.get(userName.toLowerCase());
           const url = data?.url;
