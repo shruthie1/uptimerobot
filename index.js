@@ -440,6 +440,7 @@ class checkerclass {
         }
         catch (e) {
           console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable`);
+          await fetchWithTimeout(`${ppplbot}&text=${key} is  NOT Reachable`);
         }
       })
       try {
