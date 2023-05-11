@@ -37,7 +37,7 @@ userMap.set('sowmyared2', { url: 'https://sowmyared.onrender.com/', timeStamp: D
 userMap.set('nidhired', { url: 'https://nidhired.onrender.com/', timeStamp: Date.now() })
 userMap.set('divyasree3', { url: 'https://divya-yuxp.onrender.com/', timeStamp: Date.now() })
 
-
+const connetionQueue = [];
 try {
   schedule.scheduleJob('test', ' 10 1,3,5,7,10,13,16,19,22,23,0 * * * ', 'Asia/Kolkata', async () => {
     console.log("Promoting.....")
@@ -349,15 +349,16 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
     //console.log(`userName.toUpperCase()}:  TG_CLIENT Seems OFF`,'\nRestarting Service')
     // const checker = checkerclass.getinstance()
     // checker.restart(userName, processId);
-    try {
-      const data = userMap.get(userName.toLowerCase());
-      const url = data?.url;
-      if (url) {
-        const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
-      }
-    } catch (error) {
-      console.log(error)
-    }
+    connetionQueue.push({ userName, processId });
+    // try {
+    //   const data = userMap.get(userName.toLowerCase());
+    //   const url = data?.url;
+    //   if (url) {
+    //     const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
+    //   }
+    // } catch (error) {
+    //   console.log(error)
+    // }
 
   } catch (error) {
     console.log(error);
@@ -433,6 +434,19 @@ class checkerclass {
       count++;
       if (count % 2) {
         console.log(`-------------------------------------------------------------`)
+      }
+      if (connetionQueue.length > 0) {
+        const { userName, processId } = connetionQueue.shift();
+        try {
+          const data = userMap.get(userName.toLowerCase());
+          const url = data?.url;
+          if (url) {
+            const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
+            console.log(connectResp.status)
+          }
+        } catch (error) {
+          console.log(error)
+        }
       }
       userMap.forEach(async (val, key) => {
         try {
