@@ -27,15 +27,15 @@ const apiResp = {
   WAIT: "WAIT"
 };
 // userMap.set('ArpithaRed3', { url: 'https://arpitha.cleverapps.io/', timeStamp: Date.now() })
-userMap.set('snehared1', { url: 'https://snehareddy.onrender.com/', timeStamp: Date.now() })
-userMap.set('arpithared7', { url: 'https://arpithared.onrender.com/', timeStamp: Date.now() })
-userMap.set('shruthiee', { url: 'https://shruthie.onrender.com/', timeStamp: Date.now() })
-userMap.set('ramyared7', { url: 'https://ramyaaa.onrender.com/', timeStamp: Date.now() })
-userMap.set('meghanared', { url: 'https://meghana-reddy.onrender.com/', timeStamp: Date.now() })
-userMap.set('kavyared', { url: 'https://kavyar.onrender.com/', timeStamp: Date.now() })
-userMap.set('sowmyared2', { url: 'https://sowmyared.onrender.com/', timeStamp: Date.now() })
-userMap.set('nidhired', { url: 'https://nidhired.onrender.com/', timeStamp: Date.now() })
-userMap.set('divyasree3', { url: 'https://divya-yuxp.onrender.com/', timeStamp: Date.now() })
+userMap.set('snehared1', { url: 'https://snehareddy.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cgdjo11mbg54ast4vit0?key=h3cZsVLB49U` })
+userMap.set('arpithared7', { url: 'https://arpithared.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cg5gm5ndvk4pls50tpi0?key=WYYrJhIAL4I` })
+userMap.set('shruthiee', { url: 'https://shruthie.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cfljh0pa6gdjlmpelfg0?key=Zh5zh7Ha_gQ` })
+userMap.set('ramyared7', { url: 'https://ramyaaa.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cgqfc75269v32o8arvpg?key=G-SA6DvOwno` })
+userMap.set('meghanared', { url: 'https://meghana-reddy.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cgnr02l269v5rj89n4cg?key=-MaU-g4DJSY` })
+userMap.set('kavyared', { url: 'https://kavyar.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cgslcve4dad33k9rhkmg?key=aoqrRyot1TY` })
+userMap.set('sowmyared2', { url: 'https://sowmyared.onrender.com/', timeStamp: Date.now(), deployKey: `srv-ch2i4ndgk4qarqh4q2m0?key=5Q7iBpspP9k` })
+userMap.set('nidhired', { url: 'https://nidhired.onrender.com/', timeStamp: Date.now(), deployKey: `srv-ch3vhi8rddl4gk2ijkf0?key=5fFgOLPkyIg` })
+userMap.set('divyasree3', { url: 'https://divya-yuxp.onrender.com/', timeStamp: Date.now(), deployKey: `srv-chbo993hp8u016274q20?key=DxzFtQRbNW8` })
 
 const connetionQueue = [];
 try {
@@ -459,6 +459,10 @@ class checkerclass {
         catch (e) {
           console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable`);
           await fetchWithTimeout(`${ppplbot}&text=${key} is  NOT Reachable`);
+          const resp = await axios.get(`https://api.render.com/deploy/${val.deployKey}`, { timeout: 10000 });
+          if (resp?.status == 200 || resp.status == 201) {
+            await fetchWithTimeout(`${ppplbot}&text=Restarted ${key}`);
+          }
         }
       })
       try {
@@ -468,7 +472,10 @@ class checkerclass {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot}&text=ChatGPT  NOT Reachable`);
         try {
-          const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/exit`, { timeout: 10000 });
+          const resp = await axios.get(`https://api.render.com/deploy/srv-cflkq853t39778sm0clg?key=e4QNTs9kDw4`, { timeout: 10000 });
+          if (resp?.status == 200 || resp.status == 201) {
+            await fetchWithTimeout(`${ppplbot}&text=Restarted CHATGPT`);
+          }
         } catch (error) {
           console.log("Cannot restart ChatGpt server");
           await fetchWithTimeout(`${ppplbot}&text=Cannot restart ChatGpt server`);
