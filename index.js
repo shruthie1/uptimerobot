@@ -462,6 +462,7 @@ class checkerclass {
           userMap.set(key, { ...val, downTime: val.downTime++ })
           await fetchWithTimeout(`${ppplbot}&text=${key} is  NOT Reachable`);
           if (val.downTime > 2) {
+            userMap.set(key, { ...val, downTime: 0 })
             const resp = await axios.get(`https://api.render.com/deploy/${val.deployKey}`, { timeout: 10000 });
             if (resp?.status == 200 || resp.status == 201) {
               await fetchWithTimeout(`${ppplbot}&text=Restarted ${key}`);
