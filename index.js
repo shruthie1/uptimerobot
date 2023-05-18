@@ -37,6 +37,7 @@ userMap.set('kavyared', { url: 'https://kavyar.onrender.com/', timeStamp: Date.n
 userMap.set('sowmyared2', { url: 'https://sowmyared.onrender.com/', timeStamp: Date.now(), deployKey: `srv-ch2i4ndgk4qarqh4q2m0?key=5Q7iBpspP9k`, downTime: 0 })
 userMap.set('nidhired', { url: 'https://nidhired.onrender.com/', timeStamp: Date.now(), deployKey: `srv-ch3vhi8rddl4gk2ijkf0?key=5fFgOLPkyIg`, downTime: 0 })
 userMap.set('divyasree3', { url: 'https://divya-yuxp.onrender.com/', timeStamp: Date.now(), deployKey: `srv-chbo993hp8u016274q20?key=DxzFtQRbNW8`, downTime: 0 })
+userMap.set('divyasree3', { url: 'https://spammer-uelh.onrender.com/', timeStamp: Date.now(), deployKey: `srv-chis22t269v2e2bjlor0?key=hUuP2B2hhrQ`, downTime: 0 })
 
 const connetionQueue = [];
 try {
