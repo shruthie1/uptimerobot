@@ -44,7 +44,8 @@ try {
   schedule.scheduleJob('test', ' 10 1,3,5,7,10,13,16,19,22,23,0 * * * ', 'Asia/Kolkata', async () => {
     console.log("Promoting.....")
     Array.from(userMap.values()).map(async (value) => {
-      const res = await fetchWithTimeout(`${value.url}promote`);
+      await fetchWithTimeout(`${value.url}promote`);
+      await fetchWithTimeout(`${value.url}markasread`);
     })
   })
   schedule.scheduleJob('test1', ' 2 0,13 * * * ', 'Asia/Kolkata', async () => {
@@ -56,7 +57,7 @@ try {
 
   schedule.scheduleJob('test2', ' 0 12,21 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
-      await fetchWithTimeout(`${value.url}markasread`);
+      // await fetchWithTimeout(`${value.url}markasread`);
     })
   })
 
