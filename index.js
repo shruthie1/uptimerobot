@@ -462,7 +462,7 @@ class checkerclass {
         catch (e) {
           console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable`);
           userMap.set(key, { ...val, downTime: val.downTime++ })
-          await fetchWithTimeout(`${ppplbot}&text=${key} is  NOT Reachable`);
+          await fetchWithTimeout(`${ppplbot}&text=${key} is  NOT Reachable - ${val.downtime}`);
           if (val.downTime > 2) {
             userMap.set(key, { ...val, downTime: 0 })
             const resp = await axios.get(`https://api.render.com/deploy/${val.deployKey}`, { timeout: 10000 });
