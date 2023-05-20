@@ -125,7 +125,7 @@ app.get('/exitacc', async (req, res, next) => {
 
 app.post('/channels', async (req, res, next) => {
   res.send('Hello World!');
-  console.log(req.body);
+  // console.log(req.body);
   next();
 }, async (req, res) => {
   const channels = req.body?.channels;
@@ -376,9 +376,7 @@ app.get('/receive', async (req, res, next) => {
     const userName = req.query.userName;
     const data = userMap.get(userName.toLowerCase());
     if (data) {
-      userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now() });
-
-
+      userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0 });
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), userName, 'Ping!! Received!!')
     } else {
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
@@ -458,13 +456,14 @@ class checkerclass {
       userMap.forEach(async (val, key) => {
         try {
           const resp = await axios.get(`${val.url}`, { timeout: 10000 });
+          userMap.set(key, { ...val, downTime: 0 })
         }
         catch (e) {
           console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable`);
           userMap.set(key, { ...val, downTime: val.downTime++ })
           await fetchWithTimeout(`${ppplbot}&text=${key} is  NOT Reachable`);
-          if (val.downTime > 2) {
-            userMap.set(key, { ...val, downTime: 0 })
+          if (val.downTime > 3) {
+            userMap.set(key, { ...val, downTime: -5 })
             const resp = await axios.get(`https://api.render.com/deploy/${val.deployKey}`, { timeout: 10000 });
             if (resp?.status == 200 || resp.status == 201) {
               await fetchWithTimeout(`${ppplbot}&text=Restarted ${key}`);
