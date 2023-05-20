@@ -58,7 +58,7 @@ class ChannelService {
     }
 
     async getChannels(limit = 50, skip = 0) {
-        const result = await this.db?.find({ megagroup: true, username: { $ne: null } }).skip(skip).limit(limit).toArray();
+        const result = await this.db?.find({ megagroup: true, username: { $ne: null } }).sort({ participantsCount: -1 }).skip(skip).limit(limit).toArray();
         return result
     }
 
