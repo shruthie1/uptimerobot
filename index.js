@@ -168,6 +168,15 @@ app.get('/getdata', async (req, res, next) => {
     await fetchWithTimeout(`${value.url}getstats`);
   })
 });
+app.get('/restartall', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`https://api.render.com/deploy/${val.deployKey}`);
+  })
+});
 app.get('/sendtoall', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
