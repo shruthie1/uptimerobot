@@ -474,7 +474,7 @@ class checkerclass {
           if (val.downTime > 2) {
             userMap.set(key, { ...val, downTime: -5 })
             try {
-              const resp = await axios.get(`https://api.render.com/deploy/${val.deployKey}`, { timeout: 10000 });
+              //const resp = await axios.get(`https://api.render.com/deploy/${val.deployKey}`, { timeout: 10000 });
               if (resp?.status == 200 || resp.status == 201) {
                 await fetchWithTimeout(`${ppplbot}&text=Restarted ${key}`);
               } else {
