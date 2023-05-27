@@ -173,7 +173,7 @@ app.get('/restartall', async (req, res, next) => {
   next();
 }, async (req, res) => {
   Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`https://api.render.com/deploy/${val.deployKey}`);
+    await fetchWithTimeout(`https://api.render.com/deploy/${value.deployKey}`);
   })
 });
 app.get('/sendtoall', async (req, res, next) => {
