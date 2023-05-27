@@ -505,6 +505,22 @@ class checkerclass {
         }
       }
       try {
+        const resp = await axios.get(`https://uptimechecker.onrender.com`, { timeout: 10000 });
+      }
+      catch (e) {
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'UpTimeBot', ` NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot}&text=UpTimeBot  NOT Reachable`);
+        try {
+          const resp = await axios.get(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 10000 });
+          if (resp?.status == 200 || resp.status == 201) {
+            await fetchWithTimeout(`${ppplbot}&text=Restarted UpTimeBot`);
+          }
+        } catch (error) {
+          console.log("Cannot restart ChatGpt server");
+          await fetchWithTimeout(`${ppplbot}&text=Cannot restart UpTimeBot server`);
+        }
+      }
+      try {
         const resp = await axios.get(`https://tgsignup.onrender.com/`, { timeout: 10000 });
       }
       catch (e) {
