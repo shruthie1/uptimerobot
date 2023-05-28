@@ -76,6 +76,7 @@ try {
       setTimeout(async () => {
         await fetchWithTimeout(`${value.url}resetstats`);
       }, 10000);
+      await sleep(1500)
     })
   })
 } catch (error) {
@@ -147,8 +148,8 @@ app.post('/users', async (req, res, next) => {
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
-  const limit = req.params.limit | 30
-  const skip = req.params.limit | 20
+  const limit = req.params.limit ? req.params.limit : 30
+  const skip = req.params.skip ? req.params.skip : 20
   const db = ChannelService.getInstance();
   const channels = await db.getChannels(parseInt(limit), parseInt(skip));
   let resp = 'joinchannel:'
@@ -165,6 +166,7 @@ app.get('/getdata', async (req, res, next) => {
 }, async (req, res) => {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}getstats`);
+    await sleep(1500)
   })
 });
 app.get('/restartall', async (req, res, next) => {
@@ -299,6 +301,7 @@ app.get('/getchannels', async (req, res, next) => {
 }, async (req, res) => {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}getchannels`);
+    await sleep(1500)
   })
 });
 
