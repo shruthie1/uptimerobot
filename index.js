@@ -76,7 +76,7 @@ try {
       setTimeout(async () => {
         await fetchWithTimeout(`${value.url}resetstats`);
       }, 10000);
-      await sleep(1500)
+      await sleep(1000)
     })
   })
 } catch (error) {
@@ -168,7 +168,7 @@ app.get('/getdata', async (req, res, next) => {
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
     await fetchWithTimeout(`${value.url}getstats`);
-    await sleep(1500);
+    await sleep(1000);
   }
 });
 app.get('/restartall', async (req, res, next) => {
@@ -305,7 +305,7 @@ app.get('/getchannels', async (req, res, next) => {
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
     await fetchWithTimeout(`${value.url}getchannels`);
-    await sleep(1500);
+    await sleep(1000);
   }
 });
 
