@@ -164,10 +164,12 @@ app.get('/getdata', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
-  Array.from(userMap.values()).map(async (value) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
     await fetchWithTimeout(`${value.url}getstats`);
-    await sleep(1500)
-  })
+    await sleep(1500);
+  }
 });
 app.get('/restartall', async (req, res, next) => {
   checkerclass.getinstance()
@@ -299,10 +301,12 @@ app.get('/getchannels', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
-  Array.from(userMap.values()).map(async (value) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
     await fetchWithTimeout(`${value.url}getchannels`);
-    await sleep(1500)
-  })
+    await sleep(1500);
+  }
 });
 
 app.get('/restart', async (req, res, next) => {
