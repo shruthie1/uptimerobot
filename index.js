@@ -487,12 +487,12 @@ class checkerclass {
       }
       userMap.forEach(async (val, key) => {
         try {
-          const resp = await axios.get(`${val.url}`, { timeout: 10000 });
+          const resp = await axios.get(`${val.url}`, { timeout: 50000 });
           userMap.set(key, { ...val, downTime: 0 })
         }
         catch (e) {
-          console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable`);
           userMap.set(key, { ...val, downTime: val.downTime + 1 })
+          console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable - ${val.downTime}`);
           // await fetchWithTimeout(`${ppplbot}&text=${key} is  NOT Reachable - ${val.downTime}`);
           if (val.downTime > 5) {
             userMap.set(key, { ...val, downTime: -5 })
