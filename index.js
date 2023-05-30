@@ -512,13 +512,13 @@ class checkerclass {
         }
       })
       try {
-        const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 10000 });
+        const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot}&text=ChatGPT  NOT Reachable`);
         try {
-          const resp = await axios.get(`https://api.render.com/deploy/srv-cflkq853t39778sm0clg?key=e4QNTs9kDw4`, { timeout: 10000 });
+          const resp = await axios.get(`https://api.render.com/deploy/srv-cflkq853t39778sm0clg?key=e4QNTs9kDw4`, { timeout: 55000 });
           if (resp?.status == 200 || resp.status == 201) {
             await fetchWithTimeout(`${ppplbot}&text=Restarted CHATGPT`);
           }
@@ -528,13 +528,13 @@ class checkerclass {
         }
       }
       try {
-        const resp = await axios.get(`https://uptimechecker.onrender.com`, { timeout: 10000 });
+        const resp = await axios.get(`https://uptimechecker.onrender.com`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'UpTimeBot', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot}&text=UpTimeBot  NOT Reachable`);
         try {
-          const resp = await axios.get(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 10000 });
+          const resp = await axios.get(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 55000 });
           if (resp?.status == 200 || resp.status == 201) {
             await fetchWithTimeout(`${ppplbot}&text=Restarted UpTimeBot`);
           }
@@ -544,7 +544,7 @@ class checkerclass {
         }
       }
       try {
-        const resp = await axios.get(`https://tgsignup.onrender.com/`, { timeout: 10000 });
+        const resp = await axios.get(`https://tgsignup.onrender.com/`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
