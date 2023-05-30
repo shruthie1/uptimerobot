@@ -65,7 +65,7 @@ try {
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}resetunpaid`);
-      await fetchWithTimeout(`${value.url}resetunppl`);
+      // await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getstats`);
       await fetchWithTimeout(`${value.url}asktopay`);
 
@@ -212,6 +212,20 @@ app.get('/keepready', async (req, res, next) => {
     }, 20000)
   })
 });
+
+
+app.get('/asktopay', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send(`Asking Pppl`);
+  next();
+}, async (req, res) => {
+  const msg = req.query.msg;
+  console.log("Msg = ", msg);
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}asktopay`)
+  })
+});
+
 
 app.get('/markasread', async (req, res, next) => {
   checkerclass.getinstance()
