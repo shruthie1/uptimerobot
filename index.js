@@ -49,7 +49,7 @@ try {
       await fetchWithTimeout(`${value.url}promote`);
     })
   })
-  schedule.scheduleJob('test1', ' 2 22,13,18 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test1', ' 2 22,7,10,13,15,18 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}calltopaid`);
       await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
@@ -223,6 +223,19 @@ app.get('/asktopay', async (req, res, next) => {
   console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}asktopay`)
+  })
+});
+
+
+app.get('/calltopaid', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send(`Asking Pppl`);
+  next();
+}, async (req, res) => {
+  const msg = req.query.msg;
+  console.log("Msg = ", msg);
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}calltopaid`)
   })
 });
 
