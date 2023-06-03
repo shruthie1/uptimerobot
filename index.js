@@ -80,6 +80,12 @@ try {
       }, 10000);
       await sleep(1000)
     })
+    try {
+      const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
+      const resp2 = await axios.get(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
+    } catch (error) {
+      console.log(error)
+    }
   })
 } catch (error) {
   console.log(error);
@@ -212,7 +218,6 @@ app.get('/keepready', async (req, res, next) => {
     }, 20000)
   })
 });
-
 
 app.get('/asktopay', async (req, res, next) => {
   checkerclass.getinstance()
