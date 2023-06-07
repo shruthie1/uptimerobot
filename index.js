@@ -115,7 +115,7 @@ async function fetchWithTimeout(resource, options = {}) {
     return undefined;
   }
 }
-this.app.use(cors());
+app.use(cors());
 app.use(bodyParser.json());
 app.get('/', async (req, res, next) => {
   checkerclass.getinstance()
