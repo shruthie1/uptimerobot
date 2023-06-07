@@ -66,8 +66,9 @@ try {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
-      await fetchWithTimeout(`${value.url}getstats`);
+      await fetchWithTimeout(`${value.url}getuserstats`);
       await fetchWithTimeout(`${value.url}asktopay`);
+      await fetchWithTimeout(`${value.url}getDemostats`);
 
       const now = new Date();
       if (now.getUTCDate() % 3 === 1) {
@@ -175,10 +176,24 @@ app.get('/getdata', async (req, res, next) => {
   const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    await fetchWithTimeout(`${value.url}getstats`);
+    await fetchWithTimeout(`${value.url}getDemostats`);
     await sleep(1000);
   }
 });
+
+app.get('/getuserdata', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    await fetchWithTimeout(`${value.url}getuserstats`);
+    await sleep(1000);
+  }
+});
+
 app.get('/restartall', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');

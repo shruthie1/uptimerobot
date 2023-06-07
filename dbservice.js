@@ -5,6 +5,7 @@ class ChannelService {
     static instance;
     db = undefined;
     users = undefined;
+    statsDb = undefined;
     static mongoClinet = undefined;
     isConnected = false;
 
@@ -30,6 +31,7 @@ class ChannelService {
                 this.isConnected = true;
                 this.db = client.db("tgclients").collection('channels');
                 this.users = client.db("tgclients").collection('users');
+                this.statsDb = client.db("tgclients").collection('stats');
                 return true;
             } catch (error) {
                 console.log(`Error connecting to MongoDB: ${error}`);
@@ -86,6 +88,24 @@ class ChannelService {
 
     async getUsersFullData(limit = 2, skip = 0) {
         const result = await this.users?.find({}).sort({ personalChats: 1 }).skip(skip).limit(limit).sort({ _id: -1 }).toArray();
+        if (result) {
+            return result;
+        } else {
+            return undefined;
+        }
+    }
+
+    async readStats() {
+        const result = await this.statsDb.find({}).sort({ newUser: -1 })
+        if (result) {
+            return result.toArray();
+        } else {
+            return undefined;
+        }
+    }
+
+    async read(chatId) {
+        const result = await this.db.findOne({ chatId });
         if (result) {
             return result;
         } else {
