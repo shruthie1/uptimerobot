@@ -3,6 +3,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb')
 
 class ChannelService {
     static instance;
+    client = undefined
     db = undefined;
     users = undefined;
     statsDb = undefined;
@@ -26,12 +27,12 @@ class ChannelService {
         if (!ChannelService.mongoClinet) {
             console.log('trying to connect to DB......')
             try {
-                const client = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+                this.client = await MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
                 console.log('Connected to MongoDB');
                 this.isConnected = true;
-                this.db = client.db("tgclients").collection('channels');
-                this.users = client.db("tgclients").collection('users');
-                this.statsDb = client.db("tgclients").collection('stats');
+                this.db = this.client.db("tgclients").collection('channels');
+                this.users = this.client.db("tgclients").collection('users');
+                this.statsDb = this.client.db("tgclients").collection('stats');
                 return true;
             } catch (error) {
                 console.log(`Error connecting to MongoDB: ${error}`);
@@ -123,7 +124,7 @@ class ChannelService {
     }
 
     async getupi(key) {
-        const upiDb = client.db("tgclients").collection('upi-ids');
+        const upiDb = this.client.db("tgclients").collection('upi-ids');
         const upiIds = await upiDb.findOne({});
         console.log(upiIds)
         return upiIds[key] || "lakshmi-69@paytm"
