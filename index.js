@@ -288,7 +288,8 @@ app.get('/getUpiId', async (req, res) => {
   checkerclass.getinstance();
   const app = req.query.app ? req.query.app : "paytm3"
   const db = ChannelService.getInstance();
-  const upiId = db.getupi(app)
+  const upiId = db.getupi(app);
+  console.log(app,upiId)
   res.send(upiId);
 });
 
