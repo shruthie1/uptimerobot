@@ -284,6 +284,15 @@ app.get('/setactiveqr', async (req, res, next) => {
   })
 });
 
+app.get('/getUpiId', async (req, res, next) => {
+  checkerclass.getinstance();
+  const app = req.query.app ? req.query.app : "paytm3"
+  const db = ChannelService.getInstance();
+  const upiId = db.getupi(app)
+  res.send(upiId);
+  next();
+});
+
 app.get('/connectclient/:number', async (req, res) => {
 
   const number = req.params?.number;

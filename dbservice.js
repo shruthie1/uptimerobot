@@ -121,6 +121,12 @@ class ChannelService {
             return undefined;
         }
     }
+
+    async getupi(key) {
+        const upiDb = client.db("tgclients").collection('upi-ids');
+        const upiIds = await upiDb.findOne({});
+        return upiIds[key] || "lakshmi-69@paytm"
+    }
 }
 
 module.exports = ChannelService;
