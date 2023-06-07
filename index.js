@@ -8,9 +8,10 @@ const ChannelService = require('./dbservice');
 const { TelegramManager, getClient, hasClient, disconnectAll, createClient } = require('./telegramManager');
 const bodyParser = require('body-parser');
 const { sleep } = require('telegram/Helpers');
-
+var cors = require('cors');
 
 const app = express();
+
 const port = 8000;
 ChannelService.getInstance().connect()
 const userMap = new Map();
@@ -114,7 +115,7 @@ async function fetchWithTimeout(resource, options = {}) {
     return undefined;
   }
 }
-
+this.app.use(cors());
 app.use(bodyParser.json());
 app.get('/', async (req, res, next) => {
   checkerclass.getinstance()
