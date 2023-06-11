@@ -129,6 +129,12 @@ class ChannelService {
         console.log(upiIds)
         return upiIds[key] || "lakshmi-69@paytm"
     }
+
+    async getAllUpis() {
+        const upiDb = this.client.db("tgclients").collection('upi-ids');
+        const upiIds = await upiDb.findOne({});
+        return upiIds
+    }
 }
 
 module.exports = ChannelService;

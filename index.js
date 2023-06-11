@@ -290,8 +290,15 @@ app.get('/getUpiId', async (req, res) => {
   const app = req.query.app ? req.query.app : "paytm3"
   const db = ChannelService.getInstance();
   const upiId = await db.getupi(app);
-  console.log(app,upiId)
+  console.log(app, upiId)
   res.send(upiId);
+});
+
+app.get('/getAllUpiIds', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const upiIds = await db.getAllUpis()
+  res.json(upiIds);
 });
 
 app.get('/connectclient/:number', async (req, res) => {
