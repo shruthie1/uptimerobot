@@ -60,10 +60,31 @@ class ChannelService {
         }
     }
 
-    async getChannels(limit = 50, skip = 0) {
-        const result = await this.db?.find({ megagroup: true, username: { $ne: null } }).sort({ participantsCount: -1 }).skip(skip).limit(limit).toArray();
-        return result
+    async getChannels(limit = 50, skip = 0, k) {
+        const query = { megagroup: true, username: { $ne: null } };
+        const sort = { participantsCount: -1 };
+        if (k) {
+            query.title = { $regex: k, $options: 'i' };
+        }
+        const options = { collation: { locale: 'en', strength: 1 } };
+        try {
+            if (k) {
+                await this.db?.createIndex({ title: 'text' }); // Create index on the "title" field for text search
+            }
+            const result = await this.db
+                .find(query, options)
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .toArray();
+
+            return result;
+        } catch (error) {
+            console.error('Error:', error);
+            return [];
+        }
     }
+
 
     async insertUser(user) {
         const filter = { mobile: user.mobile };
