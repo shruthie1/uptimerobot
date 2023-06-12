@@ -183,6 +183,19 @@ app.get('/getdata', async (req, res, next) => {
   }
 });
 
+app.get('/refreshupis', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    await fetchWithTimeout(`${value.url}refreshupis`);
+    await sleep(1000);
+  }
+});
+
 app.get('/getuserdata', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
