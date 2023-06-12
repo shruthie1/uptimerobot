@@ -192,7 +192,6 @@ app.get('/refreshupis', async (req, res, next) => {
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
     await fetchWithTimeout(`${value.url}refreshupis`);
-    await sleep(1000);
   }
 });
 
