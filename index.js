@@ -314,6 +314,20 @@ app.get('/getAllUpiIds', async (req, res) => {
   res.json(upiIds);
 });
 
+app.get('/getConfig', async (req, res) => {
+  const username = req.query.user
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const userConfig = await db.getUserConfig(username);
+  res.json(userConfig);
+});
+app.get('/getTgConfig', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const tgConfig = await db.getTgConfig()
+  res.json(tgConfig);
+});
+
 app.get('/connectclient/:number', async (req, res) => {
   const number = req.params?.number;
   const db = ChannelService.getInstance();

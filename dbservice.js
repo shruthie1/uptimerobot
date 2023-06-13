@@ -156,6 +156,18 @@ class ChannelService {
         const upiIds = await upiDb.findOne({});
         return upiIds
     }
+
+    async getUserConfig(userName) {
+        const clientDb = this.client.db("tgclients").collection('clients');
+        const client = await clientDb.findOne({ userName });
+        return client
+    }
+
+    async getTgConfig() {
+        const clientDb = this.client.db("tgclients").collection('configuration');
+        const client = await clientDb.findOne({ "apiId": "1591339" });
+        return client
+    }
 }
 
 module.exports = ChannelService;
