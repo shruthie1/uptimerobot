@@ -314,7 +314,7 @@ app.get('/getAllUpiIds', async (req, res) => {
   res.json(upiIds);
 });
 
-app.get('/getConfig', async (req, res) => {
+app.get('/getUserConfig', async (req, res) => {
   const username = req.query.user
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
