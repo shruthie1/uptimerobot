@@ -328,7 +328,7 @@ app.get('/getAllUserClients', async (req, res) => {
   const userConfig = await db.getAllUserClients();
   const resp = []
   userConfig.map((user) => {
-    resp.push(user.name)
+    resp.push(user.clientId)
   })
   res.send(resp);
 });
