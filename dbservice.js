@@ -165,7 +165,7 @@ class ChannelService {
 
     async getAllUserClients() {
         const clientDb = this.client.db("tgclients").collection('clients');
-        const client = await clientDb.findOne({});
+        const client = await clientDb.find({});
         return client.toArray()
     }
 
