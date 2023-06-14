@@ -169,9 +169,9 @@ class ChannelService {
         return client
     }
 
-    async updateUserConfig(user, data) {
+    async updateUserConfig(filter, data) {
         const upiDb = this.client.db("tgclients").collection('clients');
-        const upiIds = await upiDb.updateOne({ clientId: user }, { $set: { ...data } });
+        const upiIds = await upiDb.updateOne(filter, { $set: { ...data } });
         return upiIds
     }
 

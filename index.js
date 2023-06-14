@@ -319,7 +319,12 @@ app.post('/getAllUpiIds', async (req, res) => {
   checkerclass.getinstance();
   console.log(data)
   const db = ChannelService.getInstance();
-  const upiIds = await db.updateUpis(data)
+  const upiIds = await db.updateUpis(data);
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    await fetchWithTimeout(`${value.url}refreshupis`);
+  }
   res.json(upiIds);
 });
 
@@ -332,12 +337,12 @@ app.get('/getUserConfig', async (req, res) => {
 });
 
 app.post('/getUserConfig', async (req, res) => {
-  const username = req.query.user
+  const filter = req.query
   const data = req.body
   checkerclass.getinstance();
   console.log(data)
   const db = ChannelService.getInstance();
-  const upiIds = await db.updateUserConfig(username, data)
+  const upiIds = await db.updateUserConfig(filter, data);
   res.json(upiIds);
 });
 
