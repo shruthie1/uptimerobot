@@ -5,15 +5,16 @@ const axios = require('axios');
 const schedule = require('node-schedule-tz');
 const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 const ChannelService = require('./dbservice');
-const { TelegramManager, getClient, hasClient, disconnectAll, createClient } = require('./telegramManager');
+const { getClient, hasClient, disconnectAll, createClient } = require('./telegramManager');
 const bodyParser = require('body-parser');
 const { sleep } = require('telegram/Helpers');
 var cors = require('cors');
 
 const app = express();
-
 const port = 8000;
-ChannelService.getInstance().connect()
+ChannelService.getInstance().connect().then(async () => {
+  await setUserMap()
+})
 const userMap = new Map();
 
 let count = 0;
@@ -28,19 +29,14 @@ const apiResp = {
   DANGER: "DANGER",
   WAIT: "WAIT"
 };
-// userMap.set('ArpithaRed3', { url: 'https://arpitha.cleverapps.io/', timeStamp: Date.now() })
-userMap.set('snehared4', { url: 'https://snehareddy.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cgdjo11mbg54ast4vit0?key=h3cZsVLB49U`, downTime: 0 })
-userMap.set('arpithared7', { url: 'https://arpithared.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cg5gm5ndvk4pls50tpi0?key=WYYrJhIAL4I`, downTime: 0 })
-userMap.set('shruthiee', { url: 'https://shruthie.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cfljh0pa6gdjlmpelfg0?key=Zh5zh7Ha_gQ`, downTime: 0 })
-userMap.set('ramyared7', { url: 'https://ramyaaa.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cgqfc75269v32o8arvpg?key=G-SA6DvOwno`, downTime: 0 })
-userMap.set('meghanared', { url: 'https://meghana-reddy.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cgnr02l269v5rj89n4cg?key=-MaU-g4DJSY`, downTime: 0 })
-userMap.set('kavyared', { url: 'https://kavyar.onrender.com/', timeStamp: Date.now(), deployKey: `srv-cgslcve4dad33k9rhkmg?key=aoqrRyot1TY`, downTime: 0 })
-userMap.set('sowmyared6', { url: 'https://sowmyared.onrender.com/', timeStamp: Date.now(), deployKey: `srv-ch2i4ndgk4qarqh4q2m0?key=5Q7iBpspP9k`, downTime: 0 })
-userMap.set('nidhired2', { url: 'https://nidhired.onrender.com/', timeStamp: Date.now(), deployKey: `srv-ch3vhi8rddl4gk2ijkf0?key=5fFgOLPkyIg`, downTime: 0 })
-userMap.set('divyasree4', { url: 'https://divya-yuxp.onrender.com/', timeStamp: Date.now(), deployKey: `srv-chbo993hp8u016274q20?key=DxzFtQRbNW8`, downTime: 0 })
-userMap.set('mspam99', { url: 'https://spammer-uelh.onrender.com/', timeStamp: Date.now(), deployKey: `srv-chis22t269v2e2bjlor0?key=hUuP2B2hhrQ`, downTime: 0 })
-userMap.set('keerthi1', { url: 'https://keerthir.onrender.com/', timeStamp: Date.now(), deployKey: `srv-chkbfvm4dadfmsjif6gg?key=hGSfDcAlJ4w`, downTime: 0 })
-userMap.set('kavyar2', { url: 'https://kavya2.onrender.com/', timeStamp: Date.now(), deployKey: `srv-chphub7dvk4goeobf33g?key=Jc8_2HugOhg`, downTime: 0 })
+
+async function setUserMap() {
+  const db = ChannelService.getInstance();
+  const users = await db.getAllUserClients();
+  users.forEach(user => {
+    userMap.set(user.userName, { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0 })
+  })
+}
 
 const connetionQueue = [];
 try {
@@ -445,6 +441,19 @@ app.get('/getchannels', async (req, res, next) => {
   }
 });
 
+
+app.get('/getMap', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    console.log(value);
+  }
+});
+
 app.get('/restart', async (req, res, next) => {
   res.send('Hello World!');
   next();
@@ -538,7 +547,9 @@ app.get('/receive', async (req, res, next) => {
   }
 });
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+app.listen(port, async () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+});
 class checkerclass {
   static instance = undefined;
 

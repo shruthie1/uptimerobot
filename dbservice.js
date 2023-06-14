@@ -1,4 +1,4 @@
-const uri = "mongodb+srv://ssk:Ajtdmwajt@cluster0.iucpdpe.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb://ssk1:Ajtdmwajt1@ac-oux75kn-shard-00-00.iucpdpe.mongodb.net:27017,ac-oux75kn-shard-00-01.iucpdpe.mongodb.net:27017,ac-oux75kn-shard-00-02.iucpdpe.mongodb.net:27017/admin?ssl=true&retryWrites=true&replicaSet=atlas-137i8d-shard-0&readPreference=primary&connectTimeoutMS=10000&authSource=admin&authMechanism=SCRAM-SHA-1"
 const { MongoClient, ServerApiVersion } = require('mongodb')
 
 class ChannelService {
