@@ -41,7 +41,7 @@ async function setUserMap() {
 
 const connetionQueue = [];
 try {
-  schedule.scheduleJob('test', ' 0 */2 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test', ' 0 * * * * ', 'Asia/Kolkata', async () => {
     console.log("Promoting.....")
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}promote`);
