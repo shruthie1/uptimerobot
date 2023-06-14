@@ -31,6 +31,7 @@ const apiResp = {
 };
 
 async function setUserMap() {
+  userMap.clear();
   const db = ChannelService.getInstance();
   const users = await db.getAllUserClients();
   users.forEach(user => {
@@ -128,6 +129,12 @@ app.get('/exitacc', async (req, res, next) => {
   next();
 }, async (req, res) => {
   //
+});
+
+app.get('/refreshMap', async (req, res) => {
+  checkerclass.getinstance();
+  await setUserMap();
+  res.send('Hello World!');
 });
 
 app.post('/channels', async (req, res, next) => {
