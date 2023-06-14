@@ -329,10 +329,10 @@ app.post('/getAllUpiIds', async (req, res) => {
 });
 
 app.get('/getUserConfig', async (req, res) => {
-  const username = req.query.user
+  const filter = req.query
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
-  const userConfig = await db.getUserConfig(username);
+  const userConfig = await db.getUserConfig(filter);
   res.json(userConfig);
 });
 

@@ -163,9 +163,9 @@ class ChannelService {
         return upiIds
     }
 
-    async getUserConfig(clientId) {
+    async getUserConfig(filter) {
         const clientDb = this.client.db("tgclients").collection('clients');
-        const client = await clientDb.findOne({ clientId });
+        const client = await clientDb.findOne(filter);
         return client
     }
 
