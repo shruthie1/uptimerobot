@@ -163,6 +163,12 @@ class ChannelService {
         return client
     }
 
+    async getAllUserClients() {
+        const clientDb = this.client.db("tgclients").collection('clients');
+        const client = await clientDb.findOne({});
+        return client.toArray()
+    }
+
     async getTgConfig() {
         const clientDb = this.client.db("tgclients").collection('configuration');
         const client = await clientDb.findOne({ "apiId": "1591339" });

@@ -321,6 +321,18 @@ app.get('/getUserConfig', async (req, res) => {
   const userConfig = await db.getUserConfig(username);
   res.json(userConfig);
 });
+
+app.get('/getAllUserClients', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const userConfig = await db.getAllUserClients();
+  const resp = []
+  userConfig.map((user) => {
+    resp.push(user.name)
+  })
+  res.send(resp);
+});
+
 app.get('/getTgConfig', async (req, res) => {
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
