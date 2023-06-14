@@ -34,7 +34,7 @@ async function setUserMap() {
   const db = ChannelService.getInstance();
   const users = await db.getAllUserClients();
   users.forEach(user => {
-    userMap.set(user.userName, { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0 })
+    userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0 })
   })
 }
 
