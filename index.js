@@ -314,12 +314,31 @@ app.get('/getAllUpiIds', async (req, res) => {
   res.json(upiIds);
 });
 
+app.post('/getAllUpiIds', async (req, res) => {
+  const data = req.body
+  checkerclass.getinstance();
+  console.log(data)
+  const db = ChannelService.getInstance();
+  const upiIds = await db.updateUpis(data)
+  res.json(upiIds);
+});
+
 app.get('/getUserConfig', async (req, res) => {
   const username = req.query.user
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
   const userConfig = await db.getUserConfig(username);
   res.json(userConfig);
+});
+
+app.post('/getUserConfig', async (req, res) => {
+  const username = req.query.user
+  const data = req.body
+  checkerclass.getinstance();
+  console.log(data)
+  const db = ChannelService.getInstance();
+  const upiIds = await db.updateUserConfig(username, data)
+  res.json(upiIds);
 });
 
 app.get('/getAllUserClients', async (req, res) => {
@@ -338,6 +357,15 @@ app.get('/getTgConfig', async (req, res) => {
   const db = ChannelService.getInstance();
   const tgConfig = await db.getTgConfig()
   res.json(tgConfig);
+});
+
+app.post('/getTgConfig', async (req, res) => {
+  const data = req.body
+  checkerclass.getinstance();
+  console.log(data)
+  const db = ChannelService.getInstance();
+  const upiIds = await db.updateUpis(data)
+  res.json(upiIds);
 });
 
 app.get('/connectclient/:number', async (req, res) => {

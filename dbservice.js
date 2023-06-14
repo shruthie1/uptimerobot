@@ -157,10 +157,22 @@ class ChannelService {
         return upiIds
     }
 
+    async updateUpis(data) {
+        const upiDb = this.client.db("tgclients").collection('upi-ids');
+        const upiIds = await upiDb.updateOne({}, { $set: { ...data } });
+        return upiIds
+    }
+
     async getUserConfig(clientId) {
         const clientDb = this.client.db("tgclients").collection('clients');
         const client = await clientDb.findOne({ clientId });
         return client
+    }
+
+    async updateUserConfig(user, data) {
+        const upiDb = this.client.db("tgclients").collection('clients');
+        const upiIds = await upiDb.updateOne({ clientId: user }, { $set: { ...data } });
+        return upiIds
     }
 
     async getAllUserClients() {
@@ -173,6 +185,12 @@ class ChannelService {
         const clientDb = this.client.db("tgclients").collection('configuration');
         const client = await clientDb.findOne({ "apiId": "1591339" });
         return client
+    }
+
+    async updateTgConfig(data) {
+        const upiDb = this.client.db("tgclients").collection('configurations');
+        const upiIds = await upiDb.updateOne({}, { $set: { ...data } });
+        return upiIds
     }
 }
 
