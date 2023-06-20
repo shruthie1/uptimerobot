@@ -617,11 +617,13 @@ class checkerclass {
               const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
               console.log(connectResp.status)
             }
+            setTimeout(async () => {
+              const connectResp = await axios.get(`${url}promote`)
+            }, 15000);
           } catch (error) {
             console.log(error)
           }
           await sleep(15000);
-          const connectResp = await axios.get(`${url}promote`)
         }
       }
       userMap.forEach(async (val, key) => {
