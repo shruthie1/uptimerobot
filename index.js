@@ -620,7 +620,8 @@ class checkerclass {
           } catch (error) {
             console.log(error)
           }
-          await sleep(15000)
+          await sleep(15000);
+          const connectResp = await axios.get(`${url}promote`)
         }
       }
       userMap.forEach(async (val, key) => {
