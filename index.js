@@ -619,7 +619,7 @@ class checkerclass {
             }
             setTimeout(async () => {
               const connectResp = await axios.get(`${url}promote`)
-            }, 15000);
+            }, 35000);
           } catch (error) {
             console.log(error)
           }
