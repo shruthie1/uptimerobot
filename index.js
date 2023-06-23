@@ -60,6 +60,10 @@ try {
     })
   })
 
+  schedule.scheduleJob('test3', ' 0 13 * * * ', 'Asia/Kolkata', async () => {
+    await assure();
+  })
+
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}resetunpaid`);
@@ -112,6 +116,16 @@ async function fetchWithTimeout(resource, options = {}) {
     return undefined;
   }
 }
+
+async function assure(){
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}resptopaid?msg=Hey...Dont worry!! I will Call you before night ok!!`);
+    setTimeout(async () => {
+      await fetchWithTimeout(`${value.url}markasread?all=true`);
+    }, 20000)
+  })
+}
+
 app.use(cors());
 app.use(bodyParser.json());
 app.get('/', async (req, res, next) => {
