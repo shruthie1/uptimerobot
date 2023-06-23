@@ -151,6 +151,11 @@ app.get('/refreshMap', async (req, res) => {
   res.send('Hello World!');
 });
 
+app.get('/exit', async (req, res) => {
+  process.exit(1)
+  res.send('Hello World!');
+});
+
 app.post('/channels', async (req, res, next) => {
   res.send('Hello World!');
   // console.log(req.body);
