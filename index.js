@@ -432,7 +432,7 @@ app.get('/connectclient/:number', async (req, res) => {
   const user = await db.getUser({ mobile: number });
   if (!hasClient(user.mobile)) {
     const cli = await createClient(user.mobile, user.session);
-    if (cli) {
+    if (cli > -1) {
       res.send("client created");
     } else {
       res.send("client EXPIRED");
@@ -452,7 +452,7 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
     resp = resp + user.mobile
     if (!hasClient(user.mobile)) {
       const cli = await createClient(user.mobile, user.session)
-      if (cli) {
+      if (cli > -1) {
         resp = resp + ": true\n"
       } else {
         resp = resp + ": false\n"
