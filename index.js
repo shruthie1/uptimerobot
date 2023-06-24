@@ -58,6 +58,7 @@ try {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
     })
+    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/100/0`);
   })
 
   schedule.scheduleJob('test3', ' 0 13 * * * ', 'Asia/Kolkata', async () => {
