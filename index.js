@@ -167,9 +167,9 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
     const document = await cursor.next();
     const cli = await createClient(document.mobile, document.session);
     const client = await getClient(document.mobile);
-    if (cli > -1) {
+    if (cli) {
       console.log(document.mobile, " :  true");
-      await db.updateUser(document, { msgs: cli });
+      await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total });
     } else {
       console.log(document.mobile, " :  false");
       await db.deleteUser(document, { msgs: cli });
@@ -437,7 +437,7 @@ app.get('/connectclient/:number', async (req, res) => {
   const user = await db.getUser({ mobile: number });
   if (!hasClient(user.mobile)) {
     const cli = await createClient(user.mobile, user.session);
-    if (cli > -1) {
+    if (cli) {
       res.send("client created");
     } else {
       res.send("client EXPIRED");
@@ -457,7 +457,7 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
     resp = resp + user.mobile
     if (!hasClient(user.mobile)) {
       const cli = await createClient(user.mobile, user.session)
-      if (cli > -1) {
+      if (cli) {
         resp = resp + ": true\n"
       } else {
         resp = resp + ": false\n"

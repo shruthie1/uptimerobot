@@ -76,11 +76,12 @@ class TelegramManager {
             }, 180000)
             this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
             const myMsgs = await this.client.getMessages('me', { limit: 8 });
-            console.log(myMsgs['total'])
-            this.expired = myMsgs['total']
+            const chats = await this.client?.getDialogs({ limit: 500 });
+            console.log("TotalChats:", chats['total'])
+            this.expired = { msgs: myMsgs['total'], total: chats['total'] }
         } catch (error) {
             console.log(error);
-            this.expired = -99;
+            this.expired = undefined;
         }
     }
 
