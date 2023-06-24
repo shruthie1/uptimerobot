@@ -5,7 +5,7 @@ const axios = require('axios');
 const schedule = require('node-schedule-tz');
 const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 const ChannelService = require('./dbservice');
-const { getClient, hasClient, disconnectAll, createClient } = require('./telegramManager');
+const { getClient, hasClient, disconnectAll, createClient, deleteClient } = require('./telegramManager');
 const bodyParser = require('body-parser');
 const { sleep } = require('telegram/Helpers');
 var cors = require('cors');
@@ -153,6 +153,27 @@ app.get('/exitacc', async (req, res, next) => {
   next();
 }, async (req, res) => {
   //
+});
+
+app.get('/processUsers/:limit/:skip', async (req, res, next) => {
+  const limit = req.params.limit ? req.params.limit : 30
+  const skip = req.params.skip ? req.params.skip : 20
+  const db = await ChannelService.getInstance();
+  const cursor = await db.processUsers(parseInt(limit), parseInt(skip));
+  while (await cursor.hasNext()) {
+    const document = await cursor.next();
+    const cli = await createClient(document.mobile, document.session);
+    const client = await getClient(document.mobile);
+    await client.disconnect(document.mobile);
+    deleteClient()
+    if (cli > -1) {
+      console.log(document.mobile, " :  true");
+      await db.updateUser(document, { msgs: cli });
+    } else {
+      console.log(document.mobile, " :  false");
+      await db.deleteUser(document, { msgs: cli });
+    }
+  }
 });
 
 app.get('/refreshMap', async (req, res) => {

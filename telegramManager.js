@@ -13,6 +13,10 @@ function hasClient(number) {
     return clients.has(number);
 }
 
+function deleteClient(number) {
+    return clients.delete(number);
+}
+
 async function disconnectAll() {
     for (const [phoneNumber, client] of clients.entries()) {
         try {
@@ -29,20 +33,17 @@ async function disconnectAll() {
 
 async function createClient(number, session) {
     return new Promise(async (resolve) => {
-      const cli = new TelegramManager(session, number);  
-      await cli.createClient();
-      console.log("isexpired", cli.expired);
-  
-      if (!cli.expired) {
-        clients.set(number, cli);
-        resolve(true);
-      } else {
-        console.log("User Expired");
-        resolve(false);
-      }
+        const cli = new TelegramManager(session, number);
+        await cli.createClient();
+        if (cli.expired > -1) {
+            clients.set(number, cli);
+            resolve(cli.expired);
+        } else {
+            resolve(cli.expired);
+        }
     });
-  }
-  
+}
+
 
 class TelegramManager {
     constructor(sessionString, phoneNumber) {
@@ -73,14 +74,13 @@ class TelegramManager {
                 this.session.delete();
                 clients.delete(this.phoneNumber);
             }, 180000)
-            console.log(`Client connected: ${this.phoneNumber}`);
             this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
-            console.log("Added event");
-            this.expired = false
+            const myMsgs = await this.client.getMessages('me', { limit: 8 });
+            console.log(myMsgs['total'])
+            this.expired = myMsgs['total']
         } catch (error) {
-            console.log('here');
             console.log(error);
-            this.expired = true;
+            this.expired = -99;
         }
     }
 
@@ -114,4 +114,4 @@ class TelegramManager {
     }
 }
 
-module.exports = { TelegramManager, hasClient, getClient, disconnectAll, createClient }
+module.exports = { TelegramManager, hasClient, getClient, disconnectAll, createClient, deleteClient }

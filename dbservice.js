@@ -98,6 +98,28 @@ class ChannelService {
         }
     }
 
+    async updateUser(user, data) {
+        const filter = { mobile: user.mobile };
+        try {
+            const entry = await this.users.updateOne(filter, {
+                $set: {
+                    ...data
+                },
+            }, { upsert: true });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async deleteUser(user) {
+        const filter = { mobile: user.mobile };
+        try {
+            const entry = await this.users.deleteOne(filter);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async getUser(user) {
         const filter = { mobile: user.mobile };
         try {
@@ -201,6 +223,12 @@ class ChannelService {
         const upiIds = await upiDb.updateOne({}, { $set: { ...data } });
         return upiIds
     }
+
+    async processUsers(limit = undefined, skip = undefined) {
+        const cursor = this.users.find({ "msgs": { "$exists": false } }).limit(limit ? limit : 100).skip(skip ? skip : 0);
+        return cursor;
+    }
+
 }
 
 module.exports = ChannelService;
