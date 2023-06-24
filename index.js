@@ -212,7 +212,7 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   await db.insertUser(user);
-  await fetchWithTimeout(`${ppplbot}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
+  await fetchWithTimeout(`${ppplbot}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
