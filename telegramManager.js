@@ -26,17 +26,30 @@ async function disconnectAll() {
     }
 }
 
+
 async function createClient(number, session) {
-    const cli = new TelegramManager(session, number);
-    clients.set(number, cli);
-}
+    return new Promise(async (resolve) => {
+      const cli = new TelegramManager(session, number);  
+      await cli.createClient();
+      console.log("isexpired", cli.expired);
+  
+      if (!cli.expired) {
+        clients.set(number, cli);
+        resolve(true);
+      } else {
+        console.log("User Expired");
+        resolve(false);
+      }
+    });
+  }
+  
 
 class TelegramManager {
     constructor(sessionString, phoneNumber) {
         this.session = new StringSession(sessionString);
         this.phoneNumber = phoneNumber;
         this.client = null;
-        this.createClient();
+        this.expired = false;
     }
 
     async disconnect() {
@@ -63,8 +76,11 @@ class TelegramManager {
             console.log(`Client connected: ${this.phoneNumber}`);
             this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
             console.log("Added event");
+            this.expired = false
         } catch (error) {
+            console.log('here');
             console.log(error);
+            this.expired = true;
         }
     }
 

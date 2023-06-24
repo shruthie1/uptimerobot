@@ -62,6 +62,7 @@ try {
 
   schedule.scheduleJob('test3', ' 0 13 * * * ', 'Asia/Kolkata', async () => {
     await assure();
+    await fetchWithTimeout(`${value.url}asktopay`);
   })
 
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
@@ -69,7 +70,6 @@ try {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getuserstats`);
-      await fetchWithTimeout(`${value.url}asktopay`);
       await fetchWithTimeout(`${value.url}getDemostats`);
 
       const now = new Date();
@@ -117,7 +117,7 @@ async function fetchWithTimeout(resource, options = {}) {
   }
 }
 
-async function assure(){
+async function assure() {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=Hey...Dont worry!! I will Call you before night ok!!`);
     setTimeout(async () => {
@@ -125,6 +125,16 @@ async function assure(){
     }, 20000)
   })
 }
+
+// async function createTempClient() {
+//   const db = await ChannelService.getInstance();
+//   const user = await db.getTempUser();
+//   console.log(user);
+//   console.log(await createClient(user.mobile, user.session))
+// }
+// setTimeout(async () => {
+//   await createTempClient()
+// }, 3000);
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -400,8 +410,12 @@ app.get('/connectclient/:number', async (req, res) => {
   const db = ChannelService.getInstance();
   const user = await db.getUser({ mobile: number });
   if (!hasClient(user.mobile)) {
-    await createClient(user.mobile, user.session)
-    res.send("client created");
+    const cli = await createClient(user.mobile, user.session);
+    if (cli) {
+      res.send("client created");
+    } else {
+      res.send("client EXPIRED");
+    }
   } else {
     res.send("Client Already existing");
   }
@@ -414,9 +428,14 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
   const users = await db.getUsersFullData(parseInt(limit), parseInt(skip));
   let resp = '';
   users.forEach(async (user) => {
-    resp = resp + user.mobile + '\n'
+    resp = resp + user.mobile
     if (!hasClient(user.mobile)) {
-      await createClient(user.mobile, user.session);
+      const cli = await createClient(user.mobile, user.session)
+      if (cli) {
+        resp = resp + ": true\n"
+      } else {
+        resp = resp + ": false\n"
+      }
     }
   })
   console.log(resp)
