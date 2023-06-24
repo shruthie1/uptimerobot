@@ -156,6 +156,9 @@ app.get('/exitacc', async (req, res, next) => {
 });
 
 app.get('/processUsers/:limit/:skip', async (req, res, next) => {
+  res.send("ok")
+  next();
+}, async (req, res) => {
   const limit = req.params.limit ? req.params.limit : 30
   const skip = req.params.skip ? req.params.skip : 20
   const db = await ChannelService.getInstance();
@@ -164,14 +167,16 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
     const document = await cursor.next();
     const cli = await createClient(document.mobile, document.session);
     const client = await getClient(document.mobile);
-    await client.disconnect(document.mobile);
-    deleteClient()
     if (cli > -1) {
       console.log(document.mobile, " :  true");
       await db.updateUser(document, { msgs: cli });
     } else {
       console.log(document.mobile, " :  false");
       await db.deleteUser(document, { msgs: cli });
+    }
+    if (client) {
+      await client?.disconnect(document.mobile);
+      deleteClient()
     }
   }
 });
