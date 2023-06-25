@@ -306,13 +306,14 @@ app.get('/keepready', async (req, res, next) => {
   console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
+    await fetchWithTimeout(`${value.url}getDemostats`);
     setTimeout(async () => {
       await fetchWithTimeout(`${value.url}markasread?all=true`);
+      setTimeout(async () => {
+        await fetchWithTimeout(`${value.url}resetstats`);
+      }, 15000)
     }, 20000)
   });
-  setTimeout(async () => {
-    await fetchWithTimeout(`${value.url}resetstats`);
-  }, 40000);
 });
 
 app.get('/asktopay', async (req, res, next) => {
