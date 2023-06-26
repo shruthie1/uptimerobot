@@ -258,7 +258,7 @@ app.get('/getdata2', async (req, res, next) => {
   const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    await fetchWithTimeout(`${value.url}getDemostats2`);
+    await fetchWithTimeout(`${value.url}getDemostat2`);
     await sleep(1000);
   }
 });
