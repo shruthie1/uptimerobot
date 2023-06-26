@@ -78,7 +78,7 @@ try {
       await fetchWithTimeout(`${value.url}getuserstats2`);
 
       setTimeout(async () => {
-        await fetchWithTimeout(`${value.url}getDemostats2`);
+        await fetchWithTimeout(`${value.url}getDemostat2`);
       }, 10000);
 
       const now = new Date();
