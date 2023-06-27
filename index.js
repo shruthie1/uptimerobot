@@ -89,6 +89,7 @@ try {
       }
       setTimeout(async () => {
         await fetchWithTimeout(`${value.url}resetstats2`);
+        await fetchWithTimeout(`${value.url}asktopay`);
       }, 10000);
       await sleep(1000)
     })
