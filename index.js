@@ -75,8 +75,11 @@ try {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
-      await fetchWithTimeout(`${value.url}getuserstats`);
-      await fetchWithTimeout(`${value.url}getDemostats`);
+      await fetchWithTimeout(`${value.url}getuserstats2`);
+
+      setTimeout(async () => {
+        await fetchWithTimeout(`${value.url}getDemostat2`);
+      }, 10000);
 
       const now = new Date();
       if (now.getUTCDate() % 3 === 1) {
@@ -85,7 +88,7 @@ try {
         }, 30000);
       }
       setTimeout(async () => {
-        await fetchWithTimeout(`${value.url}resetstats`);
+        await fetchWithTimeout(`${value.url}resetstats2`);
       }, 10000);
       await sleep(1000)
     })
@@ -247,6 +250,19 @@ app.get('/getdata', async (req, res, next) => {
   }
 });
 
+app.get('/getdata2', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    await fetchWithTimeout(`${value.url}getDemostat2`);
+    await sleep(1000);
+  }
+});
+
 app.get('/refreshupis', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
@@ -268,6 +284,19 @@ app.get('/getuserdata', async (req, res, next) => {
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
     await fetchWithTimeout(`${value.url}getuserstats`);
+    await sleep(1000);
+  }
+});
+
+app.get('/getuserdata2', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    await fetchWithTimeout(`${value.url}getuserstats2`);
     await sleep(1000);
   }
 });
