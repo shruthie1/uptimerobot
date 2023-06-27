@@ -338,11 +338,8 @@ app.get('/keepready', async (req, res, next) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
     await fetchWithTimeout(`${value.url}getDemostats`);
     setTimeout(async () => {
-      await fetchWithTimeout(`${value.url}markasread?all=true`);
-      setTimeout(async () => {
-        await fetchWithTimeout(`${value.url}resetstats`);
-      }, 15000)
-    }, 20000)
+      await fetchWithTimeout(`${value.url}resetstats`);
+    }, 40000)
   });
 });
 
