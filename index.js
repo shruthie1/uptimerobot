@@ -59,11 +59,10 @@ try {
     })
   })
 
-  schedule.scheduleJob('test2', '0,30 * * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test2', '*/15 * * * *', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
     })
-    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/100/0`);
   })
 
   schedule.scheduleJob('test3', ' 0 13 * * * ', 'Asia/Kolkata', async () => {
@@ -327,6 +326,22 @@ app.get('/sendtoall', async (req, res, next) => {
   })
 });
 
+app.get('/keepready2', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send(`Responding!!\nMsg = ${req.query.msg}`);
+  next();
+}, async (req, res) => {
+  const msg = req.query.msg;
+  console.log("Msg2 = ", msg);
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}resptopaid2?msg=${msg ? msg : "Oye..."}`);
+    await fetchWithTimeout(`${value.url}getDemostats`);
+    setTimeout(async () => {
+      await fetchWithTimeout(`${value.url}resetstats`);
+    }, 40000)
+  });
+});
+
 app.get('/keepready', async (req, res, next) => {
   checkerclass.getinstance()
   res.send(`Responding!!\nMsg = ${req.query.msg}`);
@@ -336,22 +351,6 @@ app.get('/keepready', async (req, res, next) => {
   console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
-    await fetchWithTimeout(`${value.url}getDemostats`);
-    setTimeout(async () => {
-      await fetchWithTimeout(`${value.url}resetstats`);
-    }, 40000)
-  });
-});
-
-app.get('/keepready2', async (req, res, next) => {
-  checkerclass.getinstance()
-  res.send(`Responding!!\nMsg = ${req.query.msg}`);
-  next();
-}, async (req, res) => {
-  const msg = req.query.msg;
-  console.log("Msg = ", msg);
-  Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`${value.url}resptopaid2?msg=${msg ? msg : "Oye..."}`);
     await fetchWithTimeout(`${value.url}getDemostats`);
     setTimeout(async () => {
       await fetchWithTimeout(`${value.url}resetstats`);
