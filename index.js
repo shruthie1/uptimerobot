@@ -239,12 +239,15 @@ app.get('/channels/:limit/:skip', async (req, res, next) => {
   })
   res.send(resp);
 });
-
+let refresTime = Date.now();
 app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
-  Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`${value.url}markasread`);
-  })
+  if (Date.now > refresTime) {
+    refresTime = Date.now() + (5 * 60 * 1000);
+    Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}markasread`);
+    })
+  }
   res.setHeader('Content-Type', 'text/html');
   res.send(await getData());
 });
