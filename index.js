@@ -242,7 +242,7 @@ app.get('/channels/:limit/:skip', async (req, res, next) => {
 let refresTime = Date.now();
 app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
-  if (Date.now > refresTime) {
+  if (Date.now() > refresTime) {
     refresTime = Date.now() + (5 * 60 * 1000);
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
