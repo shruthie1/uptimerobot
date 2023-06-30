@@ -239,6 +239,7 @@ app.get('/channels/:limit/:skip', async (req, res, next) => {
 
 app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
+  res.setHeader('Content-Type', 'text/html');
   res.send(await getData());
 });
 
