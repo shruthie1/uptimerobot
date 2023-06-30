@@ -942,7 +942,7 @@ async function getData() {
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
 
   for (const [profile, userData] of profileDataArray) {
-    reply += `${profile} : <b>${userData.totalpendingDemos}</b>    |${userData.names}<br><br>`;
+    reply += `${profile.toUpperCase()} : <b>${userData.totalpendingDemos}</b>    |${userData.names}<br>`;
   }
   console.log(reply);
   return (reply)
