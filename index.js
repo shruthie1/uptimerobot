@@ -239,15 +239,7 @@ app.get('/channels/:limit/:skip', async (req, res, next) => {
 
 app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
-  res.send('Hello World!');
-  next();
-}, async (req, res) => {
-  const userValues = Array.from(userMap.values());
-  for (let i = 0; i < userValues.length; i++) {
-    const value = userValues[i];
-    await fetchWithTimeout(`${value.url}getDemostats`);
-    await sleep(1000);
-  }
+  res.send(await getData());
 });
 
 app.get('/getdata2', async (req, res, next) => {
@@ -890,5 +882,55 @@ class checkerclass {
       console.log('url is undefined');
     }
   }
+}
+async function getData() {
+  const profileData = {};
+  const db = await ChannelService.getInstance();
+  let entries = await db.readStats();
+
+  for (const entry of entries) {
+    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile } = entry;
+    if (!(profile in profileData)) {
+      profileData[profile] = {
+        profile: profile,
+        totalCount: 0,
+        totalPaid: 0,
+        totalOldPaid: 0,
+        oldPaidDemo: 0,
+        totalpendingDemos: 0,
+        oldPendingDemos: 0,
+        totalNew: 0,
+        totalNewPaid: 0,
+        newPaidDemo: 0,
+        newPendingDemos: 0
+      };
+    }
+
+    // Increment the data for the corresponding profile
+    const userData = profileData[profile];
+    userData.totalCount += count;
+    userData.totalPaid += payAmount > 0 ? 1 : 0;
+    userData.totalOldPaid += (payAmount > 0 && !newUser) ? 1 : 0;
+    userData.oldPaidDemo += (demoGivenToday && !newUser) ? 1 : 0;
+    userData.totalpendingDemos += (payAmount > 25 && !demoGiven) ? 1 : 0;
+    userData.oldPendingDemos += (payAmount > 25 && !demoGiven && !newUser) ? 1 : 0;
+
+    if (newUser) {
+      userData.totalNew += 1;
+      userData.totalNewPaid += payAmount > 0 ? 1 : 0;
+      userData.newPaidDemo += demoGivenToday ? 1 : 0;
+      userData.newPendingDemos += (payAmount > 25 && !demoGiven) ? 1 : 0;
+    }
+  }
+
+  let reply = '';
+  const profileDataArray = Object.entries(profileData);
+  profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
+
+  for (const [profile, userData] of profileDataArray) {
+    reply += `\n ${profile} : ${userData.totalpendingDemos}`;
+  }
+  console.log(reply);
+  return (reply)
 }
 
