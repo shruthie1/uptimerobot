@@ -926,7 +926,7 @@ async function getData() {
     userData.totalpendingDemos += (payAmount > 25 && !demoGiven) ? 1 : 0;
     userData.oldPendingDemos += (payAmount > 25 && !demoGiven && !newUser) ? 1 : 0;
     if (payAmount > 25 && !demoGiven) {
-      userData.names = userData.names + ` ${name}`
+      userData.names = userData.names + ` ${name} |`
     }
 
     if (newUser) {
@@ -942,7 +942,7 @@ async function getData() {
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
 
   for (const [profile, userData] of profileDataArray) {
-    reply += `${profile} : </b>${userData.totalpendingDemos}</b> ___________${userData.names}<br><br>`;
+    reply += `${profile} : </b>${userData.totalpendingDemos}</b>  || ${userData.names}<br><br>`;
   }
   console.log(reply);
   return (reply)
