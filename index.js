@@ -899,7 +899,7 @@ async function getData() {
   let entries = await db.readStats();
 
   for (const entry of entries) {
-    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile } = entry;
+    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, name } = entry;
     if (!(profile in profileData)) {
       profileData[profile] = {
         profile: profile,
@@ -912,7 +912,8 @@ async function getData() {
         totalNew: 0,
         totalNewPaid: 0,
         newPaidDemo: 0,
-        newPendingDemos: 0
+        newPendingDemos: 0,
+        names: ""
       };
     }
 
@@ -924,6 +925,9 @@ async function getData() {
     userData.oldPaidDemo += (demoGivenToday && !newUser) ? 1 : 0;
     userData.totalpendingDemos += (payAmount > 25 && !demoGiven) ? 1 : 0;
     userData.oldPendingDemos += (payAmount > 25 && !demoGiven && !newUser) ? 1 : 0;
+    if (payAmount > 25 && !demoGiven) {
+      userData.names = userData.names + ` ${name}`
+    }
 
     if (newUser) {
       userData.totalNew += 1;
@@ -938,7 +942,7 @@ async function getData() {
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
 
   for (const [profile, userData] of profileDataArray) {
-    reply += `\n${profile} : ${userData.totalpendingDemos}   \n\n<br>`;
+    reply += `${profile} : ${userData.totalpendingDemos}   ${userData.names}<br>`;
   }
   console.log(reply);
   return (reply)
