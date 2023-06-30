@@ -242,6 +242,9 @@ app.get('/channels/:limit/:skip', async (req, res, next) => {
 
 app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
+  Array.from(userMap.values()).map(async (value) => {
+    await fetchWithTimeout(`${value.url}markasread`);
+  })
   res.setHeader('Content-Type', 'text/html');
   res.send(await getData());
 });
