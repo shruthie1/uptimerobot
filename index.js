@@ -891,7 +891,7 @@ async function getData() {
   let entries = await db.readStats();
 
   for (const entry of entries) {
-    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, name } = entry;
+    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, name, paidReply } = entry;
     if (!(profile in profileData)) {
       profileData[profile] = {
         profile: profile,
@@ -905,7 +905,9 @@ async function getData() {
         totalNewPaid: 0,
         newPaidDemo: 0,
         newPendingDemos: 0,
-        names: ""
+        names: "",
+        fullShowPPl:0,
+        fullShowNames:""
       };
     }
 
@@ -921,6 +923,11 @@ async function getData() {
       userData.names = userData.names + ` ${name} |`
     }
 
+    if (demoGiven && !paidReply) {
+      userData.fullShowPPl++;
+      userData.fullShowNames = userData.fullShowNames + ` ${name} |`
+    }
+
     if (newUser) {
       userData.totalNew += 1;
       userData.totalNewPaid += payAmount > 0 ? 1 : 0;
@@ -929,13 +936,18 @@ async function getData() {
     }
   }
 
-  let reply = '';
   const profileDataArray = Object.entries(profileData);
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
-
+  let reply = '';
   for (const [profile, userData] of profileDataArray) {
     reply += `${profile.toUpperCase()} : <b>${userData.totalpendingDemos}</b>    |${userData.names}<br>`;
   }
-  return (reply)
+
+  profileDataArray.sort((a, b) => b[1].fullShowPPl - a[1].fullShowPPl);
+  let reply2 = '';
+  for (const [profile, userData] of profileDataArray) {
+    reply2 += `${profile.toUpperCase()} : <b>${userData.fullShowPPl}</b>    |${userData.fullShowNames}<br>`;
+  }
+  return (`<div  style="display: flex;"><div style="flex: 1; padding: 10px;">${reply}</div><div style="flex: 1; padding: 10px;">${reply2}</div</div>`)
 }
 
