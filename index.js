@@ -53,13 +53,10 @@ try {
       await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
     })
   })
-  schedule.scheduleJob('test1', ' 2 6,,12,16,20,3 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test1', ' 2 6,12,16,20,3 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}assureppl`);
     })
-    setTimeout(async () => {
-      await fetchWithTimeout(`${value.url}resetstats`);
-    }, 10000)
   })
 
   schedule.scheduleJob('test2', '*/15 * * * *', 'Asia/Kolkata', async () => {
@@ -68,9 +65,10 @@ try {
     })
   })
 
-  schedule.scheduleJob('test3', ' 0 13 * * * ', 'Asia/Kolkata', async () => {
-    // await assure();
-    await fetchWithTimeout(`${value.url}asktopay`);
+  schedule.scheduleJob('test3', ' 0 7,13,20 * * * ', 'Asia/Kolkata', async () => {
+    Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}asktopay`);
+    })
   })
 
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
