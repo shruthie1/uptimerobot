@@ -47,7 +47,7 @@ try {
       await fetchWithTimeout(`${value.url}promote`);
     })
   })
-  schedule.scheduleJob('test1', ' 2 22,7,10,13,15,18 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test1', ' 2 ,2,5,7,10,13,15,18,22,1 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}calltopaid`);
       await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
@@ -338,9 +338,6 @@ app.get('/keepready2', async (req, res, next) => {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid2?msg=${msg ? msg : "Oye..."}`);
     await fetchWithTimeout(`${value.url}getDemostats`);
-    setTimeout(async () => {
-      await fetchWithTimeout(`${value.url}resetstats`);
-    }, 40000)
   });
 });
 
@@ -354,9 +351,6 @@ app.get('/keepready', async (req, res, next) => {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
     await fetchWithTimeout(`${value.url}getDemostats`);
-    setTimeout(async () => {
-      await fetchWithTimeout(`${value.url}resetstats`);
-    }, 40000)
   });
 });
 
@@ -940,7 +934,6 @@ async function getData() {
   for (const [profile, userData] of profileDataArray) {
     reply += `\n${profile} : ${userData.totalpendingDemos}   \n\n<br>`;
   }
-  console.log(reply);
   return (reply)
 }
 
