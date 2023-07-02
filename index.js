@@ -77,10 +77,6 @@ try {
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getuserstats2`);
 
-      setTimeout(async () => {
-        await fetchWithTimeout(`${value.url}getDemostat2`);
-      }, 10000);
-
       const now = new Date();
       if (now.getUTCDate() % 3 === 1) {
         setTimeout(async () => {
@@ -348,7 +344,6 @@ app.get('/keepready', async (req, res, next) => {
   console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
-    await fetchWithTimeout(`${value.url}getDemostats`);
   });
 });
 
