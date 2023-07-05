@@ -886,7 +886,7 @@ async function getData() {
   let entries = await db.readStats();
 
   for (const entry of entries) {
-    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, name, paidReply } = entry;
+    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, name, secondShow } = entry;
     if (!(profile in profileData)) {
       profileData[profile] = {
         profile: profile,
@@ -901,8 +901,8 @@ async function getData() {
         newPaidDemo: 0,
         newPendingDemos: 0,
         names: "",
-        fullShowPPl:0,
-        fullShowNames:""
+        fullShowPPl: 0,
+        fullShowNames: ""
       };
     }
 
@@ -918,7 +918,7 @@ async function getData() {
       userData.names = userData.names + ` ${name} |`
     }
 
-    if (demoGiven && !paidReply) {
+    if (demoGiven && ((payAmount > 90 && !secondShow) || (payAmount > 150 && secondShow))) {
       userData.fullShowPPl++;
       userData.fullShowNames = userData.fullShowNames + ` ${name} |`
     }
