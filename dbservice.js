@@ -229,6 +229,10 @@ class ChannelService {
         return cursor;
     }
 
+    async clearStats() {
+        const result = await this.statsDb.deleteMany({ "payAmount": { $lt: 5 } });
+    }
+
 }
 
 module.exports = ChannelService;

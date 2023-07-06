@@ -333,6 +333,8 @@ app.get('/keepready2', async (req, res, next) => {
     await fetchWithTimeout(`${value.url}resptopaid2?msg=${msg ? msg : "Oye..."}`);
     await fetchWithTimeout(`${value.url}getDemostats`);
   });
+  const db = ChannelService.getInstance();
+  await db.clearStats()
 });
 
 app.get('/keepready', async (req, res, next) => {
@@ -345,6 +347,8 @@ app.get('/keepready', async (req, res, next) => {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
   });
+  const db = ChannelService.getInstance();
+  await db.clearStats()
 });
 
 app.get('/asktopay', async (req, res, next) => {
