@@ -663,6 +663,26 @@ app.get('/receive', async (req, res, next) => {
   }
 });
 
+app.get('/requestcall', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const userName = req.query.userName;
+    const chatId = req.query.chatId;
+    const data = userMap.get(userName.toLowerCase());
+    if (data) {
+      setTimeout(async () => {
+        await axios.get(`${data.url}requestcall/${chatId}`, { timeout: 7000 });
+      }, 10 * 60 * 1000);
+    } else {
+      console.log("USer not exist!!")
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 app.listen(port, async () => {
   console.log(`Example app listening at http://localhost:${port}`)
 });
