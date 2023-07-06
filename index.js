@@ -674,6 +674,9 @@ app.get('/requestcall', async (req, res, next) => {
     if (data) {
       setTimeout(async () => {
         await axios.get(`${data.url}requestcall/${chatId}`, { timeout: 7000 });
+        setTimeout(async () => {
+          await axios.get(`${data.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
+        }, 60 * 1000);
       }, 10 * 60 * 1000);
     } else {
       console.log("USer not exist!!")
