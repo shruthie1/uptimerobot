@@ -672,13 +672,16 @@ app.get('/requestcall', async (req, res, next) => {
     const chatId = req.query.chatId;
     const data = userMap.get(userName.toLowerCase());
     if (data) {
+      await fetchWithTimeout(`${ppplbot}&text=Call Request Recived: ${userName} | ${chatId}`);
       setTimeout(async () => {
         await axios.get(`${data.url}requestcall/${chatId}`, { timeout: 7000 });
+        await fetchWithTimeout(`${ppplbot}&text=Call Request Sent: ${userName} | ${chatId}`);
         setTimeout(async () => {
           await axios.get(`${data.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
         }, 60 * 1000);
       }, 5 * 60 * 1000);
     } else {
+      await fetchWithTimeout(`${ppplbot}&text=Call Request Received: USer not exist: ${userName}`);
       console.log("USer not exist!!")
     }
   } catch (error) {
