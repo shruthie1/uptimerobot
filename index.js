@@ -59,7 +59,7 @@ try {
     })
   })
 
-  schedule.scheduleJob('test2', '*/15 * * * *', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test2', '*/10 * * * *', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
     })
@@ -751,7 +751,8 @@ class checkerclass {
               console.log(connectResp.status)
             }
             setTimeout(async () => {
-              const connectResp = await axios.get(`${url}promote`)
+              const connectResp = await axios.get(`${url}promote`);
+              const connectResp2 = await axios.get(`${url}markasreads`);
             }, 35000);
           } catch (error) {
             console.log(error)
