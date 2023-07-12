@@ -672,10 +672,11 @@ app.get('/requestcall', async (req, res, next) => {
     const userName = req.query.userName;
     const chatId = req.query.chatId;
     const data = userMap.get(userName.toLowerCase());
+    await fetchWithTimeout(`${ppplbot}&text=Call Request Recived: ${userName} | ${chatId}`);
     if (data) {
       setTimeout(async () => {
         const data = await axios.get(`${data.url}requestcall/${chatId}`, { timeout: 7000 });
-        console.log(data);
+        await fetchWithTimeout(`${ppplbot}&text=Call Request Sent: ${userName} | ${chatId}`);
         setTimeout(async () => {
           await axios.get(`${data.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
         }, 30 * 1000);
