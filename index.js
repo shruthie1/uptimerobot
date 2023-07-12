@@ -675,12 +675,20 @@ app.get('/requestcall', async (req, res, next) => {
     await fetchWithTimeout(`${ppplbot}&text=Call Request Recived: ${userName} | ${chatId}`);
     if (user) {
       setTimeout(async () => {
-        const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
-        await fetchWithTimeout(`${ppplbot}&text=Call Request Sent: ${userName} | ${chatId}`);
-        console.log(data);
-        setTimeout(async () => {
-          await axios.get(`${user.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
-        }, 30 * 1000);
+        try {
+          const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
+          if (data.data) {
+            await fetchWithTimeout(`${ppplbot}&text=Call Request Sent: ${userName} | ${chatId}`);
+            setTimeout(async () => {
+              await axios.get(`${user.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
+            }, 30 * 1000);
+          } else {
+            await fetchWithTimeout(`${ppplbot}&text=Call Request Sent Not Sucess: ${userName} | ${chatId}`);
+          }
+        } catch (error) {
+          console.log("Failed", user);
+        }
+
       }, 5 * 60 * 1000);
     } else {
       console.log("USer not exist!!")
