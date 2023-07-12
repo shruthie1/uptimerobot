@@ -675,11 +675,11 @@ app.get('/requestcall', async (req, res, next) => {
     await fetchWithTimeout(`${ppplbot}&text=Call Request Recived: ${userName} | ${chatId}`);
     if (user) {
       setTimeout(async () => {
-        const data = await axios.get(`${data.url}requestcall/${chatId}`, { timeout: 7000 });
+        const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
         await fetchWithTimeout(`${ppplbot}&text=Call Request Sent: ${userName} | ${chatId}`);
         console.log(data);
         setTimeout(async () => {
-          await axios.get(`${data.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
+          await axios.get(`${user.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
         }, 30 * 1000);
       }, 5 * 60 * 1000);
     } else {
