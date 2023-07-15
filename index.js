@@ -53,7 +53,7 @@ try {
       await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
     })
   })
-  schedule.scheduleJob('test1', ' 2 6,12,16,20,3 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test1', ' 2 6,10,16,20,3 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}assureppl`);
     })
