@@ -681,7 +681,7 @@ app.get('/requestcall', async (req, res, next) => {
             await fetchWithTimeout(`${ppplbot}&text=Call Request Sent: ${userName} | ${chatId}`);
             setTimeout(async () => {
               await axios.get(`${user.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
-            }, 35 * 1000);
+            }, 45 * 1000);
           } else {
             await fetchWithTimeout(`${ppplbot}&text=Call Request Sent Not Sucess: ${userName} | ${chatId}`);
           }
