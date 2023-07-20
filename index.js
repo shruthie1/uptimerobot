@@ -303,7 +303,7 @@ app.get('/restartall', async (req, res, next) => {
   next();
 }, async (req, res) => {
   Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`https://api.render.com/deploy/${value.deployKey}`);
+    await fetchWithTimeout(`${value.deployKey}`);
   })
 });
 app.get('/sendtoall', async (req, res, next) => {
@@ -783,7 +783,7 @@ class checkerclass {
           if (val.downTime > 5) {
             userMap.set(key, { ...val, downTime: -5 })
             try {
-              const resp = await axios.get(`https://api.render.com/deploy/${val.deployKey}`, { timeout: 10000 });
+              const resp = await axios.get(`${val.deployKey}`, { timeout: 10000 });
               if (resp?.status == 200 || resp.status == 201) {
                 await fetchWithTimeout(`${ppplbot}&text=Restarted ${key}`);
               } else {
