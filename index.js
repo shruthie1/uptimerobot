@@ -447,6 +447,7 @@ app.post('/getUserConfig', async (req, res) => {
   console.log(data)
   const db = ChannelService.getInstance();
   const upiIds = await db.updateUserConfig(filter, data);
+  await setUserMap();
   res.json(upiIds);
 });
 
@@ -468,13 +469,20 @@ app.get('/getTgConfig', async (req, res) => {
   res.json(tgConfig);
 });
 
-app.post('/getTgConfig', async (req, res) => {
+app.post('/getTgConfig', async (req, res, next) => {
   const data = req.body
   checkerclass.getinstance();
   console.log(data)
   const db = ChannelService.getInstance();
   const upiIds = await db.updateUpis(data)
   res.json(upiIds);
+  next();
+}, async () => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    await fetchWithTimeout(`${value.url}refreshupis`);
+  }
 });
 
 app.get('/connectclient/:number', async (req, res) => {
