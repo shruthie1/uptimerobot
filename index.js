@@ -332,7 +332,7 @@ app.get('/sendtoall', async (req, res, next) => {
 
 app.get('/clients', async (req, res) => {
   checkerclass.getinstance()
-  res.json(userMap.values());
+  res.send(userMap.values());
 });
 
 app.get('/keepready2', async (req, res, next) => {
