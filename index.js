@@ -7,7 +7,11 @@ const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 const ChannelService = require('./dbservice');
 const { getClient, hasClient, disconnectAll, createClient, deleteClient } = require('./telegramManager');
 const bodyParser = require('body-parser');
-const { sleep } = require('telegram/Helpers');
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 var cors = require('cors');
 
 const app = express();
@@ -72,7 +76,8 @@ try {
   })
 
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
-    Array.from(userMap.values()).map(async (value) => {
+    for (const value of userMap.values()) {
+      await sleep(1000);
       await fetchWithTimeout(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getuserstats2`);
@@ -88,7 +93,7 @@ try {
         await fetchWithTimeout(`${value.url}asktopay`);
       }, 10000);
       await sleep(1000)
-    })
+    }
     try {
       const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
       const resp2 = await axios.get(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
@@ -317,9 +322,17 @@ app.get('/sendtoall', async (req, res, next) => {
     newQuery += `${queries[key]}/`
   });
   console.log(newQuery);
-  Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`${value.url}${newQuery}`);
-  })
+  for (const value of userMap.values()) {
+    const url = `${value.url}${newQuery}`;
+    console.log(url);
+    await sleep(1000);
+    await fetchWithTimeout(url);
+  }
+});
+
+app.get('/clients', async (req, res) => {
+  checkerclass.getinstance()
+  res.json(userMap.values());
 });
 
 app.get('/keepready2', async (req, res, next) => {
