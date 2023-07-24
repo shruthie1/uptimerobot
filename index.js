@@ -579,19 +579,6 @@ app.get('/getchannels', async (req, res, next) => {
   }
 });
 
-
-app.get('/getMap', async (req, res, next) => {
-  checkerclass.getinstance()
-  res.send('Hello World!');
-  next();
-}, async (req, res) => {
-  const userValues = Array.from(userMap.values());
-  for (let i = 0; i < userValues.length; i++) {
-    const value = userValues[i];
-    console.log(value);
-  }
-});
-
 app.get('/restart', async (req, res, next) => {
   res.send('Hello World!');
   next();
