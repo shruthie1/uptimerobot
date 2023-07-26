@@ -64,7 +64,7 @@ class ChannelService {
         const query = { megagroup: true, username: { $ne: null } };
         const sort = { participantsCount: -1 };
         if (k) {
-            query.title = { $regex: k, $options: 'i' };
+            query["$or"] = [{ title: { $regex: k, $options: 'i' } }, { username: { $regex: k, $options: 'i' } }]
         }
         const options = { collation: { locale: 'en', strength: 1 } };
         try {
