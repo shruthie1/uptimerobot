@@ -295,11 +295,12 @@ app.get('/joinchannel', async (req, res, next) => {
   next();
 }, async (req, res) => {
   const username = req.query.userName;
-  const userValues = Array.from(userMap.values());
-  for (let i = 0; i < userValues.length; i++) {
-    const value = userValues[i];
-    await fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
-    await sleep(500);
+  const profile = req.query.profile;
+  for (const [key, value] of userMap.entries()) {
+    if (profile.toLowerCase() !== key.toLowerCase()) {
+      await fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
+      await sleep(1000);
+    }
   }
 });
 
