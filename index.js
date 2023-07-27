@@ -289,6 +289,20 @@ app.get('/getuserdata', async (req, res, next) => {
   }
 });
 
+app.get('/joinchannel', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const username = req.query.userName;
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    await fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
+    await sleep(500);
+  }
+});
+
 app.get('/getuserdata2', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
