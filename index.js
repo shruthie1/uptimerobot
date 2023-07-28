@@ -1021,7 +1021,6 @@ async function getData() {
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
   let reply = '';
   for (const [profile, userData] of profileDataArray) {
-    console.log(profile);
     reply += `${profile.toUpperCase()} : <b>${userData.totalpendingDemos}</b>    |${userData.names}<br>`;
   }
 
