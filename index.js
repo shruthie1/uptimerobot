@@ -39,7 +39,7 @@ async function setUserMap() {
   const db = ChannelService.getInstance();
   const users = await db.getAllUserClients();
   users.forEach(user => {
-    userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0 })
+    userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, clientId: user.clientId })
   })
 }
 
@@ -943,16 +943,26 @@ class checkerclass {
     }
   }
 }
-async function getData() {
-  const profileData = {};
-  const db = await ChannelService.getInstance();
-  let entries = await db.readStats();
 
-  for (const entry of entries) {
-    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, name, secondShow } = entry;
-    if (!(profile in profileData)) {
-      profileData[profile] = {
-        profile: profile,
+function extractNumberFromString(inputString) {
+  const regexPattern = /\d+/;
+  const matchResult = inputString?.match(regexPattern);
+  if (matchResult && matchResult.length > 0) {
+    // Parse the matched string into a number and return it
+    return parseInt(matchResult[0], 10);
+  }
+  // If no number is found, return null
+  return null;
+}
+
+function createInitializedObject() {
+
+  const initializedObject = {};
+
+  for (const [key, value] of userMap.entries()) {
+    if (extractNumberFromString(value.clientId) === 1)
+      initializedObject[key.toUpperCase()] = {
+        profile: key.toUpperCase(),
         totalCount: 0,
         totalPaid: 0,
         totalOldPaid: 0,
@@ -966,31 +976,44 @@ async function getData() {
         names: "",
         fullShowPPl: 0,
         fullShowNames: ""
-      };
-    }
+      }
+  }
 
-    // Increment the data for the corresponding profile
-    const userData = profileData[profile];
-    userData.totalCount += count;
-    userData.totalPaid += payAmount > 0 ? 1 : 0;
-    userData.totalOldPaid += (payAmount > 0 && !newUser) ? 1 : 0;
-    userData.oldPaidDemo += (demoGivenToday && !newUser) ? 1 : 0;
-    userData.totalpendingDemos += (payAmount > 25 && !demoGiven) ? 1 : 0;
-    userData.oldPendingDemos += (payAmount > 25 && !demoGiven && !newUser) ? 1 : 0;
-    if (payAmount > 25 && !demoGiven) {
-      userData.names = userData.names + ` ${name} |`
-    }
+  return initializedObject;
+}
 
-    if (demoGiven && ((payAmount > 90 && !secondShow) || (payAmount > 150 && secondShow))) {
-      userData.fullShowPPl++;
-      userData.fullShowNames = userData.fullShowNames + ` ${name} |`
-    }
 
-    if (newUser) {
-      userData.totalNew += 1;
-      userData.totalNewPaid += payAmount > 0 ? 1 : 0;
-      userData.newPaidDemo += demoGivenToday ? 1 : 0;
-      userData.newPendingDemos += (payAmount > 25 && !demoGiven) ? 1 : 0;
+async function getData() {
+  const profileData = createInitializedObject();
+  const db = await ChannelService.getInstance();
+  let entries = await db.readStats();
+  // console.log(Object.keys(profileData));
+  for (const entry of entries) {
+    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, name, secondShow } = entry;
+    // console.log(profile.toUpperCase(), profileData[profile.toUpperCase()])
+    if (profileData[profile.toUpperCase()]) {
+      const userData = profileData[profile.toUpperCase()];
+      userData.totalCount += count;
+      userData.totalPaid += payAmount > 0 ? 1 : 0;
+      userData.totalOldPaid += (payAmount > 0 && !newUser) ? 1 : 0;
+      userData.oldPaidDemo += (demoGivenToday && !newUser) ? 1 : 0;
+      userData.totalpendingDemos += (payAmount > 25 && !demoGiven) ? 1 : 0;
+      userData.oldPendingDemos += (payAmount > 25 && !demoGiven && !newUser) ? 1 : 0;
+      if (payAmount > 25 && !demoGiven) {
+        userData.names = userData.names + ` ${name} |`
+      }
+
+      if (demoGiven && ((payAmount > 90 && !secondShow) || (payAmount > 150 && secondShow))) {
+        userData.fullShowPPl++;
+        userData.fullShowNames = userData.fullShowNames + ` ${name} |`
+      }
+
+      if (newUser) {
+        userData.totalNew += 1;
+        userData.totalNewPaid += payAmount > 0 ? 1 : 0;
+        userData.newPaidDemo += demoGivenToday ? 1 : 0;
+        userData.newPendingDemos += (payAmount > 25 && !demoGiven) ? 1 : 0;
+      }
     }
   }
 
@@ -998,6 +1021,7 @@ async function getData() {
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
   let reply = '';
   for (const [profile, userData] of profileDataArray) {
+    console.log(profile);
     reply += `${profile.toUpperCase()} : <b>${userData.totalpendingDemos}</b>    |${userData.names}<br>`;
   }
 
@@ -1006,6 +1030,7 @@ async function getData() {
   for (const [profile, userData] of profileDataArray) {
     reply2 += `${profile.toUpperCase()} : <b>${userData.fullShowPPl}</b>    |${userData.fullShowNames}<br>`;
   }
+
   return (`<div  style="display: flex;"><div style="flex: 1; padding: 10px;">${reply}</div><div style="flex: 1; padding: 10px;">${reply2}</div</div>`)
 }
 
