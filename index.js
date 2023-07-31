@@ -47,9 +47,12 @@ const connetionQueue = [];
 try {
   schedule.scheduleJob('test', ' 0 * * * * ', 'Asia/Kolkata', async () => {
     console.log("Promoting.....")
-    Array.from(userMap.values()).map(async (value) => {
+    const userValues = Array.from(userMap.values());
+    for (let i = 0; i < userValues.length; i++) {
+      const value = userValues[i];
       await fetchWithTimeout(`${value.url}promote`);
-    })
+      await sleep(1000);
+    }
   })
   schedule.scheduleJob('test1', ' 2 ,2,5,7,10,13,15,18,22,1 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
