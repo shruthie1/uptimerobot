@@ -92,7 +92,8 @@ try {
         }, 30000);
       }
       setTimeout(async () => {
-        await fetchWithTimeout(`${value.url}resetstats2`);
+        const db = await ChannelService.getInstance();
+        await db.clearStats2();
         await fetchWithTimeout(`${value.url}asktopay`);
       }, 300000);
       await sleep(1000)
