@@ -231,6 +231,7 @@ class ChannelService {
 
     async clearStats() {
         const result = await this.statsDb.deleteMany({ "payAmount": { $lt: 5 } });
+        console.log(result);
     }
 
     async clearStats2() {
