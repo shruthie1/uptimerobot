@@ -965,8 +965,8 @@ function createInitializedObject() {
 
   for (const [key, value] of userMap.entries()) {
     if (extractNumberFromString(value.clientId) === 1)
-      initializedObject[key.toUpperCase()] = {
-        profile: key.toUpperCase(),
+      initializedObject[value.clientId.toUpperCase()] = {
+        profile: value.clientId.toUpperCase(),
         totalCount: 0,
         totalPaid: 0,
         totalOldPaid: 0,
@@ -1020,7 +1020,7 @@ async function getData() {
       }
     }
   }
-
+  console.log(profileData);
   const profileDataArray = Object.entries(profileData);
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
   let reply = '';
