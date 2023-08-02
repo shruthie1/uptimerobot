@@ -1023,7 +1023,6 @@ async function getData() {
       }
     }
   }
-  console.log(profileData);
   const profileDataArray = Object.entries(profileData);
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
   let reply = '';
