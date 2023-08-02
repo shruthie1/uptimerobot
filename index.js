@@ -959,14 +959,14 @@ function extractNumberFromString(inputString) {
   return null;
 }
 
-function createInitializedObject() {
-
+async function createInitializedObject() {
   const initializedObject = {};
-
-  for (const [key, value] of userMap.entries()) {
-    if (extractNumberFromString(value.clientId) === 1)
-      initializedObject[value.clientId.toUpperCase()] = {
-        profile: value.clientId.toUpperCase(),
+  const db = ChannelService.getInstance();
+  const users = await db.getAllUserClients();
+  for (const user of users) {
+    if (extractNumberFromString(user.clientId) === 1)
+      initializedObject[user.dbcoll.toUpperCase()] = {
+        profile: user.dbcoll.toUpperCase(),
         totalCount: 0,
         totalPaid: 0,
         totalOldPaid: 0,
@@ -988,12 +988,15 @@ function createInitializedObject() {
 
 
 async function getData() {
-  const profileData = createInitializedObject();
+  const profileData = await createInitializedObject();
   const db = await ChannelService.getInstance();
   let entries = await db.readStats();
   // console.log(Object.keys(profileData));
   for (const entry of entries) {
     const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, name, secondShow } = entry;
+    // if (payAmount > 0) {
+    //   console.log(entry);
+    // }
     // console.log(profile.toUpperCase(), profileData[profile.toUpperCase()])
     if (profileData[profile.toUpperCase()]) {
       const userData = profileData[profile.toUpperCase()];
