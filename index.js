@@ -965,8 +965,8 @@ async function createInitializedObject() {
   const users = await db.getAllUserClients();
   for (const user of users) {
     if (extractNumberFromString(user.clientId) === 1)
-      initializedObject[user.dbcoll.toUpperCase()] = {
-        profile: user.dbcoll.toUpperCase(),
+      initializedObject[user.clientId.toUpperCase()] = {
+        profile: user.clientId.toUpperCase(),
         totalCount: 0,
         totalPaid: 0,
         totalOldPaid: 0,
@@ -993,13 +993,13 @@ async function getData() {
   let entries = await db.readStats();
   // console.log(Object.keys(profileData));
   for (const entry of entries) {
-    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, name, secondShow } = entry;
-    // if (payAmount > 0) {
-    //   console.log(entry);
-    // }
+    const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, client, name, secondShow } = entry;
+    if (payAmount > 0) {
+      console.log(entry);
+    }
     // console.log(profile.toUpperCase(), profileData[profile.toUpperCase()])
-    if (profileData[profile.toUpperCase()]) {
-      const userData = profileData[profile.toUpperCase()];
+    if (client && profileData[client.toUpperCase()]) {
+      const userData = profileData[client.toUpperCase()];
       userData.totalCount += count;
       userData.totalPaid += payAmount > 0 ? 1 : 0;
       userData.totalOldPaid += (payAmount > 0 && !newUser) ? 1 : 0;
