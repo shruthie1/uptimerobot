@@ -349,9 +349,16 @@ app.get('/sendtoall', async (req, res, next) => {
   }
 });
 
-app.get('/clients', async (req, res) => {
+app.get('/usermap', async (req, res) => {
   checkerclass.getinstance()
-  res.send(userMap.values());
+  res.json(Array.from(userMap.values()));
+});
+
+app.get('/clients', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const users = await db.getAllUserClients();
+  res.json(users)
 });
 
 app.get('/keepready2', async (req, res, next) => {
