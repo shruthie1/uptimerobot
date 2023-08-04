@@ -17,8 +17,10 @@ var cors = require('cors');
 const app = express();
 const port = 8000;
 
-fetch('https://api.db-ip.com/v2/free/self')
-  .then(result => result.json())
+fetchWithTimeout('https://api.db-ip.com/v2/free/self')
+  .then(result => {
+    return result.data;
+  })
   .then((output) => {
     ip = output;
     console.log(ip)
