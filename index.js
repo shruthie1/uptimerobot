@@ -456,7 +456,6 @@ app.get('/getUpiId', async (req, res) => {
   const app = req.query.app ? req.query.app : "paytm3"
   const db = ChannelService.getInstance();
   const upiId = await db.getupi(app);
-  console.log(app, upiId)
   res.send(upiId);
 });
 
@@ -494,7 +493,6 @@ app.post('/getUserConfig', async (req, res) => {
   const filter = req.query
   const data = req.body
   checkerclass.getinstance();
-  console.log(data)
   const db = ChannelService.getInstance();
   const upiIds = await db.updateUserConfig(filter, data);
   await setUserMap();
@@ -522,7 +520,6 @@ app.get('/getTgConfig', async (req, res) => {
 app.post('/getTgConfig', async (req, res, next) => {
   const data = req.body
   checkerclass.getinstance();
-  console.log(data)
   const db = ChannelService.getInstance();
   const upiIds = await db.updateUpis(data)
   res.json(upiIds);
@@ -623,22 +620,6 @@ app.get('/restart', async (req, res, next) => {
   const userName = req.query.userName;
   const checker = checkerclass.getinstance()
   checker.restart(userName.toLowerCase());
-});
-
-app.get('/fetch', async (req, res, next) => {
-  res.send('Hello World!');
-  next();
-}, async (req, res) => {
-
-  fetch('https://shruthiee.onrender.com/getProcessId')
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-
 });
 
 app.get('/receiveNumber/:num', async (req, res, next) => {

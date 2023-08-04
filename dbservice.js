@@ -177,7 +177,6 @@ class ChannelService {
     async getupi(key) {
         const upiDb = this.client.db("tgclients").collection('upi-ids');
         const upiIds = await upiDb.findOne({});
-        console.log(upiIds)
         return upiIds[key] || "lakshmi-69@paytm"
     }
 
