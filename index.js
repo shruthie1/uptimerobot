@@ -16,9 +16,18 @@ var cors = require('cors');
 
 const app = express();
 const port = 8000;
-ChannelService.getInstance().connect().then(async () => {
-  await setUserMap()
-})
+
+fetch('https://api.db-ip.com/v2/free/self')
+  .then(result => result.json())
+  .then((output) => {
+    ip = output;
+    console.log(ip)
+  })
+  .then(
+    ChannelService.getInstance().connect().then(async () => {
+      await setUserMap();
+    })
+  ).catch(err => console.error(err))
 const userMap = new Map();
 
 let count = 0;
