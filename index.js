@@ -27,7 +27,10 @@ fetchWithTimeout('https://api.db-ip.com/v2/free/self')
   })
   .then(
     ChannelService.getInstance().connect().then(async () => {
-      await setUserMap();
+      setTimeout(async () => {
+        checkerclass.getinstance()
+        await setUserMap();
+      }, 100);
     })
   ).catch(err => console.error(err))
 const userMap = new Map();
@@ -210,6 +213,13 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
 app.get('/refreshMap', async (req, res) => {
   checkerclass.getinstance();
   await setUserMap();
+  res.send('Hello World!');
+});
+
+app.get('/clearstats2', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  await db.clearStats2();
   res.send('Hello World!');
 });
 

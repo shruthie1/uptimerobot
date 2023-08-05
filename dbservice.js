@@ -7,7 +7,6 @@ class ChannelService {
     users = undefined;
     statsDb = undefined;
     statsDb2 = undefined;
-    static mongoClinet = undefined;
     isConnected = false;
 
     constructor() {
@@ -17,6 +16,9 @@ class ChannelService {
         if (!ChannelService.instance) {
             ChannelService.instance = new ChannelService();
         }
+        // if (!ChannelService.instance.isConnected) {
+        //     ChannelService.instance.connect()
+        // }
         return ChannelService.instance;
     }
     static isInstanceExist() {
@@ -24,7 +26,7 @@ class ChannelService {
     }
 
     async connect() {
-        if (!ChannelService.mongoClinet) {
+        if (!this.isConnected) {
             console.log('trying to connect to DB......')
             try {
                 this.client = await MongoClient.connect(process.env.mongouri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -33,7 +35,7 @@ class ChannelService {
                 this.db = this.client.db("tgclients").collection('channels');
                 this.users = this.client.db("tgclients").collection('users');
                 this.statsDb = this.client.db("tgclients").collection('stats');
-                this.statsDb = this.client.db("tgclients").collection('stats2');
+                this.statsDb2 = this.client.db("tgclients").collection('stats2');
                 return true;
             } catch (error) {
                 console.log(`Error connecting to MongoDB: ${error}`);
@@ -236,6 +238,7 @@ class ChannelService {
 
     async clearStats2() {
         const result = await this.statsDb2?.deleteMany({});
+        console.log(result);
     }
 
 }
