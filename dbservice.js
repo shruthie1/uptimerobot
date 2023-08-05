@@ -6,6 +6,7 @@ class ChannelService {
     db = undefined;
     users = undefined;
     statsDb = undefined;
+    statsDb2 = undefined;
     static mongoClinet = undefined;
     isConnected = false;
 
@@ -32,6 +33,7 @@ class ChannelService {
                 this.db = this.client.db("tgclients").collection('channels');
                 this.users = this.client.db("tgclients").collection('users');
                 this.statsDb = this.client.db("tgclients").collection('stats');
+                this.statsDb = this.client.db("tgclients").collection('stats2');
                 return true;
             } catch (error) {
                 console.log(`Error connecting to MongoDB: ${error}`);
@@ -233,7 +235,7 @@ class ChannelService {
     }
 
     async clearStats2() {
-        const result = await this.statsDb2.deleteMany({});
+        const result = await this.statsDb2?.deleteMany({});
     }
 
 }
