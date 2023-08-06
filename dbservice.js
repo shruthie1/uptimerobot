@@ -143,7 +143,7 @@ class ChannelService {
     }
 
     async getUsersFullData(limit = 2, skip = 0) {
-        const result = await this.users?.find({}).sort({ personalChats: 1 }).skip(skip).limit(limit).sort({ _id: -1 }).toArray();
+        const result = await this.users?.find({}).skip(skip).limit(limit).sort({ _id: 1 }).toArray();
         if (result) {
             return result;
         } else {
