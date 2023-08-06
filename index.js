@@ -563,7 +563,7 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
   const skip = req.params?.skip;
   const db = ChannelService.getInstance();
   const users = await db.getUsersFullData(parseInt(limit), parseInt(skip));
-  let resp = '<html><body><pre>';
+  let resp = '<html><head><style>pre { font-size: 18px; }</style></head><body><pre>';
 
   for (const user of users) {
     if (!hasClient(user.mobile)) {
