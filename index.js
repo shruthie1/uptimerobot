@@ -563,19 +563,23 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
   const skip = req.params?.skip;
   const db = ChannelService.getInstance();
   const users = await db.getUsersFullData(parseInt(limit), parseInt(skip));
-  let resp = '';
-  users.forEach(async (user) => {
-    resp = resp + user.mobile
+  let resp = '<html><body><pre>';
+
+  for (const user of users) {
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session)
+      const cli = await createClient(user.mobile, user.session);      
       if (cli) {
-        resp = resp + ": true\n"
+        resp += `${user.mobile} : true\n\n`;
       } else {
-        resp = resp + ": false\n"
+        resp += `${user.mobile} : false\n\n`;
       }
     }
-  })
-  console.log(resp)
+  }
+
+  resp += '</pre></body></html>';
+
+  console.log("data: ", resp);
+  res.setHeader('Content-Type', 'text/html');
   res.send(resp);
 });
 
