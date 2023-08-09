@@ -92,6 +92,12 @@ try {
     })
   })
 
+  schedule.scheduleJob('test3', ' 0 4 * * * ', 'Asia/Kolkata', async () => {
+    Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}leavechannels`);
+    })
+  })
+
   schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
     for (const value of userMap.values()) {
       try {
