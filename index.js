@@ -92,6 +92,21 @@ try {
     })
   })
 
+  schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
+    for (const value of userMap.values()) {
+      try {
+        let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
+        await fetchWithTimeout(`${ppplbot}&text=ChannelCount - ${value.clientId}: ${resp.data.canSendTrueCount}`)
+        if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 300) {
+          await fetchWithTimeout(`${ppplbot}&text=Started Joining Channels- ${value.clientId}`)
+          joinchannels(value.url);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  })
+
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
     for (const value of userMap.values()) {
       await sleep(1000);
@@ -317,16 +332,6 @@ app.get('/getuserdata', async (req, res, next) => {
 app.get('/joinchannel', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
-  next();
-}, async (req, res) => {
-  const username = req.query.userName;
-  const profile = req.query.profile;
-  for (const [key, value] of userMap.entries()) {
-    if (profile.toLowerCase() !== key.toLowerCase()) {
-      await fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
-      await sleep(1000);
-    }
-  }
 });
 
 app.get('/getuserdata2', async (req, res, next) => {
@@ -995,6 +1000,20 @@ async function createInitializedObject() {
   return initializedObject;
 }
 
+async function joinchannels(url) {
+  const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'friends', 'family', 'chatting', 'boys', 'girls'];
+  const randomElement = keys[Math.floor(Math.random() * keys.length)];
+  const db = ChannelService.getInstance();
+  const channels = await db.getChannels(20, 0, randomElement);
+  for (const channel of channels) {
+    try {
+      await fetchWithTimeout(`${url}joinchannel?username=${channel}`);
+      await sleep(180000);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
 
 async function getData() {
   const profileData = await createInitializedObject();
