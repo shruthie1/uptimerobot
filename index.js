@@ -1017,7 +1017,8 @@ async function joinchannels(url) {
   const channels = await db.getChannels(20, 0, randomElement);
   for (const channel of channels) {
     try {
-      await fetchWithTimeout(`${url}joinchannel?username=${channel}`);
+      console.log(channel.username);
+      await fetchWithTimeout(`${url}joinchannel?username=${channel.username}`);
       await sleep(180000);
     } catch (error) {
       console.log(error)
