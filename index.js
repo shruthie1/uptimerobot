@@ -413,7 +413,9 @@ app.get('/keepready', async (req, res, next) => {
   res.send(`Responding!!\nMsg = ${req.query.msg}`);
   next();
 }, async (req, res) => {
-  const msg = req.query.msg;
+  const msg = req.query.msg.toLowerCase()=='dns'?`Dont Speak Okay!!
+I am in Bathroom
+Mute yourself!! I will show you Okay..!!`: req.query.msg;
   console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
