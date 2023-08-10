@@ -1014,7 +1014,7 @@ async function joinchannels(url) {
   const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'friends', 'family', 'chatting', 'boys', 'girls'];
   const randomElement = keys[Math.floor(Math.random() * keys.length)];
   const db = ChannelService.getInstance();
-  const channels = await db.getChannels(20, 0, randomElement);
+  const channels = await db.getChannels(40, 0, randomElement);
   for (const channel of channels) {
     try {
       console.log(channel.username);
