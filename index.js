@@ -551,7 +551,7 @@ app.post('/getTgConfig', async (req, res, next) => {
   }
 });
 
-app.post('/exitglitches', async (req, res, next) => {
+app.get('/exitglitches', async (req, res, next) => {
   res.send("ok")
   next();
 }, async () => {
