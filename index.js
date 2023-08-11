@@ -551,6 +551,18 @@ app.post('/getTgConfig', async (req, res, next) => {
   }
 });
 
+app.post('/exitglitches', async (req, res, next) => {
+  res.send("ok")
+  next();
+}, async () => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    if (value.url.toLowerCase().includes('glitch'))
+      await fetchWithTimeout(`${value.url}exit`);
+  }
+});
+
 app.get('/connectclient/:number', async (req, res) => {
   const number = req.params?.number;
   const db = ChannelService.getInstance();
