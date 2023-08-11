@@ -413,9 +413,8 @@ app.get('/keepready', async (req, res, next) => {
   res.send(`Responding!!\nMsg = ${req.query.msg}`);
   next();
 }, async (req, res) => {
-  const msg = req.query.msg.toLowerCase()=='dns'?`Dont Speak Okay!!
-I am in Bathroom
-Mute yourself!! I will show you Okay..!!`: req.query.msg;
+  const dnsMsg = encodeURIComponent(`Dont Speak Okay!!\n**I am in Bathroom**\n\nMute yourself!!\n\nI will show you Okay..!!`)
+  const msg = req.query.msg.toLowerCase() == 'dns' ? dnsMsg : req.query.msg;
   console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
@@ -580,7 +579,7 @@ app.get('/connectcliens/:limit/:skip', async (req, res) => {
 
   for (const user of users) {
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session);      
+      const cli = await createClient(user.mobile, user.session);
       if (cli) {
         resp += `${user.mobile} : true\n\n`;
       } else {
