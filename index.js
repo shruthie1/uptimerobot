@@ -821,6 +821,7 @@ class checkerclass {
         }
       }
       userMap.forEach(async (val, key) => {
+        console.log(val.clientId, " - ", val.downTime)
         try {
           const resp = await axios.get(`${val.url}`, { timeout: 50000 });
           userMap.set(key, { ...val, downTime: 0 })
