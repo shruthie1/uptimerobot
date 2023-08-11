@@ -410,17 +410,14 @@ app.get('/keepready2', async (req, res, next) => {
 
 app.get('/keepready', async (req, res, next) => {
   checkerclass.getinstance()
-  res.send(`Responding!!\nMsg = ${req.query.msg}`);
-  next();
-}, async (req, res) => {
   const dnsMsg = encodeURIComponent(`Dont Speak Okay!!\n**I am in Bathroom**\n\nMute yourself!!\n\nI will show you Okay..!!`)
   const msg = req.query.msg.toLowerCase() == 'dns' ? dnsMsg : req.query.msg;
-  console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
   });
   const db = ChannelService.getInstance();
-  await db.clearStats()
+  await db.clearStats();
+  res.send(`Responding!!\nMsg = ${msg}`);
 });
 
 app.get('/asktopay', async (req, res, next) => {
