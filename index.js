@@ -133,7 +133,8 @@ try {
     }
 
     await fetchWithTimeout(`${ppplbot}&text=${encodeURIComponent(await getPromotionStats())}`);
-    const db = await ChannelService.getInstance();
+    const db = ChannelService.getInstance();
+    await db.updateActiveChannels();
     await db.clearStats2();
     await db.clearPromotionStats();
     try {
@@ -537,6 +538,13 @@ app.get('/getTgConfig', async (req, res) => {
   const db = ChannelService.getInstance();
   const tgConfig = await db.getTgConfig()
   res.json(tgConfig);
+});
+
+app.get('/updateActiveChannels', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const tgConfig = await db.updateActiveChannels();
+  res.send("ok");
 });
 
 app.post('/getTgConfig', async (req, res, next) => {
