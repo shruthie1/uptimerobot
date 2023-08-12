@@ -557,12 +557,12 @@ app.post('/getTgConfig', async (req, res, next) => {
 app.get('/lastpings', async (req, res, next) => {
   checkerclass.getinstance();
   let resp = '<html><head><style>pre { font-size: 18px; }</style></head><body><pre>';
-
+  const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    resp = resp + `${value.clientId}  :  ${(Date.now() - value.lastPingTime) / 60000}`
+    resp = resp + `${value.clientId}  :  ${Number(((Date.now() - value.lastPingTime) / 60000).toFixed(2))}\n`
   }
-  resp += '</pre></body></html>'; const userValues = Array.from(userMap.values());
+  resp += '</pre></body></html>';
   res.setHeader('Content-Type', 'text/html');
   res.send(resp);
 });
