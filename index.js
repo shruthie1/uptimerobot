@@ -910,6 +910,7 @@ class checkerclass {
         }
         if (Date.now() - val.lastPingTime > (5 * 60 * 1000)) {
           try {
+            userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
             const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
           } catch (error) {
             console.log(error);
