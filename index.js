@@ -7,6 +7,8 @@ const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 const ChannelService = require('./dbservice');
 const { getClient, hasClient, disconnectAll, createClient, deleteClient } = require('./telegramManager');
 const bodyParser = require('body-parser');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swaggerConfig');
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -192,6 +194,7 @@ async function assure() {
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');

@@ -20,6 +20,8 @@
     "mongodb": "^5.2.0",
     "node-abort-controller": "^3.0.1",
     "node-schedule-tz": "^1.2.1-4",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "telegram": "^2.15.15"
   }
 }
