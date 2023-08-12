@@ -560,9 +560,9 @@ app.get('/lastpings', async (req, res, next) => {
 
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    resp = resp + `${value.clientId}  :  ${(Date.now() - value.lastPingTime)/ 60000}`
+    resp = resp + `${value.clientId}  :  ${(Date.now() - value.lastPingTime) / 60000}`
   }
-  resp += '</pre></body></html>';  const userValues = Array.from(userMap.values());
+  resp += '</pre></body></html>'; const userValues = Array.from(userMap.values());
   res.setHeader('Content-Type', 'text/html');
   res.send(resp);
 });
