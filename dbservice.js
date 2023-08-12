@@ -257,6 +257,22 @@ class ChannelService {
         console.log(result);
     }
 
+    async getCurrentActiveUniqueChannels(){
+        const promoteStatsColl = this.client.db("tgclients").collection('promoteStats');
+
+        const cursor = promoteStatsColl.find({});
+        const uniqueChannels = new Set();
+
+        await cursor.forEach((document) => {
+            for (const channel in document.data) {
+                uniqueChannels.add(channel);
+            }
+        });
+
+        const uniqueChannelNames = Array.from(uniqueChannels);
+        return uniqueChannelNames;
+    }
+
     async updateActiveChannels() {
         const promoteStatsColl = this.client.db("tgclients").collection('promoteStats');
         const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');

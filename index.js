@@ -547,6 +547,13 @@ app.get('/updateActiveChannels', async (req, res) => {
   res.send("ok");
 });
 
+app.get('/getCurrentActiveUniqueChannels', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const result = await db.getCurrentActiveUniqueChannels();
+  res.json({ length: result.length, data: result });
+});
+
 app.post('/getTgConfig', async (req, res, next) => {
   const data = req.body
   checkerclass.getinstance();
