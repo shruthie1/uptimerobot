@@ -878,7 +878,7 @@ class checkerclass {
             }
             setTimeout(async () => {
               const connectResp = await axios.get(`${url}promote`);
-              const connectResp2 = await axios.get(`${url}markasreads`);
+              const connectResp2 = await axios.get(`${url}markasread`);
             }, 35000);
           } catch (error) {
             console.log(error)
