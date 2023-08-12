@@ -845,7 +845,7 @@ class checkerclass {
           } catch (error) {
             console.log(error)
           }
-          await sleep(15000);
+          await sleep(18000);
         }
       }
       userMap.forEach(async (val, key) => {
