@@ -879,7 +879,6 @@ class checkerclass {
         }
       })
       try {
-        trt
         const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 55000 });
       }
       catch (e) {
