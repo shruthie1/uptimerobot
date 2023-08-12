@@ -130,7 +130,7 @@ try {
         await fetchWithTimeout(`${value.url}asktopay`);
       }, 300000);
       await sleep(1000)
-    }    
+    }
 
     await fetchWithTimeout(`${ppplbot}&text=${encodeURIComponent(await getPromotionStats())}`);
     const db = await ChannelService.getInstance();
@@ -843,7 +843,9 @@ class checkerclass {
         }
       }
       userMap.forEach(async (val, key) => {
-        console.log(val.clientId, " - ", val.downTime)
+        if (val.downTime > 2) {
+          console.log(val.clientId, " - ", val.downTime)
+        }
         try {
           const resp = await axios.get(`${val.url}`, { timeout: 120000 });
           userMap.set(key, { ...val, downTime: 0 })
@@ -1050,7 +1052,7 @@ async function joinchannels(url) {
   }
 }
 
-async function getPromotionStats(){
+async function getPromotionStats() {
   let resp = '';
   const db = ChannelService.getInstance();
   const result = await db.readPromoteStats();
