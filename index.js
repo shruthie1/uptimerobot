@@ -130,7 +130,7 @@ try {
         await fetchWithTimeout(`${value.url}asktopay`);
       }, 300000);
       await sleep(1000)
-    }    
+    }
 
     await fetchWithTimeout(`${ppplbot}&text=${encodeURIComponent(await getPromotionStats())}`);
     const db = await ChannelService.getInstance();
@@ -772,6 +772,8 @@ app.get('/requestcall', async (req, res, next) => {
 app.listen(port, async () => {
   console.log(`Example app listening at http://localhost:${port}`)
 });
+
+let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
@@ -821,8 +823,12 @@ class checkerclass {
       if (count % 2) {
         console.log(`-------------------------------------------------------------`)
       }
-      if (connetionQueue.length > 0) {
+      if (connetionQueue.length > 0 && !startedConnecting) {
         while (connetionQueue.length > 0) {
+          startedConnecting = true;
+          if (connetionQueue.length == 1) {
+            startedConnecting = false;
+          }
           const { userName, processId } = connetionQueue.shift();
           console.log('Starting - ', userName);
           try {
@@ -1050,7 +1056,7 @@ async function joinchannels(url) {
   }
 }
 
-async function getPromotionStats(){
+async function getPromotionStats() {
   let resp = '';
   const db = ChannelService.getInstance();
   const result = await db.readPromoteStats();
