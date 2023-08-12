@@ -53,7 +53,7 @@ async function setUserMap() {
   const db = ChannelService.getInstance();
   const users = await db.getAllUserClients();
   users.forEach(user => {
-    userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, clientId: user.clientId })
+    userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, lastPingTime: Date.now(), clientId: user.clientId })
   })
 }
 
@@ -725,7 +725,7 @@ app.get('/receive', async (req, res, next) => {
     const userName = req.query.userName;
     const data = userMap.get(userName.toLowerCase());
     if (data) {
-      userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0 });
+      userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), userName, 'Ping!! Received!!')
     } else {
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
@@ -870,8 +870,16 @@ class checkerclass {
             }
           }
         }
+        if (Date.now() - val.lastPingTime > (5 * 60 * 1000)) {
+          try {
+            const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
+          } catch (error) {
+            console.log(error);
+          }
+        }
       })
       try {
+        trt
         const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 55000 });
       }
       catch (e) {
