@@ -1016,8 +1016,11 @@ async function joinchannels(url) {
   for (const channel of channels) {
     try {
       console.log(channel.username);
-      await fetchWithTimeout(`${url}joinchannel?username=${channel.username}`);
-      await sleep(180000);
+      const username = channel?.username?.replace("@", '');
+      if (username) {
+        await fetchWithTimeout(`${url}joinchannel?username=${username}`);
+        await sleep(180000);
+      }
     } catch (error) {
       console.log(error)
     }
