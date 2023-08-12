@@ -732,6 +732,7 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
     //console.log(`userName.toUpperCase()}:  TG_CLIENT Seems OFF`,'\nRestarting Service')
     // const checker = checkerclass.getinstance()
     // checker.restart(userName, processId);
+    const data = userMap.get(userName.toLowerCase());
     userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
     connetionQueue.push({ userName, processId });
     // try {
@@ -910,6 +911,7 @@ class checkerclass {
         }
         if (Date.now() - val.lastPingTime > (5 * 60 * 1000)) {
           try {
+            const data = userMap.get(userName.toLowerCase());
             userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
             const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
           } catch (error) {
