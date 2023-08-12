@@ -732,6 +732,7 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
     //console.log(`userName.toUpperCase()}:  TG_CLIENT Seems OFF`,'\nRestarting Service')
     // const checker = checkerclass.getinstance()
     // checker.restart(userName, processId);
+    userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
     connetionQueue.push({ userName, processId });
     // try {
     //   const data = userMap.get(userName.toLowerCase());
