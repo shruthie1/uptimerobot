@@ -554,7 +554,7 @@ app.post('/getTgConfig', async (req, res, next) => {
   }
 });
 
-app.post('/lastpings', async (req, res, next) => {
+app.get('/lastpings', async (req, res, next) => {
   checkerclass.getinstance();
   let resp = '<html><head><style>pre { font-size: 18px; }</style></head><body><pre>';
 
