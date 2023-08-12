@@ -151,6 +151,16 @@ class ChannelService {
         }
     }
 
+    async readPromoteStats() {
+        const promotColl = this.client.db("tgclients").collection('promoteStats');
+        const result = await promotColl.find({}, { projection: { "client": 1, "totalCount": 1, "_id":0 } }).sort({ totalCount: -1 }).toArray();
+        if (result.length > 0) {
+            return result;
+        } else {
+            return undefined;
+        }
+    }
+
     async readStats() {
         const result = await this.statsDb.find({}).sort({ newUser: -1 })
         if (result) {
@@ -238,6 +248,12 @@ class ChannelService {
 
     async clearStats2() {
         const result = await this.statsDb2?.deleteMany({});
+        console.log(result);
+    }
+
+    async clearPromotionStats() {
+        const promotColl = this.client.db("tgclients").collection('promoteStats');
+        const result = await promotColl.deleteMany({});
         console.log(result);
     }
 

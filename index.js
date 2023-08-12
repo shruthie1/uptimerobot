@@ -127,12 +127,15 @@ try {
         }, 30000);
       }
       setTimeout(async () => {
-        const db = await ChannelService.getInstance();
-        await db.clearStats2();
         await fetchWithTimeout(`${value.url}asktopay`);
       }, 300000);
       await sleep(1000)
-    }
+    }    
+
+    await fetchWithTimeout(`${ppplbot}&text=${encodeURIComponent(await getPromotionStats())}`);
+    const db = await ChannelService.getInstance();
+    await db.clearStats2();
+    await db.clearPromotionStats();
     try {
       const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
       const resp2 = await axios.get(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
@@ -611,6 +614,13 @@ app.get('/disconnectclients', async (req, res, next) => {
   await disconnectAll();
 });
 
+app.get('/promoteStats', async (req, res, next) => {
+  const resp = await getPromotionStatsHtml();
+  res.setHeader('Content-Type', 'text/html');
+  res.send(resp)
+});
+
+
 app.get('/getusers/:limit/:skip', async (req, res, next) => {
   const limit = parseInt(req.params?.limit ? req.params?.limit : 10);
   const skip = parseInt(req.params?.skip ? req.params?.skip : 10);
@@ -1038,6 +1048,23 @@ async function joinchannels(url) {
       console.log(error)
     }
   }
+}
+
+async function getPromotionStats(){
+  let resp = '';
+  const db = ChannelService.getInstance();
+  const result = await db.readPromoteStats();
+  for (const data of result) {
+    resp += `${data.client} : ${data.totalCount}\n`;
+  }
+  return response;
+}
+
+async function getPromotionStatsHtml() {
+  let resp = '<html><head><style>pre { font-size: 18px; }</style></head><body><pre>';
+  resp = resp + await getPromotionStats();
+  resp += '</pre></body></html>';
+  return resp;
 }
 
 async function getData() {
