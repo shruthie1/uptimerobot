@@ -1,3 +1,4 @@
+'use strict';
 const dotenv = require('dotenv')
 dotenv.config();
 const express = require('express');
@@ -9,6 +10,10 @@ const { getClient, hasClient, disconnectAll, createClient, deleteClient } = requ
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConfig');
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -911,8 +916,8 @@ class checkerclass {
         }
         if (Date.now() - val.lastPingTime > (5 * 60 * 1000)) {
           try {
-            const data = userMap.get(userName.toLowerCase());
-            userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
+            const data = userMap.get(key);
+            userMap.set(key, { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
             const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
           } catch (error) {
             console.log(error);
