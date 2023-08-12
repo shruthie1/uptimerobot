@@ -1057,7 +1057,7 @@ async function getPromotionStats(){
   for (const data of result) {
     resp += `${data.client} : ${data.totalCount}\n`;
   }
-  return response;
+  return resp;
 }
 
 async function getPromotionStatsHtml() {
