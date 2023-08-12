@@ -845,7 +845,7 @@ class checkerclass {
       userMap.forEach(async (val, key) => {
         console.log(val.clientId, " - ", val.downTime)
         try {
-          const resp = await axios.get(`${val.url}`, { timeout: 50000 });
+          const resp = await axios.get(`${val.url}`, { timeout: 120000 });
           userMap.set(key, { ...val, downTime: 0 })
         }
         catch (e) {
@@ -855,7 +855,7 @@ class checkerclass {
           if (val.downTime > 5) {
             userMap.set(key, { ...val, downTime: -5 })
             try {
-              const resp = await axios.get(`${val.deployKey}`, { timeout: 10000 });
+              const resp = await axios.get(`${val.deployKey}`, { timeout: 120000 });
               if (resp?.status == 200 || resp.status == 201) {
                 await fetchWithTimeout(`${ppplbot}&text=Restarted ${key}`);
               } else {
