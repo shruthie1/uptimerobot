@@ -554,6 +554,19 @@ app.post('/getTgConfig', async (req, res, next) => {
   }
 });
 
+app.post('/lastpings', async (req, res, next) => {
+  checkerclass.getinstance();
+  let resp = '<html><head><style>pre { font-size: 18px; }</style></head><body><pre>';
+
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    resp = resp + `${value.clientId}  :  ${(Date.now() - value.lastPingTime)/ 60000}`
+  }
+  resp += '</pre></body></html>';  const userValues = Array.from(userMap.values());
+  res.setHeader('Content-Type', 'text/html');
+  res.send(resp);
+});
+
 app.get('/exitglitches', async (req, res, next) => {
   res.send("ok")
   next();
