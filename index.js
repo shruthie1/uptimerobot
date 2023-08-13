@@ -917,8 +917,12 @@ class checkerclass {
         if (Date.now() - val.lastPingTime > (5 * 60 * 1000)) {
           try {
             const data = userMap.get(key);
-            userMap.set(key, { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-            const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
+            if (Date.now() - val.lastPingTime > (7 * 60 * 1000)) {
+              userMap.set(key, { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
+              const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
+            } else {
+              const resp = await axios.get(val.url, { timeout: 200000 });
+            }
           } catch (error) {
             console.log(error);
           }
