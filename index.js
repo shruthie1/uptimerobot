@@ -921,7 +921,8 @@ class checkerclass {
               userMap.set(key, { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
               const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
             } else {
-              const resp = await axios.get(val.url, { timeout: 200000 });
+              const url = val.url.includes('glitch') ? `${val.url}exec/refresh` : val.url
+              const resp = await axios.get(url, { timeout: 200000 });
             }
           } catch (error) {
             console.log(error);
