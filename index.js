@@ -68,11 +68,9 @@ const connetionQueue = [];
 try {
   schedule.scheduleJob('test', ' 0 * * * * ', 'Asia/Kolkata', async () => {
     console.log("Promoting.....")
-    const userValues = Array.from(userMap.values());
-    for (let i = 0; i < userValues.length; i++) {
-      const value = userValues[i];
+    for (const value of userMap.values()) {
       await fetchWithTimeout(`${value.url}promote`);
-      await sleep(1000);
+      await sleep(2000)
     }
   })
   schedule.scheduleJob('test1', ' 2 ,2,5,7,10,13,15,18,22,1 * * * ', 'Asia/Kolkata', async () => {
@@ -928,11 +926,16 @@ class checkerclass {
             }
           }
         }
-        if (Date.now() - val.lastPingTime > (5 * 60 * 1000)) {
+        if (Date.now() - val.lastPingTime > (4 * 60 * 1000)) {
           try {
             const data = userMap.get(key);
-            userMap.set(key, { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-            const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
+            if (Date.now() - val.lastPingTime > (7 * 60 * 1000)) {
+              userMap.set(key, { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
+              const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
+            } else {
+              const url = val.url.includes('glitch') ? `${val.url}exec/refresh` : val.url
+              const resp = await axios.get(url, { timeout: 200000 });
+            }
           } catch (error) {
             console.log(error);
           }
