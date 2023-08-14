@@ -73,12 +73,7 @@ try {
       await sleep(2000)
     }
   })
-  schedule.scheduleJob('test1', ' 2 2,5,7,10,13,15,18,22,1 * * * ', 'Asia/Kolkata', async () => {
-    for (const value of userMap.values()) {
-      await fetchWithTimeout(`${value.url}calltopaid`);
-      await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
-    }
-  })
+
   schedule.scheduleJob('test1', ' 2 6,10,16,20,3 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}assureppl`);
@@ -88,11 +83,13 @@ try {
   schedule.scheduleJob('test2', '*/10 * * * *', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
+      await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
     })
   })
 
   schedule.scheduleJob('test3', ' 0 7,13,20,23 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}calltopaid`);
       await fetchWithTimeout(`${value.url}asktopay`);
     })
   })
