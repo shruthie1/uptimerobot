@@ -296,6 +296,20 @@ app.get('/channels/:limit/:skip', async (req, res, next) => {
   })
   res.send(resp);
 });
+
+app.get('/activechannels/:limit/:skip', async (req, res, next) => {
+  const limit = req.params.limit ? req.params.limit : 30
+  const skip = req.params.skip ? req.params.skip : 20
+  const k = req.query?.k
+  const db = ChannelService.getInstance();
+  const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k);
+  let resp = 'joinchannel:'
+  result.forEach((channel) => {
+    resp = resp + `${channel.username}|`
+  })
+  res.send(resp);
+});
+
 let refresTime = Date.now();
 app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()

@@ -257,7 +257,7 @@ class ChannelService {
         console.log(result);
     }
 
-    async getCurrentActiveUniqueChannels(){
+    async getCurrentActiveUniqueChannels() {
         const promoteStatsColl = this.client.db("tgclients").collection('promoteStats');
 
         const cursor = promoteStatsColl.find({});
@@ -271,6 +271,32 @@ class ChannelService {
 
         const uniqueChannelNames = Array.from(uniqueChannels);
         return uniqueChannelNames;
+    }
+
+    async getActiveChannels(limit = 50, skip = 0, k) {
+        const query = { megagroup: true, username: { $ne: null } };
+        const sort = { participantsCount: -1 };
+        if (k) {
+            query["$or"] = [{ title: { $regex: k, $options: 'i' } }, { username: { $regex: k, $options: 'i' } }]
+        }
+        const options = { collation: { locale: 'en', strength: 1 } };
+        const promoteStatsColl = this.client.db("tgclients").collection('activeChannels');
+        try {
+            if (k) {
+                await promoteStatsColl.createIndex({ title: 'text' }); // Create index on the "title" field for text search
+            }
+            const result = await promoteStatsColl
+                .find(query, options)
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .toArray();
+
+            return result;
+        } catch (error) {
+            console.error('Error:', error);
+            return [];
+        }
     }
 
     async updateActiveChannels() {
