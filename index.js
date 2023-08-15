@@ -1185,6 +1185,15 @@ async function getData() {
     reply2 += `${profile.toUpperCase()} : <b>${userData.fullShowPPl}</b>    |${userData.fullShowNames}<br>`;
   }
 
-  return (`<div  style="display: flex;"><div style="flex: 1; padding: 10px;">${reply}</div><div style="flex: 1; padding: 10px;">${reply2}</div</div>`)
+  let reply3 = await getPromotionStatsHtml()
+
+  return (
+    `<div style="display: flex;">
+      <div style="flex: 1; padding: 10px;">${reply}</div>
+      <div style="flex: 1; padding: 10px;">${reply2}</div>
+    </div>
+    <div style="padding: 10px;">${reply3}</div>`
+  );
+
 }
 
