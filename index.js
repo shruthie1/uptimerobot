@@ -1124,7 +1124,7 @@ async function getPromotionStats() {
   const db = ChannelService.getInstance();
   const result = await db.readPromoteStats();
   for (const data of result) {
-    resp += `${data.client} : ${data.totalCount}\n`;
+    resp += `${data.client.toUpperCase()} : <b>${data.totalCount}</b><br>`;
   }
   return resp;
 }
@@ -1143,9 +1143,7 @@ async function getData() {
   // console.log(Object.keys(profileData));
   for (const entry of entries) {
     const { count, newUser, payAmount, demoGivenToday, demoGiven, profile, client, name, secondShow } = entry;
-    if (payAmount > 0) {
-      console.log(entry);
-    }
+
     // console.log(profile.toUpperCase(), profileData[profile.toUpperCase()])
     if (client && profileData[client.toUpperCase()]) {
       const userData = profileData[client.toUpperCase()];
@@ -1176,7 +1174,7 @@ async function getData() {
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
   let reply = '';
   for (const [profile, userData] of profileDataArray) {
-    reply += `${profile.toUpperCase()} : <b>${userData.totalpendingDemos}</b>    |${userData.names}<br>`;
+    reply += `${profile.toUpperCase()} : <b>${userData.totalpendingDemos}</b>    | ${userData.names}<br>`;
   }
 
   profileDataArray.sort((a, b) => b[1].fullShowPPl - a[1].fullShowPPl);
@@ -1185,14 +1183,18 @@ async function getData() {
     reply2 += `${profile.toUpperCase()} : <b>${userData.fullShowPPl}</b>    |${userData.fullShowNames}<br>`;
   }
 
-  let reply3 = await getPromotionStatsHtml()
+  let reply3 = await getPromotionStats()
 
   return (
-    `<div style="display: flex;">
-      <div style="flex: 1; padding: 10px;">${reply}</div>
-      <div style="flex: 1; padding: 10px;">${reply2}</div>
-    </div>
-    <div style="padding: 10px;">${reply3}</div>`
+    `<div>
+      <div style="display: flex;">
+        <div style="flex: 1; padding: 10px;">${reply}</div>
+        <div style="flex: 1; padding: 10px;">${reply2}</div>
+      </div>
+      <div style="display: flex;">
+        <div style="flex: 1; padding: 10px;" >${reply3}</div>
+      </div>
+    </div>`
   );
 
 }
