@@ -273,6 +273,25 @@ class ChannelService {
         return uniqueChannelNames;
     }
 
+
+    async initPromoteStats() {
+        const promotColl = this.client.db("tgclients").collection('promoteStats');
+        const users = await this.getAllUserClients();
+        for (const user of users) {
+            const obj = {
+                client: user.clientId,
+                data: [],
+                totalCount: 0,
+                uniqueChannels: 0
+            }
+
+            const existingDocument = await promotColl.findOne({ client: user.clientId });
+            if (!existingDocument) {
+                await promotColl.insertOne(obj);
+            }
+        }
+    }
+
     async getActiveChannels(limit = 50, skip = 0, k) {
         const query = { megagroup: true, username: { $ne: null } };
         const sort = { participantsCount: -1 };
