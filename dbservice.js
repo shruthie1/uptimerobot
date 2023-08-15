@@ -280,7 +280,7 @@ class ChannelService {
         for (const user of users) {
             const obj = {
                 client: user.clientId,
-                data: [],
+                data: {},
                 totalCount: 0,
                 uniqueChannels: 0
             }
