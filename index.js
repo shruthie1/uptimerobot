@@ -63,13 +63,23 @@ async function setUserMap() {
     userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, lastPingTime: Date.now(), clientId: user.clientId })
   })
 }
-
+function getCurrentHourIST() {
+  const now = new Date();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const istTime = new Date(now.getTime() + istOffset);
+  const istHour = istTime.getUTCHours();
+  return istHour;
+}
 const connetionQueue = [];
 try {
   schedule.scheduleJob('test', ' 0 * * * * ', 'Asia/Kolkata', async () => {
-    console.log("Promoting.....")
+    console.log("Promoting.....");
+    const hour = getCurrentHourIST();
     for (const value of userMap.values()) {
       await fetchWithTimeout(`${value.url}promote`);
+      if (hour && hour % 3 === 0) {
+        await fetchWithTimeout(`${value.url}calltopaid`);
+      }
       await sleep(2000)
     }
   })
@@ -89,7 +99,6 @@ try {
 
   schedule.scheduleJob('test3', ' 0 7,13,20,23 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
-      await fetchWithTimeout(`${value.url}calltopaid`);
       await fetchWithTimeout(`${value.url}asktopay`);
     })
   })
