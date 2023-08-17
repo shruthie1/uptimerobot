@@ -924,7 +924,7 @@ class checkerclass {
             }
           }
         }
-        if (Date.now() - val.lastPingTime > (4 * 60 * 1000)) {
+        if (Date.now() - val.lastPingTime > (3 * 60 * 1000)) {
           try {
             const data = userMap.get(key);
             if (Date.now() - val.lastPingTime > (7 * 60 * 1000)) {
