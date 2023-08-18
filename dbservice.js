@@ -282,7 +282,8 @@ class ChannelService {
                 client: user.clientId,
                 data: {},
                 totalCount: 0,
-                uniqueChannels: 0
+                uniqueChannels: 0,
+                lastupdatedTimeStamp: Date.now()
             }
 
             const existingDocument = await promotColl.findOne({ client: user.clientId });
