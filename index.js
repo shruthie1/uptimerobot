@@ -937,7 +937,7 @@ class checkerclass {
             }
           }
         }
-        if (userPromoteStats?.isActive && (Date.now() - userPromoteStats?.lastUpdatedTimeStamp) / (1000 * 60) > 14) {
+        if (userPromoteStats?.isActive && (Date.now() - userPromoteStats?.lastUpdatedTimeStamp) / (1000 * 60) > 12) {
           try {
             const resp = await axios.get(`${val.url}promote`, { timeout: 120000 });
           } catch (error) {
