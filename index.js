@@ -905,7 +905,11 @@ class checkerclass {
           await sleep(18000);
         }
       }
+
+      const db = ChannelService.getInstance();
       userMap.forEach(async (val, key) => {
+        const userPromoteStats = await db.readSinglePromoteStats(val.clientId);
+        // console.log(userPromoteStats)
         if (val.downTime > 2) {
           console.log(val.clientId, " - ", val.downTime)
         }
@@ -931,6 +935,13 @@ class checkerclass {
               console.log(`Failed to Restart ${key}`);
               await fetchWithTimeout(`${ppplbot}&text=Failed to Restart ${key}`);
             }
+          }
+        }
+        if (userPromoteStats?.isActive && (Date.now() - userPromoteStats?.lastUpdatedTimeStamp) / (1000 * 60) > 14) {
+          try {
+            const resp = await axios.get(`${val.url}promote`, { timeout: 120000 });
+          } catch (error) {
+            console.log(error);
           }
         }
         if (Date.now() - val.lastPingTime > (3 * 60 * 1000)) {
