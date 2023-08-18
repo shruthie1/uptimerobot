@@ -1137,7 +1137,7 @@ async function getPromotionStats() {
   const db = ChannelService.getInstance();
   const result = await db.readPromoteStats();
   for (const data of result) {
-    resp += `${data.client.toUpperCase()} : <b>${data.totalCount}</b>   -   ${(Date.now() - data.lastupdatedTimeStamp) / (1000 * 60)}<br>`;
+    resp += `${data.client.toUpperCase()} : <b>${data.totalCount}</b>${data.totalCount > 0 ? `    | ${Number((Date.now() - data.lastUpdatedTimeStamp) / (1000 * 60)).toFixed(2)}` : ''}<br>`;
   }
   return resp;
 }

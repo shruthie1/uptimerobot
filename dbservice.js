@@ -153,7 +153,7 @@ class ChannelService {
 
     async readPromoteStats() {
         const promotColl = this.client.db("tgclients").collection('promoteStats');
-        const result = await promotColl.find({}, { projection: { "client": 1, "totalCount": 1, "_id": 0 } }).sort({ totalCount: -1 }).toArray();
+        const result = await promotColl.find({}, { projection: { "client": 1, "totalCount": 1, "lastUpdatedTimeStamp": 1, "_id": 0 } }).sort({ totalCount: -1 }).toArray();
         if (result.length > 0) {
             return result;
         } else {
