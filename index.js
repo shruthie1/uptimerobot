@@ -105,7 +105,7 @@ try {
 
   schedule.scheduleJob('test3', ' 0 4 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
-      await fetchWithTimeout(`${value.url}leavechannels`);
+      //await fetchWithTimeout(`${value.url}leavechannels`);
     })
   })
 
@@ -116,7 +116,7 @@ try {
         await fetchWithTimeout(`${ppplbot}&text=ChannelCount - ${value.clientId}: ${resp.data.canSendTrueCount}`)
         if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 300) {
           await fetchWithTimeout(`${ppplbot}&text=Started Joining Channels- ${value.clientId}`)
-          joinchannels(value.url);
+         // joinchannels(value.url);
         }
       } catch (error) {
         console.log(error);
