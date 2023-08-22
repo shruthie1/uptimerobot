@@ -93,7 +93,6 @@ try {
   schedule.scheduleJob('test2', '*/10 * * * *', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
-      await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
     })
   })
 
@@ -122,6 +121,7 @@ try {
         console.log(error);
       }
     }
+    await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
   })
 
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
