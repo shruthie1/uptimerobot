@@ -93,7 +93,6 @@ try {
   schedule.scheduleJob('test2', '*/10 * * * *', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
-      await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
     })
   })
 
@@ -105,7 +104,7 @@ try {
 
   schedule.scheduleJob('test3', ' 0 4 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
-      await fetchWithTimeout(`${value.url}leavechannels`);
+      //await fetchWithTimeout(`${value.url}leavechannels`);
     })
   })
 
@@ -116,12 +115,13 @@ try {
         await fetchWithTimeout(`${ppplbot}&text=ChannelCount - ${value.clientId}: ${resp.data.canSendTrueCount}`)
         if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 300) {
           await fetchWithTimeout(`${ppplbot}&text=Started Joining Channels- ${value.clientId}`)
-          joinchannels(value.url);
+         // joinchannels(value.url);
         }
       } catch (error) {
         console.log(error);
       }
     }
+    await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
   })
 
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
@@ -908,7 +908,11 @@ class checkerclass {
           await sleep(18000);
         }
       }
+
+      const db = ChannelService.getInstance();
       userMap.forEach(async (val, key) => {
+        const userPromoteStats = await db.readSinglePromoteStats(val.clientId);
+        // console.log(userPromoteStats)
         if (val.downTime > 2) {
           console.log(val.clientId, " - ", val.downTime)
         }
@@ -934,6 +938,13 @@ class checkerclass {
               console.log(`Failed to Restart ${key}`);
               await fetchWithTimeout(`${ppplbot}&text=Failed to Restart ${key}`);
             }
+          }
+        }
+        if (userPromoteStats?.isActive && (Date.now() - userPromoteStats?.lastUpdatedTimeStamp) / (1000 * 60) > 12) {
+          try {
+            const resp = await axios.get(`${val.url}promote`, { timeout: 120000 });
+          } catch (error) {
+            console.log(error);
           }
         }
         if (Date.now() - val.lastPingTime > (3 * 60 * 1000)) {

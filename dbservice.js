@@ -153,12 +153,18 @@ class ChannelService {
 
     async readPromoteStats() {
         const promotColl = this.client.db("tgclients").collection('promoteStats');
-        const result = await promotColl.find({}, { projection: { "client": 1, "totalCount": 1, "lastUpdatedTimeStamp": 1, "_id": 0 } }).sort({ totalCount: -1 }).toArray();
+        const result = await promotColl.find({}, { projection: { "client": 1, "totalCount": 1, "lastUpdatedTimeStamp": 1, "isActive": 1, "_id": 0 } }).sort({ totalCount: -1 }).toArray();
         if (result.length > 0) {
             return result;
         } else {
             return undefined;
         }
+    }
+
+    async readSinglePromoteStats(clientId) {
+        const promotColl = this.client.db("tgclients").collection('promoteStats');
+        const result = await promotColl.findOne({ client: clientId }, { projection: { "client": 1, "totalCount": 1, "lastUpdatedTimeStamp": 1, "isActive": 1, "_id": 0 } });
+        return result
     }
 
     async readStats() {
