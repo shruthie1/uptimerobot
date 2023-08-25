@@ -800,18 +800,21 @@ app.get('/requestcall', async (req, res, next) => {
     const userName = req.query.userName;
     const chatId = req.query.chatId;
     const user = userMap.get(userName.toLowerCase());
-    await fetchWithTimeout(`${ppplbot}&text=Call Request Recived: ${userName} | ${chatId}`);
+    // await fetchWithTimeout(`${ppplbot}&text=Call Request Recived: ${userName} | ${chatId}`);
+    console.log(`Call Request Recived: ${userName} | ${chatId}`)
     if (user) {
       setTimeout(async () => {
         try {
           const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
           if (data.data) {
-            await fetchWithTimeout(`${ppplbot}&text=Call Request Sent: ${userName} | ${chatId}`);
+            // await fetchWithTimeout(`${ppplbot}&text=Call Request Sent: ${userName} | ${chatId}`);
+            console.log(`Call Request Sent: ${userName} | ${chatId}`)
             setTimeout(async () => {
               await axios.get(`${user.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
             }, 45 * 1000);
           } else {
-            await fetchWithTimeout(`${ppplbot}&text=Call Request Sent Not Sucess: ${userName} | ${chatId}`);
+            console.log(`Call Request Sent Not Sucess: ${userName} | ${chatId}`);
+            // await fetchWithTimeout(`${ppplbot}&text=Call Request Sent Not Sucess: ${userName} | ${chatId}`);
           }
         } catch (error) {
           console.log("Failed", user);
