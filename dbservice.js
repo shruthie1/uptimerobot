@@ -300,7 +300,7 @@ class ChannelService {
     }
 
     async getActiveChannels(limit = 50, skip = 0, k) {
-        const query = { cannotSendMsgs: true, username: { $ne: null } };
+        const query = { canSendMsgs: true, username: { $ne: null } };
         const sort = { participantsCount: -1 };
         if (k) {
             query["$or"] = [{ title: { $regex: k, $options: 'i' } }, { username: { $regex: k, $options: 'i' } }]
