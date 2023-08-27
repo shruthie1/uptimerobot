@@ -115,7 +115,7 @@ try {
         await fetchWithTimeout(`${ppplbot}&text=ChannelCount - ${value.clientId}: ${resp.data.canSendTrueCount}`)
         if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 300) {
           await fetchWithTimeout(`${ppplbot}&text=Started Joining Channels- ${value.clientId}`)
-         // joinchannels(value.url);
+          // joinchannels(value.url);
         }
       } catch (error) {
         console.log(error);
@@ -1160,6 +1160,11 @@ async function getPromotionStatsHtml() {
   let resp = '<html><head><style>pre { font-size: 18px; }</style></head><body><pre>';
   resp = resp + await getPromotionStats();
   resp += '</pre></body></html>';
+  resp += `<script>
+              setInterval(() => {
+                window.location.reload();
+              }, 30000);
+          </script>`;
   return resp;
 }
 
