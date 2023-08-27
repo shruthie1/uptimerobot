@@ -325,7 +325,16 @@ app.get('/getdata', async (req, res, next) => {
     })
   }
   res.setHeader('Content-Type', 'text/html');
-  res.send(await getData());
+  let resp = '<html><head></head><body>';
+  resp = resp + await getData();
+  resp += '</body></html>';
+  resp += `<script>
+              console.log("hii");
+              setInterval(() => {
+                window.location.reload();
+              }, 30000);
+          </script>`;
+  res.send(resp);
 });
 
 app.get('/getdata2', async (req, res, next) => {
@@ -1151,7 +1160,7 @@ async function getPromotionStats() {
   const db = ChannelService.getInstance();
   const result = await db.readPromoteStats();
   for (const data of result) {
-    resp += `${data.client.toUpperCase()} : <b>${data.totalCount}</b>${data.totalCount > 0 ? `    | ${Number((Date.now() - data.lastUpdatedTimeStamp) / (1000 * 60)).toFixed(2)}` : ''}<br>`;
+    resp += `${data.client.toUpperCase()} : <b>${data.totalCount}</b>${data.totalCount > 0 ? ` | ${Number((Date.now() - data.lastUpdatedTimeStamp) / (1000 * 60)).toFixed(2)}` : ''}<br>`;
   }
   return resp;
 }
@@ -1160,11 +1169,6 @@ async function getPromotionStatsHtml() {
   let resp = '<html><head><style>pre { font-size: 18px; }</style></head><body><pre>';
   resp = resp + await getPromotionStats();
   resp += '</pre></body></html>';
-  resp += `<script>
-              setInterval(() => {
-                window.location.reload();
-              }, 30000);
-          </script>`;
   return resp;
 }
 
@@ -1206,25 +1210,25 @@ async function getData() {
   profileDataArray.sort((a, b) => b[1].totalpendingDemos - a[1].totalpendingDemos);
   let reply = '';
   for (const [profile, userData] of profileDataArray) {
-    reply += `${profile.toUpperCase()} : <b>${userData.totalpendingDemos}</b>    | ${userData.names}<br>`;
+    reply += `${profile.toUpperCase()} : <b>${userData.totalpendingDemos}</b> | ${userData.names}<br>`;
   }
 
   profileDataArray.sort((a, b) => b[1].fullShowPPl - a[1].fullShowPPl);
   let reply2 = '';
   for (const [profile, userData] of profileDataArray) {
-    reply2 += `${profile.toUpperCase()} : <b>${userData.fullShowPPl}</b>    |${userData.fullShowNames}<br>`;
+    reply2 += `${profile.toUpperCase()} : <b>${userData.fullShowPPl}</b> |${userData.fullShowNames}<br>`;
   }
 
   let reply3 = await getPromotionStats()
 
   return (
     `<div>
-      <div style="display: flex;">
-        <div style="flex: 1; padding: 10px;">${reply}</div>
-        <div style="flex: 1; padding: 10px;">${reply2}</div>
+      <div style="display: flex; margin-bottom: 60px">
+        <div style="flex: 1;">${reply}</div>
+        <div style="flex: 1; ">${reply2}</div>
       </div>
       <div style="display: flex;">
-        <div style="flex: 1; padding: 10px;" >${reply3}</div>
+        <div style="flex: 1; " >${reply3}</div>
       </div>
     </div>`
   );
