@@ -310,7 +310,7 @@ app.get('/activechannels/:limit/:skip', async (req, res, next) => {
   const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k);
   let resp = 'joinchannel:'
   result.forEach((channel) => {
-    resp = resp + `${channel.username}|`
+    resp = resp + `@${channel.username}|`
   })
   res.send(resp);
 });
