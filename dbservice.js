@@ -335,25 +335,27 @@ class ChannelService {
 
             await cursor.forEach((document) => {
                 for (const channel in document.data) {
-                    uniqueChannels.add(channel);
+                    if (channel) {
+                        uniqueChannels.add(channel);
+                    }
                 }
             });
 
             const uniqueChannelNames = Array.from(uniqueChannels);
-
             const channelInfoCollection = this.client.db("tgclients").collection('channels');
 
             for (const channelName of uniqueChannelNames) {
                 const existingChannel = await activeChannelCollection.findOne({ username: `@${channelName}` }, { projection: { "_id": 0 } });
                 if (!existingChannel) {
-                    const channelInfo = await channelInfoCollection.findOne({ username: `@${channelName}` });
+                    const channelInfo = await channelInfoCollection.findOne({ username: `@${channelName}` }, { projection: { "_id": 0 } });
                     if (channelInfo) {
                         await activeChannelCollection.insertOne(channelInfo);
                     }
                 }
             }
+            console.log("hi3")
         } catch (error) {
-
+            console.log(error)
         }
     }
 }
