@@ -43,7 +43,17 @@ fetchWithTimeout('https://api.db-ip.com/v2/free/self')
 const userMap = new Map();
 
 let count = 0;
-const ppplbot = "https://api.telegram.org/bot5807856562:AAFnhxpbQQ8MvyQaQGEg8vkpfCssLlY6x5c/sendMessage?chat_id=-1001801844217";
+let botCount = 0
+const ppplbot = () => {
+  let token;
+  if (botCount % 2 == 1) {
+    token = `6624618034:AAHoM3GYaw3_uRadOWYzT7c2OEp6a7A61mY`
+  } else {
+    token = `6607225097:AAG6DJg9Ll5XVxy24Nr449LTZgRb5bgshUA`
+  }
+
+  return `https://api.telegram.org/${token}/sendMessage?chat_id=-1001801844217`
+}
 const pingerbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001703065531`;
 
 const apiResp = {
@@ -112,9 +122,9 @@ try {
     for (const value of userMap.values()) {
       try {
         let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
-        await fetchWithTimeout(`${ppplbot}&text=ChannelCount - ${value.clientId}: ${resp.data.canSendTrueCount}`)
+        await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount - ${value.clientId}: ${resp.data.canSendTrueCount}`)
         if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 300) {
-          await fetchWithTimeout(`${ppplbot}&text=Started Joining Channels- ${value.clientId}`)
+          await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
           // joinchannels(value.url);
         }
       } catch (error) {
@@ -143,7 +153,7 @@ try {
       await sleep(1000)
     }
 
-    await fetchWithTimeout(`${ppplbot}&text=${encodeURIComponent(await getPromotionStats())}`);
+    await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStats())}`);
     const db = ChannelService.getInstance();
     await db.updateActiveChannels();
     await db.clearStats2();
@@ -286,7 +296,7 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   await db.insertUser(user);
-  await fetchWithTimeout(`${ppplbot}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
+  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
@@ -761,7 +771,7 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
     // } catch (e) {
     //   console.log('No Other Instance Exist');
     // }
-    // await axios.get(`${ppplbot}&text=${userName.toUpperCase()}:  TG_CLIENT Seems OFF`);
+    // await axios.get(`${ppplbot()}&text=${userName.toUpperCase()}:  TG_CLIENT Seems OFF`);
     //console.log(`userName.toUpperCase()}:  TG_CLIENT Seems OFF`,'\nRestarting Service')
     // const checker = checkerclass.getinstance()
     // checker.restart(userName, processId);
@@ -809,21 +819,21 @@ app.get('/requestcall', async (req, res, next) => {
     const userName = req.query.userName;
     const chatId = req.query.chatId;
     const user = userMap.get(userName.toLowerCase());
-    // await fetchWithTimeout(`${ppplbot}&text=Call Request Recived: ${userName} | ${chatId}`);
+    // await fetchWithTimeout(`${ppplbot()}&text=Call Request Recived: ${userName} | ${chatId}`);
     console.log(`Call Request Recived: ${userName} | ${chatId}`)
     if (user) {
       setTimeout(async () => {
         try {
           const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
           if (data.data) {
-            // await fetchWithTimeout(`${ppplbot}&text=Call Request Sent: ${userName} | ${chatId}`);
+            // await fetchWithTimeout(`${ppplbot()}&text=Call Request Sent: ${userName} | ${chatId}`);
             console.log(`Call Request Sent: ${userName} | ${chatId}`)
             setTimeout(async () => {
               await axios.get(`${user.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
             }, 45 * 1000);
           } else {
             console.log(`Call Request Sent Not Sucess: ${userName} | ${chatId}`);
-            // await fetchWithTimeout(`${ppplbot}&text=Call Request Sent Not Sucess: ${userName} | ${chatId}`);
+            // await fetchWithTimeout(`${ppplbot()}&text=Call Request Sent Not Sucess: ${userName} | ${chatId}`);
           }
         } catch (error) {
           console.log("Failed", user);
@@ -868,11 +878,11 @@ class checkerclass {
     //                     console.log(resp.data.userName, ': All good');
     //                 } else {
     //                     console.log(resp.data.userName, ': DIAGNOSE - Checking Connection - ', resp.data.status);
-    //                     await axios.get(`${ppplbot}&text=${(resp.data.userName).toUpperCase()}:healthCheckError${resp.data.status}`);
+    //                     await axios.get(`${ppplbot()}&text=${(resp.data.userName).toUpperCase()}:healthCheckError${resp.data.status}`);
     //                     try {
     //                         const connectResp = await axios.get(`${val.url}tryToConnect`, { timeout: 10000 });
     //                         console.log(connectResp.data.userName, ': CONNECTION CHECK RESP - ', connectResp.data.status);
-    //                         await axios.get(`${ppplbot}&text=${(connectResp.data.userName).toUpperCase()}:retryResponse -${connectResp.data.status}`);
+    //                         await axios.get(`${ppplbot()}&text=${(connectResp.data.userName).toUpperCase()}:retryResponse -${connectResp.data.status}`);
     //                     } catch (e) {
     //                         console.log(val.url, `CONNECTION RESTART FAILED!!`);
     //                     }
@@ -932,20 +942,20 @@ class checkerclass {
         catch (e) {
           userMap.set(key, { ...val, downTime: val.downTime + 1 })
           console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable - ${val.downTime}`);
-          // await fetchWithTimeout(`${ppplbot}&text=${key} is  NOT Reachable - ${val.downTime}`);
+          // await fetchWithTimeout(`${ppplbot()}&text=${key} is  NOT Reachable - ${val.downTime}`);
           if (val.downTime > 5) {
             userMap.set(key, { ...val, downTime: -5 })
             try {
               const resp = await axios.get(`${val.deployKey}`, { timeout: 120000 });
               if (resp?.status == 200 || resp.status == 201) {
-                await fetchWithTimeout(`${ppplbot}&text=Restarted ${key}`);
+                await fetchWithTimeout(`${ppplbot()}&text=Restarted ${key}`);
               } else {
                 console.log(`Failed to Restart ${key}`);
-                await fetchWithTimeout(`${ppplbot}&text=Failed to Restart ${key}`);
+                await fetchWithTimeout(`${ppplbot()}&text=Failed to Restart ${key}`);
               }
             } catch (error) {
               console.log(`Failed to Restart ${key}`);
-              await fetchWithTimeout(`${ppplbot}&text=Failed to Restart ${key}`);
+              await fetchWithTimeout(`${ppplbot()}&text=Failed to Restart ${key}`);
             }
           }
         }
@@ -961,15 +971,15 @@ class checkerclass {
             const data = userMap.get(key);
             if (Date.now() - val.lastPingTime > (7 * 60 * 1000)) {
               userMap.set(key, { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-              await fetchWithTimeout(`${ppplbot}&text=${val.clientId} : Trying to Exit as not responding `);
+              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Trying to Exit as not responding `);
               const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
             } else {
               const url = val.url.includes('glitch') ? `${val.url}exec/refresh` : val.url;
-              await fetchWithTimeout(`${ppplbot}&text=${val.clientId} : Not responding | url = ${url}`);
+              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
               const resp = await axios.get(url, { timeout: 200000 });
             }
           } catch (error) {
-            await fetchWithTimeout(`${ppplbot}&text=${val.clientId} : Url not responding`);
+            await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Url not responding`);
             console.log(error);
           }
         }
@@ -979,15 +989,15 @@ class checkerclass {
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot}&text=ChatGPT  NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot()}&text=ChatGPT  NOT Reachable`);
         try {
           const resp = await axios.get(`https://api.render.com/deploy/srv-cflkq853t39778sm0clg?key=e4QNTs9kDw4`, { timeout: 55000 });
           if (resp?.status == 200 || resp.status == 201) {
-            await fetchWithTimeout(`${ppplbot}&text=Restarted CHATGPT`);
+            await fetchWithTimeout(`${ppplbot()}&text=Restarted CHATGPT`);
           }
         } catch (error) {
           console.log("Cannot restart ChatGpt server");
-          await fetchWithTimeout(`${ppplbot}&text=Cannot restart ChatGpt server`);
+          await fetchWithTimeout(`${ppplbot()}&text=Cannot restart ChatGpt server`);
         }
       }
       try {
@@ -995,15 +1005,15 @@ class checkerclass {
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'UpTimeBot', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot}&text=UpTimeBot  NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot()}&text=UpTimeBot  NOT Reachable`);
         try {
           const resp = await axios.get(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 55000 });
           if (resp?.status == 200 || resp.status == 201) {
-            await fetchWithTimeout(`${ppplbot}&text=Restarted UpTimeBot`);
+            await fetchWithTimeout(`${ppplbot()}&text=Restarted UpTimeBot`);
           }
         } catch (error) {
           console.log("Cannot restart ChatGpt server");
-          await fetchWithTimeout(`${ppplbot}&text=Cannot restart UpTimeBot server`);
+          await fetchWithTimeout(`${ppplbot()}&text=Cannot restart UpTimeBot server`);
         }
       }
       try {
@@ -1011,7 +1021,7 @@ class checkerclass {
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot}&text=TgSignup  NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot()}&text=TgSignup  NOT Reachable`);
       }
     }, 60000);
 
@@ -1020,7 +1030,7 @@ class checkerclass {
     //     if (val.timeStamp + 230000 < Date.now()) {
     //       userMap.set(key, { ...val, timeStamp: Date.now() });
     //       try {
-    //         await axios.get(`${ ppplbot } & text=${ key } is DOWN!!`, { timeout: 10000 });
+    //         await axios.get(`${ ppplbot() } & text=${ key } is DOWN!!`, { timeout: 10000 });
     //         await axios.get(`${ val.url }`, { timeout: 10000 });
     //         try {
     //           const resp = await axios.get(`${ val.url }checkHealth`, { timeout: 10000 });
@@ -1029,11 +1039,11 @@ class checkerclass {
     //               console.log(resp.data.userName, ': All good');
     //             } else {
     //               console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
-    //               await axios.get(`${ ppplbot } & text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${ resp.data.status } `);
+    //               await axios.get(`${ ppplbot() } & text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${ resp.data.status } `);
     //               try {
     //                 const connectResp = await axios.get(`${ val.url } tryToConnect`, { timeout: 10000 });
     //                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
-    //                 await axios.get(`${ ppplbot }& text=${ (connectResp.data.userName).toUpperCase() }: RetryResponse - ${ connectResp.data.status } `);
+    //                 await axios.get(`${ ppplbot() }& text=${ (connectResp.data.userName).toUpperCase() }: RetryResponse - ${ connectResp.data.status } `);
     //               } catch (e) {
     //                 s
     //                 console.log(val.url, `CONNECTION RESTART FAILED!!`);
@@ -1061,7 +1071,7 @@ class checkerclass {
     if (url) {
       userMap.set(userName, { ...data, timeStamp: Date.now() });
       try {
-        //await axios.get(`${ ppplbot }& text=${ userName } is DOWN!!`, { timeout: 10000 });
+        //await axios.get(`${ ppplbot() }& text=${ userName } is DOWN!!`, { timeout: 10000 });
         //await axios.get(`${ url } `, { timeout: 10000 });
         try {
           console.log('Checking Health')
@@ -1071,11 +1081,11 @@ class checkerclass {
               console.log(resp.data.userName, ': All good');
             } else {
               console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
-              await axios.get(`${ppplbot}& text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${resp.data.status} `);
+              await axios.get(`${ppplbot()}& text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${resp.data.status} `);
               try {
                 const connectResp = await axios.get(`${url} tryToConnect / ${processId} `, { timeout: 10000 });
                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
-                await axios.get(`${ppplbot}& text=${(connectResp.data.userName).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
+                await axios.get(`${ppplbot()}& text=${(connectResp.data.userName).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
               } catch (e) {
                 console.log(url, `CONNECTION RESTART FAILED!!`);
               }
