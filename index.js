@@ -68,8 +68,7 @@ const apiResp = {
 async function setUserMap() {
   userMap.clear();
   const db = ChannelService.getInstance();
-  await fetchWithTimeout(`${ppplbot()}&text=hii`);
-  await fetchWithTimeout(`${ppplbot()}&text=hello`);
+  await fetchWithTimeout(`${ppplbot()}&text=UptimeRobot : Refreshed Map`);
   const users = await db.getAllUserClients();
   users.forEach(user => {
     userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, lastPingTime: Date.now(), clientId: user.clientId })
