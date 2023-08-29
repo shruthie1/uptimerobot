@@ -113,21 +113,19 @@ try {
     })
   })
 
-  schedule.scheduleJob('test3', ' 0 4 * * * ', 'Asia/Kolkata', async () => {
-    Array.from(userMap.values()).map(async (value) => {
-      //await fetchWithTimeout(`${value.url}leavechannels`);
-    })
-  })
-
   schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
     for (const value of userMap.values()) {
       try {
-        let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
-        await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount - ${value.clientId}: ${resp.data.canSendTrueCount}`)
-        if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 300) {
-          await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
-          // joinchannels(value.url);
+        const now = new Date();
+        if (now.getUTCDate() % 3 === 1) {
+          await fetchWithTimeout(`${value.url}leavechannels`);
         }
+        let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
+        await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
+        // if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 300) {
+        //   await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
+        //   // joinchannels(value.url);
+        // }
       } catch (error) {
         console.log(error);
       }
