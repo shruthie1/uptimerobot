@@ -110,7 +110,8 @@ try {
   schedule.scheduleJob('test3', ' 0 7,13,20,23 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}asktopay`);
-    })
+    });
+    await fetchWithTimeout(`https://uptimechecker.onrender.com/procesusers/200/0`);
   })
 
   schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
