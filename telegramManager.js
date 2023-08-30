@@ -115,6 +115,7 @@ class TelegramManager {
                         })
                     );
                 }
+                console.log("Joined channel Sucess")
             } catch (error) {
               console.log(error);
             }
