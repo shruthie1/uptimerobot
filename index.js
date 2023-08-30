@@ -111,7 +111,7 @@ try {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}asktopay`);
     });
-    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/500/0`);
+    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/200/0`);
   })
 
   schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
@@ -248,13 +248,11 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       console.log(document.mobile, " :  true");
       const lastActive = await client.getLastActiveTime()
       await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total, lastActive });
+      await client?.disconnect(document.mobile);
+      deleteClient()
     } else {
       console.log(document.mobile, " :  false");
       await db.deleteUser(document, { msgs: cli });
-    }
-    if (client) {
-      await client?.disconnect(document.mobile);
-      deleteClient()
     }
   }
   console.log("finished")
