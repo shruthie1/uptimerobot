@@ -659,7 +659,7 @@ app.get('/connectclient/:number', async (req, res) => {
 app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
   res.send("joiningChannels");
   next();
-}, async () => {
+}, async (req, res) => {
   const number = req.params?.number;
   const limit = req.params.limit ? req.params.limit : 30
   const skip = req.params.skip ? req.params.skip : 20
