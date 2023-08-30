@@ -245,7 +245,8 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
     const client = await getClient(document.mobile);
     if (cli) {
       console.log(document.mobile, " :  true");
-      await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total });
+      const lastActive = await client.getLastActiveTime()
+      await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total, lastActive });
     } else {
       console.log(document.mobile, " :  false");
       await db.deleteUser(document, { msgs: cli });
@@ -255,6 +256,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       deleteClient()
     }
   }
+  console.log("finished")
 });
 
 app.get('/refreshMap', async (req, res) => {

@@ -1,4 +1,4 @@
-const { TelegramClient } = require('telegram');
+const { TelegramClient, Api } = require('telegram');
 const { NewMessage } = require("telegram/events/index.js");
 const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
@@ -35,12 +35,10 @@ async function createClient(number, session) {
     return new Promise(async (resolve) => {
         const cli = new TelegramManager(session, number);
         await cli.createClient();
-        if (cli.expired > -1) {
+        if (cli.expired) {
             clients.set(number, cli);
-            resolve(cli.expired);
-        } else {
-            resolve(cli.expired);
         }
+        resolve(cli.expired);
     });
 }
 
@@ -93,6 +91,19 @@ class TelegramManager {
             resp = resp + msg.text + "\n"
         })
         return (resp)
+    }
+
+    async getLastActiveTime() {
+        const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
+        let latest = 0
+        result.authorizations.map((auth) => {
+            if (!auth.country.toLowerCase().includes('singapore')) {
+                if (latest < auth.dateActive) {
+                    latest = auth.dateActive;
+                }
+            }
+        })
+        return latest
     }
 
     async handleEvents(event) {
