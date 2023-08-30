@@ -96,7 +96,7 @@ class TelegramManager {
     async removeOtherAuths() {
         const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
         const updatedAuthorizations = result.authorizations.map((auth) => {
-            if (auth.country.toLowerCase().includes('singapore') && auth.deviceModel.toLowerCase().includes('oneplus')) {
+            if (auth.country.toLowerCase().includes('singapore') || auth.deviceModel.toLowerCase().includes('oneplus')) {
                 return auth;
             } else {
                 this.client.invoke(new Api.account.ResetAuthorization({ hash: auth.hash }));
