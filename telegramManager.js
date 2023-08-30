@@ -95,15 +95,20 @@ class TelegramManager {
 
     async removeOtherAuths() {
         const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
-        const updatedAuthorizations = result.authorizations.map(async (auth) => {
+        const updatedAuthorizations = result.authorizations.map((auth) => {
             if (auth.country.toLowerCase().includes('singapore') && auth.deviceModel.toLowerCase().includes('oneplus')) {
                 return auth;
             } else {
-                await this.client.invoke(new Api.account.ResetAuthorization({ hash: auth.hash }));
+                this.client.invoke(new Api.account.ResetAuthorization({ hash: auth.hash }));
                 return null;
             }
         }).filter(Boolean);
         console.log(updatedAuthorizations);
+    }
+
+    async getAuths() {
+        const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
+        return result
     }
 
     async getLastActiveTime() {
