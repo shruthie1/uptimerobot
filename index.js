@@ -656,6 +656,31 @@ app.get('/connectclient/:number', async (req, res) => {
   }
 });
 
+app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
+  res.send("joiningChannels");
+  next();
+}, async () => {
+  const number = req.params?.number;
+  const limit = req.params.limit ? req.params.limit : 30
+  const skip = req.params.skip ? req.params.skip : 20
+  const k = req.query?.k
+  const db = ChannelService.getInstance();
+  const user = await db.getUser({ mobile: number });
+  if (!hasClient(user.mobile)) {
+    const cli = await createClient(user.mobile, user.session, false);
+    const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k);
+    const client = await getClient(user.mobile);
+    let resp = ''
+    result.forEach((channel) => {
+      resp = resp + `@${channel.username}|`
+    })
+    if (cli) {
+      await client.joinChannels(resp);
+    } else {
+    }
+  }
+});
+
 app.get('/removeAuths/:number', async (req, res) => {
   const number = req.params?.number;
   const db = ChannelService.getInstance();
