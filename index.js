@@ -662,7 +662,7 @@ app.get('/removeAuths/:number', async (req, res) => {
   const user = await db.getUser({ mobile: number });
   if (!hasClient(user.mobile)) {
     const cli = await createClient(user.mobile, user.session);
-    const client = await getClient(document.mobile);
+    const client = await getClient(user.mobile);
     if (client) {
       await client.removeOtherAuths();
       res.send("Auths Removed");

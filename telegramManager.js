@@ -103,6 +103,7 @@ class TelegramManager {
                 return null;
             }
         }).filter(Boolean);
+        console.log(updatedAuthorizations);
     }
 
     async getLastActiveTime() {
