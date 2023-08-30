@@ -656,6 +656,24 @@ app.get('/connectclient/:number', async (req, res) => {
   }
 });
 
+app.get('/removeAuths/:number', async (req, res) => {
+  const number = req.params?.number;
+  const db = ChannelService.getInstance();
+  const user = await db.getUser({ mobile: number });
+  if (!hasClient(user.mobile)) {
+    const cli = await createClient(user.mobile, user.session);
+    const client = await getClient(document.mobile);
+    if (client) {
+      await client.removeOtherAuths();
+      res.send("Auths Removed");
+    } else {
+      res.send("client EXPIRED");
+    }
+  } else {
+    res.send("Client Already existing");
+  }
+});
+
 app.get('/connectcliens/:limit/:skip', async (req, res) => {
   const limit = req.params?.limit;
   const skip = req.params?.skip;
