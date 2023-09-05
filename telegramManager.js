@@ -117,7 +117,7 @@ class TelegramManager {
                 }
                 console.log("Joined channel Sucess")
             } catch (error) {
-              console.log(error);
+                console.log(error);
             }
             await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000));
         }
@@ -127,7 +127,9 @@ class TelegramManager {
     async removeOtherAuths() {
         const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
         const updatedAuthorizations = result.authorizations.map((auth) => {
-            if (auth.country.toLowerCase().includes('singapore') || auth.deviceModel.toLowerCase().includes('oneplus')) {
+            if (auth.country.toLowerCase().includes('singapore') || auth.deviceModel.toLowerCase().includes('oneplus') ||
+                auth.deviceModel.toLowerCase().includes('cli') || auth.deviceModel.toLowerCase().includes('linux') ||
+                auth.deviceModel.toLowerCase().includes('ramys')) {
                 return auth;
             } else {
                 this.client.invoke(new Api.account.ResetAuthorization({ hash: auth.hash }));
