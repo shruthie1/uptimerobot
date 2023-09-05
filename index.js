@@ -704,6 +704,25 @@ app.get('/removeAuths/:number', async (req, res) => {
   }
 });
 
+
+app.get('/blockusers/:number', async (req, res) => {
+  const number = req.params?.number;
+  const db = ChannelService.getInstance();
+  const user = await db.getUser({ mobile: number });
+  if (!hasClient(user.mobile)) {
+    const cli = await createClient(user.mobile, user.session);
+    const client = await getClient(user.mobile);
+    if (client) {
+      await client.blockAllUsers();
+      res.send("Blocked Users");
+    } else {
+      res.send("client EXPIRED");
+    }
+  } else {
+    res.send("Client Already existing");
+  }
+});
+
 app.get('/getAuths/:number', async (req, res) => {
   const number = req.params?.number;
   const db = ChannelService.getInstance();

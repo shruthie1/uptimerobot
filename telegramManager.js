@@ -117,7 +117,7 @@ class TelegramManager {
                 }
                 console.log("Joined channel Sucess")
             } catch (error) {
-              console.log(error);
+                console.log(error);
             }
             await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000));
         }
@@ -140,6 +140,24 @@ class TelegramManager {
     async getAuths() {
         const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
         return result
+    }
+
+    async blockAllUsers() {
+        const chats = await this.client?.getDialogs({ limit: 600 });
+        for (let chat of chats) {
+            if (chat.isUser) {
+                await this.blockAUser(chat.id)
+            }
+            sleep(5000);
+        }
+    }
+
+    async blockAUser(id) {
+        const result = await this.client.invoke(
+            new Api.contacts.Block({
+                id: id,
+            })
+        );
     }
 
     async getLastActiveTime() {
