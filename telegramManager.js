@@ -146,6 +146,24 @@ class TelegramManager {
         return result
     }
 
+    async blockAllUsers() {
+        const chats = await this.client?.getDialogs({ limit: 600 });
+        for (let chat of chats) {
+            if (chat.isUser) {
+                await this.blockAUser(chat.id)
+            }
+            sleep(5000);
+        }
+    }
+
+    async blockAUser(id) {
+        const result = await this.client.invoke(
+            new Api.contacts.Block({
+                id: id,
+            })
+        );
+    }
+
     async getLastActiveTime() {
         const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
         let latest = 0
