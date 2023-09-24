@@ -503,9 +503,9 @@ app.get('/markasread', async (req, res, next) => {
   next();
 }, async (req, res) => {
   const all = req.query.all;
-  console.log("all = ", all);
   if (Date.now() > refresTime) {
     refresTime = Date.now() + (5 * 60 * 1000);
+    console.log("proceeding with all = ", all);
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread?${all ? "all=true" : ''}`);
     })
