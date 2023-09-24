@@ -325,15 +325,15 @@ app.get('/activechannels/:limit/:skip', async (req, res, next) => {
   res.send(resp);
 });
 
-// let refresTime = Date.now();
+let refresTime = Date.now();
 app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
-  // if (Date.now() > refresTime) {
-  //   refresTime = Date.now() + (5 * 60 * 1000);
-  //   Array.from(userMap.values()).map(async (value) => {
-  //     await fetchWithTimeout(`${value.url}markasread`);
-  //   })
-  // }
+  if (Date.now() > refresTime) {
+    refresTime = Date.now() + (5 * 60 * 1000);
+    Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}markasread`);
+    })
+  }
   res.setHeader('Content-Type', 'text/html');
   let resp = '<html><head></head><body>';
   resp = resp + await getData();
@@ -504,9 +504,12 @@ app.get('/markasread', async (req, res, next) => {
 }, async (req, res) => {
   const all = req.query.all;
   console.log("all = ", all);
-  Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`${value.url}markasread?${all ? "all=true" : ''}`);
-  })
+  if (Date.now() > refresTime) {
+    refresTime = Date.now() + (5 * 60 * 1000);
+    Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}markasread?${all ? "all=true" : ''}`);
+    })
+  }
 });
 
 app.get('/setactiveqr', async (req, res, next) => {
