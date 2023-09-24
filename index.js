@@ -325,15 +325,15 @@ app.get('/activechannels/:limit/:skip', async (req, res, next) => {
   res.send(resp);
 });
 
-let refresTime = Date.now();
+// let refresTime = Date.now();
 app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
-  if (Date.now() > refresTime) {
-    refresTime = Date.now() + (5 * 60 * 1000);
-    Array.from(userMap.values()).map(async (value) => {
-      await fetchWithTimeout(`${value.url}markasread`);
-    })
-  }
+  // if (Date.now() > refresTime) {
+  //   refresTime = Date.now() + (5 * 60 * 1000);
+  //   Array.from(userMap.values()).map(async (value) => {
+  //     await fetchWithTimeout(`${value.url}markasread`);
+  //   })
+  // }
   res.setHeader('Content-Type', 'text/html');
   let resp = '<html><head></head><body>';
   resp = resp + await getData();
@@ -497,7 +497,8 @@ app.get('/calltopaid', async (req, res, next) => {
 
 
 app.get('/markasread', async (req, res, next) => {
-  checkerclass.getinstance()
+  checkerclass.getinstance();
+  console.log('Received MarkasRead Req');
   res.send('Hello World!');
   next();
 }, async (req, res) => {
@@ -1004,7 +1005,9 @@ class checkerclass {
             }
             setTimeout(async () => {
               const connectResp = await axios.get(`${url}promote`);
-              const connectResp2 = await axios.get(`${url}markasread`);
+              setTimeout(async () => {
+                const connectResp2 = await axios.get(`${url}markasread`);
+              }, 35000);
             }, 35000);
           } catch (error) {
             console.log(error)
