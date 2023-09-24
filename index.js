@@ -1053,16 +1053,17 @@ class checkerclass {
         }
         if (Date.now() - val.lastPingTime > (3 * 60 * 1000)) {
           try {
-            const data = userMap.get(key);
-            if (Date.now() - val.lastPingTime > (7 * 60 * 1000)) {
-              userMap.set(key, { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Trying to Exit as not responding `);
-              const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
-            } else {
-              const url = val.url.includes('glitch') ? `${val.url}exec/refresh` : val.url;
-              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
-              const resp = await axios.get(url, { timeout: 200000 });
-            }
+            await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding `);
+
+            // const data = userMap.get(key);
+            // if (Date.now() - val.lastPingTime > (7 * 60 * 1000)) {
+            //   userMap.set(key, { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
+            //   // const resp = await axios.get(`${val.url}exit`, { timeout: 120000 });
+            // } else {
+            //   const url = val.url.includes('glitch') ? `${val.url}exec/refresh` : val.url;
+            //   // await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
+            //   // const resp = await axios.get(url, { timeout: 200000 });
+            // }
           } catch (error) {
             await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Url not responding`);
             console.log(error);
