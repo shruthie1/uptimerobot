@@ -1017,9 +1017,17 @@ class checkerclass {
               console.log(connectResp.status)
             }
             setTimeout(async () => {
-              const connectResp = await axios.get(`${url}promote`);
+              try {
+                const connectResp = await axios.get(`${url}promote`);
+              } catch (error) {
+                console.log(error.code)
+              }
               setTimeout(async () => {
-                const connectResp2 = await axios.get(`${url}markasread`);
+                try {
+                  const connectResp2 = await axios.get(`${url}markasread`);
+                } catch (error) {
+                  console.log(error.code)
+                }
               }, 35000);
             }, 35000);
           } catch (error) {
