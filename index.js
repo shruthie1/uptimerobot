@@ -413,7 +413,8 @@ app.get('/restartall', async (req, res, next) => {
   })
 });
 app.get('/sendtoall', async (req, res, next) => {
-  checkerclass.getinstance()
+  checkerclass.getinstance();
+  console.log('Received sendtoall request');
   res.send('Hello World!');
   next();
 }, async (req, res) => {
@@ -433,11 +434,13 @@ app.get('/sendtoall', async (req, res, next) => {
 
 app.get('/usermap', async (req, res) => {
   checkerclass.getinstance()
+  console.log('Received Usermap request');
   res.json(Array.from(userMap.values()));
 });
 
 app.get('/clients', async (req, res) => {
   checkerclass.getinstance();
+  console.log('Received Client request');
   const db = ChannelService.getInstance();
   const users = await db.getAllUserClients();
   res.json(users)
@@ -445,6 +448,7 @@ app.get('/clients', async (req, res) => {
 
 app.get('/keepready2', async (req, res, next) => {
   checkerclass.getinstance()
+  console.log('Received keepready2 request');
   res.send(`Responding!!\nMsg = ${req.query.msg}`);
   next();
 }, async (req, res) => {
@@ -459,7 +463,8 @@ app.get('/keepready2', async (req, res, next) => {
 });
 
 app.get('/keepready', async (req, res, next) => {
-  checkerclass.getinstance()
+  checkerclass.getinstance();
+  console.log('Received Keepready request');
   const dnsMsg = encodeURIComponent(`Dont Speak Okay!!\n**I am in Bathroom**\n\nMute yourself!!\n\nI will show you Okay..!!`)
   const msg = req.query.msg.toLowerCase() == 'dns' ? dnsMsg : req.query.msg;
   Array.from(userMap.values()).map(async (value) => {
@@ -471,7 +476,8 @@ app.get('/keepready', async (req, res, next) => {
 });
 
 app.get('/asktopay', async (req, res, next) => {
-  checkerclass.getinstance()
+  checkerclass.getinstance();
+  console.log('Received AsktoPay request');
   res.send(`Asking Pppl`);
   next();
 }, async (req, res) => {
@@ -482,17 +488,21 @@ app.get('/asktopay', async (req, res, next) => {
   })
 });
 
-
+let callingTime = Date.now();
 app.get('/calltopaid', async (req, res, next) => {
   checkerclass.getinstance()
+  console.log('Received Call request');
   res.send(`Asking Pppl`);
   next();
 }, async (req, res) => {
   const msg = req.query.msg;
   console.log("Msg = ", msg);
-  Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`${value.url}calltopaid`)
-  })
+  if (Date.now() > callingTime) {
+    callingTime = Date.now() + (10 * 60 * 1000)
+    Array.from(userMap.values()).map(async (value) => {
+      await fetchWithTimeout(`${value.url}calltopaid`)
+    })
+  }
 });
 
 
