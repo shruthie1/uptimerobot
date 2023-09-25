@@ -130,6 +130,7 @@ class ChannelService {
             return entry
         } catch (error) {
             console.log(error)
+            return undefined
         }
     }
 
