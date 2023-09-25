@@ -128,7 +128,7 @@ try {
           joinchannels(value.url);
         }
       } catch (error) {
-        console.log(error);
+        console.log("Some Error: ", error.code);
       }
     }
     await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
@@ -163,11 +163,11 @@ try {
       const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
       const resp2 = await axios.get(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
     } catch (error) {
-      console.log(error)
+      console.log("Some Error: ", error.code)
     }
   })
 } catch (error) {
-  console.log(error);
+  console.log("Some Error: ", error.code);
 }
 
 async function fetchWithTimeout(resource, options = {}) {
@@ -696,7 +696,7 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log(error)
+    console.log("Some Error: ", error.code)
   }
 });
 
@@ -852,7 +852,7 @@ app.get('/receiveNumber/:num', async (req, res, next) => {
       await axios.get(`${data.url}receiveNumber/${num}`, { timeout: 7000 });
     }
   } catch (error) {
-    console.log(error);
+    console.log("Some Error: ", error.code);
   }
 });
 
@@ -884,11 +884,11 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
     //     const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
     //   }
     // } catch (error) {
-    //   console.log(error)
+    //   console.log("Some Error: ",error.code)
     // }
 
   } catch (error) {
-    console.log(error);
+    console.log("Some Error: ", error.code);
   }
 });
 
@@ -906,7 +906,7 @@ app.get('/receive', async (req, res, next) => {
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
     }
   } catch (error) {
-    console.log(error);
+    console.log("Some Error: ", error.code);
   }
 });
 
@@ -943,7 +943,7 @@ app.get('/requestcall', async (req, res, next) => {
       console.log("USer not exist!!")
     }
   } catch (error) {
-    console.log(error);
+    console.log("Some Error: ", error.code);
   }
 });
 
@@ -1023,7 +1023,7 @@ class checkerclass {
               }, 35000);
             }, 35000);
           } catch (error) {
-            console.log(error)
+            console.log("Some Error: ", error.code)
           }
           await sleep(18000);
         }
@@ -1064,7 +1064,7 @@ class checkerclass {
           try {
             const resp = await axios.get(`${val.url}promote`, { timeout: 120000 });
           } catch (error) {
-            console.log(error);
+            console.log("Some Error: ", error.code);
           }
         }
         if (Date.now() - val.lastPingTime > (3 * 60 * 1000)) {
@@ -1082,7 +1082,7 @@ class checkerclass {
             // }
           } catch (error) {
             await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Url not responding`);
-            console.log(error);
+            console.log("Some Error: ", error.code);
           }
         }
       })
@@ -1262,7 +1262,7 @@ async function joinchannels(url) {
         await sleep(180000);
       }
     } catch (error) {
-      console.log(error)
+      console.log("Some Error: ", error.code)
     }
   }
 }
