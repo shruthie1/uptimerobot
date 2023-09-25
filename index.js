@@ -658,15 +658,19 @@ app.get('/connectclient/:number', async (req, res) => {
   const number = req.params?.number;
   const db = ChannelService.getInstance();
   const user = await db.getUser({ mobile: number });
-  if (!hasClient(user.mobile)) {
-    const cli = await createClient(user.mobile, user.session);
-    if (cli) {
-      res.send("client created");
+  if (user) {
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session);
+      if (cli) {
+        res.send("client created");
+      } else {
+        res.send("client EXPIRED");
+      }
     } else {
-      res.send("client EXPIRED");
+      res.send("Client Already existing");
     }
   } else {
-    res.send("Client Already existing");
+    res.send("User Does not exist");
   }
 });
 
