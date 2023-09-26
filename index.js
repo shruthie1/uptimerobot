@@ -248,7 +248,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       console.log(document.mobile, " :  true");
       const lastActive = await client.getLastActiveTime();
       const date = new Date(lastActive * 1000);
-      const me = await cli.getMe()
+      const me = await client.getMe()
       await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString() });
       await client?.disconnect(document.mobile);
       deleteClient()
