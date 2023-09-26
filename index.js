@@ -111,7 +111,7 @@ try {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}asktopay`);
     });
-    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/200/0`);
+    // await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/200/0`);
   })
 
   schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
