@@ -95,6 +95,11 @@ class TelegramManager {
         return (resp)
     }
 
+    async getMe() {
+        const me = await this.client.getMe();
+        return me
+    }
+
     async joinChannels(str) {
         const channels = str.split('|');
         for (let i = 0; i < channels.length; i++) {
