@@ -896,7 +896,8 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
       const data = userMap.get(userName.toLowerCase());
       const url = data?.url;
       if (url) {
-        const connectResp = await axios.get(`${url}getprocessId`, { timeout: 10000 });
+        const connectResp = await axios.get(`${url}getprocessid`, { timeout: 10000 });
+        console.log(connectResp);
         const resp = connectResp.json();
         console.log(resp);
         if (resp.ProcessId === processId) {
@@ -905,11 +906,11 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
         }
       }
     } catch (error) {
-      console.log("Some Error: ", error.code)
+      console.log("Some Error: ", error)
     }
 
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", error);
   }
 });
 
@@ -946,20 +947,25 @@ app.get('/requestcall', async (req, res, next) => {
         try {
           const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
           if (data.data) {
-            // await fetchWithTimeout(`${ppplbot()}&text=Call Request Sent: ${userName} | ${chatId}`);
             console.log(`Call Request Sent: ${userName} | ${chatId}`)
             setTimeout(async () => {
-              await axios.get(`${user.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
-            }, 45 * 1000);
+              try {
+                const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
+                setTimeout(async () => {
+                  await axios.get(`${user.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
+                }, 45 * 1000);
+              } catch (error) {
+                console.log(error)
+              }
+            }, 2 * 60 * 1000);
           } else {
             console.log(`Call Request Sent Not Sucess: ${userName} | ${chatId}`);
-            // await fetchWithTimeout(`${ppplbot()}&text=Call Request Sent Not Sucess: ${userName} | ${chatId}`);
           }
         } catch (error) {
           console.log("Failed", user);
         }
 
-      }, 5 * 60 * 1000);
+      }, 3 * 60 * 1000);
     } else {
       console.log("USer not exist!!")
     }
