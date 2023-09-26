@@ -93,6 +93,7 @@ try {
       }
       await sleep(2000)
     }
+    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
   })
 
   schedule.scheduleJob('test1', ' 2 6,10,16,20,3 * * * ', 'Asia/Kolkata', async () => {
@@ -111,7 +112,6 @@ try {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}asktopay`);
     });
-    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
   })
 
   schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
