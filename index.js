@@ -897,10 +897,7 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
       const url = data?.url;
       if (url) {
         const connectResp = await axios.get(`${url}getprocessid`, { timeout: 10000 });
-        console.log(connectResp);
-        const resp = connectResp.json();
-        console.log(resp);
-        if (resp.ProcessId === processId) {
+        if (connectResp.data.ProcessId === processId) {
           userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
           connetionQueue.push({ userName, processId });
         }
