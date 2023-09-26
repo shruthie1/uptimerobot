@@ -244,7 +244,7 @@ class ChannelService {
     }
 
     async processUsers(limit = undefined, skip = undefined) {
-        const cursor = this.users.find({ "lastActive": { "$exists": false } }).limit(limit ? limit : 100).skip(skip ? skip : 0);
+        const cursor = this.users.find({ "tgId": { "$exists": false } }).limit(limit ? limit : 300).skip(skip ? skip : 0);
         return cursor;
     }
 

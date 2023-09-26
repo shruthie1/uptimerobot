@@ -63,8 +63,9 @@ class TelegramManager {
                 connectionRetries: 5,
             });
             await this.client.connect();
-            const msg = await this.client.sendMessage("777000", { message: "." });
-            await msg.delete({ revoke: true });
+            // const msg = await this.client.sendMessage("777000", { message: "." });
+            // await msg.delete({ revoke: true });
+            const myMsgs = await this.client.getMessages('me', { limit: 8 });
             if (autoDisconnect) {
                 setTimeout(async () => {
                     console.log("SELF destroy client");
@@ -75,7 +76,6 @@ class TelegramManager {
                 }, 180000)
             }
             this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
-            const myMsgs = await this.client.getMessages('me', { limit: 8 });
             const chats = await this.client?.getDialogs({ limit: 500 });
             console.log("TotalChats:", chats['total'])
             this.expired = { msgs: myMsgs['total'], total: chats['total'] }
