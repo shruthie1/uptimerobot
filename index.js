@@ -892,18 +892,21 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
     //console.log(`userName.toUpperCase()}:  TG_CLIENT Seems OFF`,'\nRestarting Service')
     // const checker = checkerclass.getinstance()
     // checker.restart(userName, processId);
-    const data = userMap.get(userName.toLowerCase());
-    userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-    connetionQueue.push({ userName, processId });
-    // try {
-    //   const data = userMap.get(userName.toLowerCase());
-    //   const url = data?.url;
-    //   if (url) {
-    //     const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
-    //   }
-    // } catch (error) {
-    //   console.log("Some Error: ",error.code)
-    // }
+    try {
+      const data = userMap.get(userName.toLowerCase());
+      const url = data?.url;
+      if (url) {
+        const connectResp = await axios.get(`${url}getprocessId`, { timeout: 10000 });
+        const resp = connectResp.json();
+        console.log(resp);
+        if (resp.ProcessId === processId) {
+          userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
+          connetionQueue.push({ userName, processId });
+        }
+      }
+    } catch (error) {
+      console.log("Some Error: ", error.code)
+    }
 
   } catch (error) {
     console.log("Some Error: ", error.code);
