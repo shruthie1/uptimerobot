@@ -668,6 +668,18 @@ app.get('/exitprimary', async (req, res, next) => {
   }
 });
 
+app.get('/exitsecondary', async (req, res, next) => {
+  res.send("ok")
+  next();
+}, async () => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    if (value.clientId.toLowerCase().includes('2'))
+      await fetchWithTimeout(`${value.url}exit`);
+  }
+});
+
 app.get('/connectclient/:number', async (req, res) => {
   const number = req.params?.number;
   const db = ChannelService.getInstance();
