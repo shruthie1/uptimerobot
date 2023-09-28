@@ -891,24 +891,9 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
   next();
 }, async (req, res) => {
   try {
-    const requestInfo = {
-      method: req.method,
-      url: req.url,
-      params: req.params,
-      query: req.query,
-      headers: req.headers,
-      ip: req.ip,
-      cookies: req.cookies,
-      body: req.body,
-      session: req.session,
-      user: req.user,
-    };
-
-    // You can log the information or send it as a JSON response
-    console.log("INFO:", requestInfo);
     const userName = req.query.userName;
     const processId = req.params.num;
-    console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'Req receved from: ', userName, ' - ', processId)
+    console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'Req receved from: ', req.query.url, " : ", userName, ' - ', processId)
     // try {
     //   //await axios.get(`${val.url}exit`, { timeout: 7000 });
     //   console.log('Other Instance Exist');
@@ -924,11 +909,11 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
       const url = data?.url;
       if (url) {
         const connectResp = await axios.get(`${url}getprocessid`, { timeout: 10000 });
-        console.log(`Actual Process Id from ${url}getprocessid : `, connectResp.data.ProcessId);
         if (connectResp.data.ProcessId === processId) {
           userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
           connetionQueue.push({ userName, processId });
         } else {
+          console.log(`Actual Process Id from ${url}getprocessid : `, connectResp.data.ProcessId);
           console.log("Request received from Unknown process")
         }
       }
