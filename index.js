@@ -893,6 +893,9 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
   try {
     const userName = req.query.userName;
     const processId = req.params.num;
+    if( req.query.userName === 'shruthie1'){
+      console.log(req.query);
+    }
     console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'Req receved from: ', req.query.url, " : ", userName, ' - ', processId)
     // try {
     //   //await axios.get(`${val.url}exit`, { timeout: 7000 });
@@ -904,6 +907,7 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
     //console.log(`userName.toUpperCase()}:  TG_CLIENT Seems OFF`,'\nRestarting Service')
     // const checker = checkerclass.getinstance()
     // checker.restart(userName, processId);
+
     try {
       const data = userMap.get(userName.toLowerCase());
       const url = data?.url;
