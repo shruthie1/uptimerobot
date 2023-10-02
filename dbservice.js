@@ -234,8 +234,6 @@ class ChannelService {
                     "session": 0,
                     "number": 0,
                     "password": 0,
-                    "deployKey": 0,
-                    "repl": 0
                 }
             }
         ]).toArray();
