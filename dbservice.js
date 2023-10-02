@@ -224,11 +224,18 @@ class ChannelService {
         const upiIds = await upiDb.updateOne(filter, { $set: { ...data } });
         return upiIds
     }
-
+    
     async getAllUserClients() {
         const clientDb = this.client.db("tgclients").collection('clients');
-        const client = await clientDb.find({}, { "session": 0, '_id': 0 });
-        return client.toArray()
+        const clients = await clientDb.aggregate([
+            {
+                $project: {
+                    "_id": 0,
+                    "session": 0 // Exclude the "session" field
+                }
+            }
+        ]).toArray();
+        return clients;
     }
 
     async getTgConfig() {
