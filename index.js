@@ -153,7 +153,7 @@ try {
       await sleep(1000)
     }
 
-    await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStats())}`);
+    await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
     const db = ChannelService.getInstance();
     await db.updateActiveChannels();
     await db.clearStats2();
@@ -249,7 +249,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       const lastActive = await client.getLastActiveTime();
       const date = new Date(lastActive * 1000);
       const me = await client.getMe()
-      await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString() });
+      await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString(), lastUpdated: new Date().toISOString().split('T')[0] });
       await client?.disconnect(document.mobile);
       deleteClient()
     } else {
@@ -344,7 +344,7 @@ app.get('/getdata', async (req, res, next) => {
               console.log("hii");
               setInterval(() => {
                 window.location.reload();
-              }, 30000);
+              }, 20000);
           </script>`;
   res.send(resp);
 });
@@ -1305,6 +1305,17 @@ async function joinchannels(url) {
   }
 }
 
+
+async function getPromotionStatsPlain() {
+  let resp = '';
+  const db = ChannelService.getInstance();
+  const result = await db.readPromoteStats();
+  for (const data of result) {
+    resp += `${data.client.toUpperCase()} : ${data.totalCount} ${data.totalCount > 0 ? ` | ${Number((Date.now() - data.lastUpdatedTimeStamp) / (1000 * 60)).toFixed(2)}` : ''}`;
+  }
+  return resp;
+}
+
 async function getPromotionStats() {
   let resp = '';
   const db = ChannelService.getInstance();
@@ -1320,6 +1331,14 @@ async function getPromotionStatsHtml() {
   resp = resp + await getPromotionStats();
   resp += '</pre></body></html>';
   return resp;
+}
+
+function isDateInPast(dateStr) {
+  const today = new Date();
+  const [day, month, year] = dateStr.split('-').map(Number);
+  const inputDate = new Date(year, month - 1, day); // Note: Month is 0-based in JavaScript
+
+  return inputDate < today;
 }
 
 async function getData() {
