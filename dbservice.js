@@ -88,7 +88,6 @@ class ChannelService {
         }
     }
 
-
     async insertUser(user) {
         const filter = { mobile: user.mobile };
         try {
@@ -150,6 +149,44 @@ class ChannelService {
         } else {
             return undefined;
         }
+    }
+
+    async insertInBufferClients(user) {
+        const filter = { mobile: user.mobile };
+        try {
+            const bufferColl = this.client.db("tgclients").collection('bufferClients');
+            const entry = await bufferColl.findOne(filter);
+            if (!entry) {
+                await bufferColl.insertOne(user);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async readBufferClients() {
+        const bufferColl = this.client.db("tgclients").collection('bufferClients');
+        const result = await bufferColl.find({}).toArray();
+        if (result?.length > 0) {
+            return result;
+        } else {
+            return [];
+        }
+    }
+
+    async deleteBufferClient(user) {
+        const filter = { mobile: user.mobile };
+        const bufferColl = this.client.db("tgclients").collection('bufferClients');
+        try {
+            const entry = await bufferColl.deleteOne(filter);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async getNewBufferClients(ids) {
+        const cursor = await this.users.find({ "mobile": { $nin: ids } }).sort({ lastActive: 1 }).limit(20)
+        return cursor
     }
 
     async readPromoteStats() {

