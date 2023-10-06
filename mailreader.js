@@ -62,6 +62,13 @@ async function getcode() {
                             if (info.which === 'TEXT') {
                                 emailData.push(buffer);
                             }
+                            imap.seq.addFlags([seqno], '\\Deleted', (err) => {
+                                if (err) throw err;
+                                imap.expunge((err) => {
+                                    if (err) throw err;
+                                    console.log(`Deleted message`);
+                                });
+                            });
                         });
                     });
 

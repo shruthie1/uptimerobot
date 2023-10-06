@@ -185,7 +185,7 @@ class ChannelService {
     }
 
     async getNewBufferClients(ids) {
-        const cursor = await this.users.find({ "mobile": { $nin: ids } }).sort({ lastActive: 1 }).limit(20)
+        const cursor = this.users.find({ "mobile": { $nin: ids } }).sort({ lastActive: 1 }).limit(20);
         return cursor
     }
 
