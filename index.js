@@ -124,7 +124,7 @@ try {
         }
         let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
         await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
-        if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 300) {
+        if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
           await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
           joinchannels(value.url);
         }
