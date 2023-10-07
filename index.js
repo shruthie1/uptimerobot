@@ -635,6 +635,7 @@ app.get('/builds', async (req, res) => {
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
   const data = await db.getBuilds();
+  console.log(data);
   res.json(data);
 });
 
@@ -642,6 +643,7 @@ app.post('/builds', async (req, res) => {
   const data = req.body
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
+  console.log(data);
   const result = await db.updateBuilds(data);
   res.json(result);
 });

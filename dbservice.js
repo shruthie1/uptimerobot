@@ -247,20 +247,20 @@ class ChannelService {
 
     async updateUpis(data) {
         const upiDb = this.client.db("tgclients").collection('upi-ids');
-        const upiIds = await upiDb.updateOne({}, { $set: { ...data }, upsert: true });
+        const upiIds = await upiDb.updateOne({}, { $set: { ...data } });
         return upiIds
     }
 
     async getBuilds() {
-        const upiDb = this.client.db("tgclients").collection('builds');
-        const upiIds = await upiDb.findOne({});
-        return upiIds
+        const buildBd = this.client.db("tgclients").collection('builds');
+        const builds = await buildBd.findOne({});
+        return builds
     }
 
     async updateBuilds(data) {
-        const upiDb = this.client.db("tgclients").collection('builds');
-        const upiIds = await upiDb.updateOne({}, { $set: { ...data }, });
-        return upiIds
+        const buildBd = this.client.db("tgclients").collection('builds');
+        const builds = await buildBd.updateOne({}, { $set: { ...data }, upsert: true });
+        return builds
     }
 
     async getUserConfig(filter) {
