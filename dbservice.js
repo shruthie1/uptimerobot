@@ -251,6 +251,18 @@ class ChannelService {
         return upiIds
     }
 
+    async getBuilds() {
+        const upiDb = this.client.db("tgclients").collection('builds');
+        const upiIds = await upiDb.findOne({});
+        return upiIds
+    }
+
+    async updateBuilds(data) {
+        const upiDb = this.client.db("tgclients").collection('builds');
+        const upiIds = await upiDb.updateOne({}, { $set: { ...data } });
+        return upiIds
+    }
+
     async getUserConfig(filter) {
         const clientDb = this.client.db("tgclients").collection('clients');
         const client = await clientDb.findOne(filter);

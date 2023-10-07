@@ -630,6 +630,22 @@ app.post('/getUserConfig', async (req, res) => {
   res.json(upiIds);
 });
 
+
+app.get('/builds', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const data = await db.getBuilds();
+  res.json(data);
+});
+
+app.post('/builds', async (req, res) => {
+  const data = req.body
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const res = await db.updateBuilds(data);
+  res.json(res);
+});
+
 app.get('/getAllUserClients', async (req, res) => {
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
