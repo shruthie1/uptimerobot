@@ -383,10 +383,16 @@ app.get('/getAllIps', async (req, res, next) => {
   const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    const res = await fetchWithTimeout(`${value.url}getip`);
-    console.log(res.json());
+    try {
+      console.log(value.clientId)
+      const res = await fetchWithTimeout(`${value.url}getip`);
+      console.log(res.data); 
+    } catch (error) {
+      
+    }
   }
 });
+
 app.get('/refreshupis', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');

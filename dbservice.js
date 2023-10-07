@@ -16,9 +16,6 @@ class ChannelService {
         if (!ChannelService.instance) {
             ChannelService.instance = new ChannelService();
         }
-        if (!ChannelService.instance.isConnected) {
-            ChannelService.instance.connect()
-        }
         return ChannelService.instance;
     }
     static isInstanceExist() {
