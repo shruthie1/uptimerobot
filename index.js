@@ -20,11 +20,12 @@ function sleep(ms) {
 }
 
 var cors = require('cors');
-
 const app = express();
 const port = 8000;
+const userMap = new Map();
+let ip;
 
-fetchWithTimeout('https://api.db-ip.com/v2/free/self')
+fetchWithTimeout('https://ipinfo.io/json')
   .then(result => {
     return result.data;
   })
@@ -33,14 +34,13 @@ fetchWithTimeout('https://api.db-ip.com/v2/free/self')
     console.log(ip)
   })
   .then(
-    ChannelService.getInstance().connect().then(async () => {
-      setTimeout(async () => {
-        checkerclass.getinstance()
-        await setUserMap();
-      }, 100);
-    })
+    // ChannelService.getInstance().connect().then(async () => {
+    //   setTimeout(async () => {
+    //     checkerclass.getinstance()
+    //     await setUserMap();
+    //   }, 100);
+    // })
   ).catch(err => console.error(err))
-const userMap = new Map();
 
 let count = 0;
 let botCount = 0
@@ -297,6 +297,10 @@ app.post('/channels', async (req, res, next) => {
   channels?.forEach(async (channel) => {
     await db.insertChannel(channel);
   })
+});
+
+app.get('/getip', (req, res) => {
+  res.json(ip);
 });
 
 app.post('/users', async (req, res, next) => {

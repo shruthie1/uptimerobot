@@ -16,9 +16,9 @@ class ChannelService {
         if (!ChannelService.instance) {
             ChannelService.instance = new ChannelService();
         }
-        // if (!ChannelService.instance.isConnected) {
-        //     ChannelService.instance.connect()
-        // }
+        if (!ChannelService.instance.isConnected) {
+            ChannelService.instance.connect()
+        }
         return ChannelService.instance;
     }
     static isInstanceExist() {
@@ -32,6 +32,10 @@ class ChannelService {
                 this.client = await MongoClient.connect(process.env.mongouri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
                 console.log('Connected to MongoDB');
                 this.isConnected = true;
+                this.client.on('close', () => {
+                    console.log('MongoDB connection closed.');
+                    this.isConnected = false;
+                });
                 this.db = this.client.db("tgclients").collection('channels');
                 this.users = this.client.db("tgclients").collection('users');
                 this.statsDb = this.client.db("tgclients").collection('stats');
