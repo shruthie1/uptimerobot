@@ -14,6 +14,9 @@ const swaggerSpec = require('./swaggerConfig');
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
+process.on('exit', async () => {
+  await ChannelService.getInstance().closeConnection();
+});
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -288,6 +291,7 @@ app.get('/clearstats2', async (req, res) => {
 });
 
 app.get('/exit', async (req, res) => {
+  await ChannelService.getInstance().closeConnection();
   process.exit(1)
   res.send('Hello World!');
 });

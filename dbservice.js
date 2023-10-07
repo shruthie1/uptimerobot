@@ -26,7 +26,7 @@ class ChannelService {
         if (!this.isConnected) {
             console.log('trying to connect to DB......')
             try {
-                this.client = await MongoClient.connect(process.env.mongouri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+                this.client = await MongoClient.connect(process.env.mongouri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1, poolSize: 15 });
                 console.log('Connected to MongoDB');
                 this.isConnected = true;
                 this.client.on('close', () => {
@@ -309,6 +309,18 @@ class ChannelService {
         const promotColl = this.client.db("tgclients").collection('promoteStats');
         const result = await promotColl.deleteMany({});
         console.log(result);
+    }
+
+    async closeConnection() {
+        try {
+            if (this.isConnected) {
+                this.isConnected = false;
+                console.log('MongoDB connection closed.');
+            }
+            await this.client?.close();
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     async getCurrentActiveUniqueChannels() {
