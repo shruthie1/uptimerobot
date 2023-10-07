@@ -642,8 +642,8 @@ app.post('/builds', async (req, res) => {
   const data = req.body
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
-  const res = await db.updateBuilds(data);
-  res.json(res);
+  const result = await db.updateBuilds(data);
+  res.json(result);
 });
 
 app.get('/getAllUserClients', async (req, res) => {
