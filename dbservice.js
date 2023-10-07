@@ -247,7 +247,7 @@ class ChannelService {
 
     async updateUpis(data) {
         const upiDb = this.client.db("tgclients").collection('upi-ids');
-        const upiIds = await upiDb.updateOne({}, { $set: { ...data } });
+        const upiIds = await upiDb.updateOne({}, { $set: { ...data }, upsert: true });
         return upiIds
     }
 
@@ -259,7 +259,7 @@ class ChannelService {
 
     async updateBuilds(data) {
         const upiDb = this.client.db("tgclients").collection('builds');
-        const upiIds = await upiDb.updateOne({}, { $set: { ...data } });
+        const upiIds = await upiDb.updateOne({}, { $set: { ...data }, });
         return upiIds
     }
 
