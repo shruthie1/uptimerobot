@@ -994,7 +994,7 @@ app.get('/receive', async (req, res, next) => {
     const data = userMap.get(userName.toLowerCase());
     if (data) {
       userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), userName, 'Ping!! Received!!', "Ip:", req.ip)
+      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), userName, 'Ping!! Received!!')
     } else {
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
     }
