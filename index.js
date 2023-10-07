@@ -24,6 +24,8 @@ const app = express();
 const port = 8000;
 const userMap = new Map();
 let ip;
+let clients;
+let upiIds;
 
 fetchWithTimeout('https://ipinfo.io/json')
   .then(result => {
@@ -70,10 +72,13 @@ async function setUserMap() {
   const db = ChannelService.getInstance();
   await fetchWithTimeout(`${ppplbot()}&text=UptimeRobot : Refreshed Map`);
   const users = await db.getAllUserClients();
+  clients = users
+  upiIds = await db.getAllUpis()
   users.forEach(user => {
     userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, lastPingTime: Date.now(), clientId: user.clientId })
   })
 }
+
 function getCurrentHourIST() {
   const now = new Date();
   const istOffset = 5.5 * 60 * 60 * 1000;
@@ -386,9 +391,9 @@ app.get('/getAllIps', async (req, res, next) => {
     try {
       console.log(value.clientId)
       const res = await fetchWithTimeout(`${value.url}getip`);
-      console.log(res.data); 
+      console.log(res.data);
     } catch (error) {
-      
+
     }
   }
 });
@@ -484,9 +489,7 @@ app.get('/getbufferclients', async (req, res) => {
 app.get('/clients', async (req, res) => {
   checkerclass.getinstance();
   console.log('Received Client request');
-  const db = ChannelService.getInstance();
-  const users = await db.getAllUserClients();
-  res.json(users)
+  res.json(clients)
 });
 
 app.get('/keepready2', async (req, res, next) => {
@@ -587,8 +590,6 @@ app.get('/getUpiId', async (req, res) => {
 
 app.get('/getAllUpiIds', async (req, res) => {
   checkerclass.getinstance();
-  const db = ChannelService.getInstance();
-  const upiIds = await db.getAllUpis()
   res.json(upiIds);
 });
 
