@@ -26,7 +26,7 @@ class ChannelService {
         if (!this.isConnected) {
             console.log('trying to connect to DB......')
             try {
-                this.client = await MongoClient.connect(process.env.mongouri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1, poolSize: 15 });
+                this.client = await MongoClient.connect(process.env.mongouri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
                 console.log('Connected to MongoDB');
                 this.isConnected = true;
                 this.client.on('close', () => {
