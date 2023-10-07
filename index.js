@@ -375,6 +375,18 @@ app.get('/getdata2', async (req, res, next) => {
   }
 });
 
+app.get('/getAllIps', async (req, res, next) => {
+  checkerclass.getinstance()
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
+    const res = await fetchWithTimeout(`${value.url}getip`);
+    console.log(res.json());
+  }
+});
 app.get('/refreshupis', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
