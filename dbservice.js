@@ -259,7 +259,7 @@ class ChannelService {
 
     async updateBuilds(data) {
         const buildBd = this.client.db("tgclients").collection('builds');
-        const builds = await buildBd.updateOne({}, { $set: { ...data }, upsert: true });
+        const builds = await buildBd.updateOne({}, { $set: { ...data } }, { upsert: true });
         return builds
     }
 
