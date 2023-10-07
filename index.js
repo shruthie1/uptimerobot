@@ -124,7 +124,7 @@ try {
         }
         let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
         await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
-        if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
+        if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 200) {
           await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
           joinchannels(value.url);
         }
@@ -967,7 +967,7 @@ app.get('/receive', async (req, res, next) => {
     const data = userMap.get(userName.toLowerCase());
     if (data) {
       userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), userName, 'Ping!! Received!!')
+      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), userName, 'Ping!! Received!!', "Ip:", req.ip)
     } else {
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
     }
@@ -1331,7 +1331,7 @@ async function joinchannels(url) {
   const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'friends', 'family', 'chatting', 'boys', 'girls'];
   const randomElement = keys[Math.floor(Math.random() * keys.length)];
   const db = ChannelService.getInstance();
-  const channels = await db.getActiveChannels(150, 0, randomElement);
+  const channels = await db.getActiveChannels(100, 0, randomElement);
   for (const channel of channels) {
     try {
       console.log(channel.username);
