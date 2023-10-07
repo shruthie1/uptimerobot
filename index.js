@@ -34,12 +34,12 @@ fetchWithTimeout('https://ipinfo.io/json')
     console.log(ip)
   })
   .then(
-    // ChannelService.getInstance().connect().then(async () => {
-    //   setTimeout(async () => {
-    //     checkerclass.getinstance()
-    //     await setUserMap();
-    //   }, 100);
-    // })
+    ChannelService.getInstance().connect().then(async () => {
+      setTimeout(async () => {
+        checkerclass.getinstance()
+        await setUserMap();
+      }, 100);
+    })
   ).catch(err => console.error(err))
 
 let count = 0;
