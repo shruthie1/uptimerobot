@@ -314,7 +314,7 @@ app.get('/setupClient/:clientId', async (req, res, next) => {
   const clientId = req.params?.clientId;
   const archieveOld = req.query?.a;
   console.log(clientId);
-  await setUpClient(clientId, archieveOld.toLowerCase() === 'yes' ? true : false)
+  await setUpClient(clientId.toString(), archieveOld.toLowerCase() === 'yes' ? true : false)
 })
 
 app.get('/getip', (req, res) => {
@@ -1760,7 +1760,7 @@ async function setUpClient(clientId, archieveOld) {
       await client.updatePrivacy();
       await sleep(10000)
       await client.updateProfile(oldClient.name, "Genuine Paid Girl, Best Services :)");
-      setActiveClientSetup({ phoneNumber, clientId });
+      setActiveClientSetup({ phoneNumber: newClient.mobile, clientId });
       await sleep(5000)
       //Todo: profile pics
       await generateNewSession(newClient.mobile)
@@ -1769,7 +1769,7 @@ async function setUpClient(clientId, archieveOld) {
 }
 
 
-async function generateNewSession(phoneNumber, clientId) {
+async function generateNewSession(phoneNumber) {
   try {
     const response = await axios.get(`https://tgsignup.onrender.com/login?phone=${phoneNumber}`);
     setTimeout(() => {
