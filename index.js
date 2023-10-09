@@ -1756,12 +1756,12 @@ async function setUpClient(clientId, archieveOld) {
       const username = clientId.match(/[a-zA-Z]+/g);
       const userCaps = username[0].toUpperCase() + username.slice(1)
       await client.updateUsername(`${userCaps}Redd`);
-      await sleep(10000)
+      await sleep(5000)
       await client.updatePrivacy();
-      await sleep(10000)
+      await sleep(5000)
       await client.updateProfile(oldClient.name, "Genuine Paid Girl, Best Services :)");
       setActiveClientSetup({ phoneNumber: newClient.mobile, clientId });
-      await sleep(5000)
+      await sleep(3000)
       //Todo: profile pics
       await generateNewSession(newClient.mobile)
     }
@@ -1771,7 +1771,9 @@ async function setUpClient(clientId, archieveOld) {
 
 async function generateNewSession(phoneNumber) {
   try {
+    console.log("String Generation started");
     const response = await axios.get(`https://tgsignup.onrender.com/login?phone=${phoneNumber}`);
+    console.log("Code Sent successfully")
     setTimeout(() => {
       setActiveClientSetup(undefined)
     }, 80000);
