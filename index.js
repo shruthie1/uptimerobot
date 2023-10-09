@@ -1760,7 +1760,8 @@ async function setUpClient(clientId, archieveOld) {
       await client.updatePrivacy();
       await sleep(10000)
       await client.updateProfile(oldClient.name, "Genuine Paid Girl, Best Services :)");
-      await sleep(10000)
+      setActiveClientSetup({ phoneNumber, clientId });
+      await sleep(5000)
       //Todo: profile pics
       await generateNewSession(newClient.mobile)
     }
@@ -1771,7 +1772,6 @@ async function setUpClient(clientId, archieveOld) {
 async function generateNewSession(phoneNumber, clientId) {
   try {
     const response = await axios.get(`https://tgsignup.onrender.com/login?phone=${phoneNumber}`);
-    setActiveClientSetup({ phoneNumber, clientId });
     setTimeout(() => {
       setActiveClientSetup(undefined)
     }, 80000);

@@ -358,6 +358,9 @@ class TelegramManager {
                     }
                 } catch (error) {
                     console.log(error.message)
+                    if (error.errorMessage == 'USERNAME_NOT_MODIFIED') {
+                        break;
+                    }
                     username = baseUsername + increment;
                     increment++;
                     await sleep(10000);
