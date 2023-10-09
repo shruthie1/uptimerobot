@@ -324,7 +324,7 @@ class TelegramManager {
     async updateUsername(baseUsername) {
 
         let username = (baseUsername && baseUsername !== '') ? baseUsername : '';
-        let increment = 10;
+        let increment = 0;
         if (username === '') {
             try {
                 const res = await this.client.invoke(new Api.account.UpdateUsername({ username }));
