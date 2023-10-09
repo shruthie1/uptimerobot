@@ -24,7 +24,7 @@ const app = express();
 const port = 8000;
 const userMap = new Map();
 let activeClientSetup = undefined
-export function getActiveClientSetup() {
+function getActiveClientSetup() {
   return activeClientSetup;
 }
 let ip;
@@ -1811,3 +1811,5 @@ function fetchNumbersFromString(inputString) {
     return '';
   }
 }
+
+module.exports = { getActiveClientSetup }
