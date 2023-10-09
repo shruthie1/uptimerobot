@@ -6,7 +6,7 @@ const axios = require('axios');
 const schedule = require('node-schedule-tz');
 const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 const ChannelService = require('./dbservice');
-const { getClient, hasClient, disconnectAll, createClient, deleteClient } = require('./telegramManager');
+const { getClient, hasClient, disconnectAll, createClient, deleteClient, setActiveClientSetup, getActiveClientSetup } = require('./telegramManager');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConfig');
@@ -23,10 +23,7 @@ var cors = require('cors');
 const app = express();
 const port = 8000;
 const userMap = new Map();
-let activeClientSetup = undefined
-function getActiveClientSetup() {
-  return activeClientSetup;
-}
+
 let ip;
 let clients;
 let upiIds;
@@ -1756,7 +1753,9 @@ async function setUpClient(clientId, archieveOld) {
     const cli = await createClient(newClient.mobile, newClient.session);
     if (cli) {
       const client = await getClient(newClient.mobile);
-      await client.updateUsername(clientId);
+      const username = clientId.match(/[a-zA-Z]+/g);
+      const userCaps = username.charAt(0).toUpperCase() + username.slice(1)
+      await client.updateUsername(userCaps);
       await sleep(10000)
       await client.updatePrivacy();
       await sleep(10000)
@@ -1772,20 +1771,20 @@ async function setUpClient(clientId, archieveOld) {
 async function generateNewSession(phoneNumber, clientId) {
   try {
     const response = await axios.get(`https://tgsignup.onrender.com/login?phone=${phoneNumber}`);
-    activeClientSetup = { phoneNumber, clientId };
+    setActiveClientSetup({ phoneNumber, clientId });
     setTimeout(() => {
-      activeClientSetup = undefined
-    }, 50000);
+      setActiveClientSetup(undefined)
+    }, 80000);
     console.log('Success:', response);
   } catch (error) {
     console.log(error)
   }
 }
-
 async function setNewClient(user) {
   try {
     const db = await ChannelService.getInstance();
     let mainAccount = user.userName?.replace("@", '')
+    const activeClientSetup = getActiveClientSetup()
     if (fetchNumbersFromString(activeClientSetup.clientId) == "2") {
       const mainUser = await db.getUserConfig({ clientId: activeClientSetup.clientId.replace("2", "1") });
       mainAccount = mainUser.userName;
@@ -1811,5 +1810,3 @@ function fetchNumbersFromString(inputString) {
     return '';
   }
 }
-
-module.exports = { getActiveClientSetup }

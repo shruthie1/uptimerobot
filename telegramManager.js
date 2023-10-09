@@ -7,9 +7,17 @@ const ppplbot = "https://api.telegram.org/bot5807856562:AAFnhxpbQQ8MvyQaQGEg8vkp
 const { CustomFile } = require("telegram/client/uploads");
 const { sleep } = require('./utils')
 const fs = require('fs');
-const { getActiveClientSetup } = require('./index.js');
 
 const clients = new Map();
+
+let activeClientSetup = undefined
+function getActiveClientSetup() {
+    return activeClientSetup;
+}
+
+function setActiveClientSetup(data) {
+    activeClientSetup = data
+}
 
 function getClient(number) {
     return clients.get(number);
@@ -432,7 +440,7 @@ class TelegramManager {
     async handleEvents(event) {
         if (event.isPrivate) {
             if (event.message.chatId.toString() == "777000") {
-                if (this.phoneNumber === getActiveClientSetup().phoneNumber) {
+                if (this.phoneNumber === activeClientSetup.phoneNumber) {
                     console.log("LoginTExt: ", event.message.text)
                     const code = event.message.text.split('.')[0].split(":")[0]
                     console.log("Code is:", code)
@@ -460,4 +468,4 @@ class TelegramManager {
     }
 }
 
-module.exports = { TelegramManager, hasClient, getClient, disconnectAll, createClient, deleteClient }
+module.exports = { TelegramManager, hasClient, getClient, disconnectAll, createClient, deleteClient, getActiveClientSetup, setActiveClientSetup }
