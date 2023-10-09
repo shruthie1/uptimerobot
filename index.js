@@ -1775,7 +1775,6 @@ async function generateNewSession(phoneNumber) {
     setTimeout(() => {
       setActiveClientSetup(undefined)
     }, 80000);
-    console.log('Success:', response);
   } catch (error) {
     console.log(error)
   }
