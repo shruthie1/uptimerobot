@@ -175,6 +175,16 @@ class ChannelService {
         }
     }
 
+    async getOneBufferClient() {
+        const bufferColl = this.client.db("tgclients").collection('bufferClients');
+        const result = await bufferColl.findOne({});
+        if (result) {
+            return result;
+        } else {
+            return undefined;
+        }
+    }
+
     async deleteBufferClient(user) {
         const filter = { mobile: user.mobile };
         const bufferColl = this.client.db("tgclients").collection('bufferClients');
@@ -272,6 +282,12 @@ class ChannelService {
     async updateUserConfig(filter, data) {
         const upiDb = this.client.db("tgclients").collection('clients');
         const upiIds = await upiDb.updateOne(filter, { $set: { ...data } });
+        return upiIds
+    }
+
+    async insertInAchivedClient(data) {
+        const upiDb = this.client.db("tgclients").collection('ArchivedClients');
+        const upiIds = await upiDb.updateOne({ mobile: data.mobile }, { $set: { ...data } }, { upsert: true });
         return upiIds
     }
 

@@ -23,6 +23,6 @@
     "node-schedule-tz": "^1.2.1-4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
-    "telegram": "^2.15.15"
+    "telegram": "^2.19.6"
   }
 }

