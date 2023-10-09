@@ -1792,7 +1792,7 @@ async function setNewClient(user, activeClientSetup) {
       const data = await db.updateUserConfig({ clientId: client2 }, { mainAccount: mainAccount });
       if (data) {
         console.log(`updated ${client2}'s MainAccount with ${mainAccount}`)
-        await axios.get(`${data.repl}/exit`);
+        await axios.get(`${data?.repl}/exit`);
       }
     }
     const updatedClient = await db.updateUserConfig({ clientId: activeClientSetup.clientId }, { session: user.session, number: `+${user.mobile}`, userName: user.userName?.replace("@", ''), mainAccount: mainAccount });
