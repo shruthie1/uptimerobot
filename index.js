@@ -1796,9 +1796,9 @@ async function setNewClient(user, activeClientSetup) {
       }
     }
     const updatedClient = await db.updateUserConfig({ clientId: activeClientSetup.clientId }, { session: user.session, number: `+${user.mobile}`, userName: user.userName?.replace("@", ''), mainAccount: mainAccount });
-    console.log("Updated the Client Successfully");
+    console.log("Updated the Client Successfully", updatedClient);
     await db.deleteBufferClient({ mobile: activeClientSetup.phoneNumber });
-    await axios.get(`${updatedClient.repl}/exit`)
+    await axios.get(`${updatedClient?.repl}/exit`)
   } catch (error) {
     console.log(error);
   }
