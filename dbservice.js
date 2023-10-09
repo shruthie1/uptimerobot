@@ -278,11 +278,10 @@ class ChannelService {
         const client = await clientDb.findOne(filter);
         return client
     }
-
     async updateUserConfig(filter, data) {
         const upiDb = this.client.db("tgclients").collection('clients');
-        const upiIds = await upiDb.updateOne(filter, { $set: { ...data } });
-        return upiIds
+        const updatedDocument = await upiDb.findOneAndUpdate(filter, { $set: { ...data } }, { returnOriginal: false });
+        return updatedDocument.value;
     }
 
     async insertInAchivedClient(data) {
