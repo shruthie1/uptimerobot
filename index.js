@@ -1791,14 +1791,28 @@ async function setNewClient(user, activeClientSetup) {
       const client2 = activeClientSetup.clientId.replace("1", "2")
       const data = await db.updateUserConfig({ clientId: client2 }, { mainAccount: mainAccount });
       if (data) {
-        console.log(`updated ${client2}'s MainAccount with ${mainAccount}`)
-        await axios.get(`${data?.repl}/exit`);
+        console.log(client2, " -  ", data)
+        console.log(`updated ${client2}'s MainAccount with ${mainAccount}`);
+        if (data.repl) {
+          try {
+            await axios.get(`${data?.repl}/exit`);
+          } catch (error) {
+
+          }
+        }
       }
     }
     const updatedClient = await db.updateUserConfig({ clientId: activeClientSetup.clientId }, { session: user.session, number: `+${user.mobile}`, userName: user.userName?.replace("@", ''), mainAccount: mainAccount });
     console.log("Updated the Client Successfully", updatedClient);
     await db.deleteBufferClient({ mobile: activeClientSetup.phoneNumber });
-    await axios.get(`${updatedClient?.repl}/exit`)
+    console.log(activeClientSetup.clientId, " -  ", data)
+    if (updatedClient?.repl) {
+      try {
+        await axios.get(`${updatedClient?.repl}/exit`)
+      } catch (error) {
+        console.log(error);
+      }
+    }
   } catch (error) {
     console.log(error);
   }
