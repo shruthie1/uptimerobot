@@ -286,7 +286,7 @@ class ChannelService {
 
     async insertInAchivedClient(data) {
         const upiDb = this.client.db("tgclients").collection('ArchivedClients');
-        const upiIds = await upiDb.updateOne({ mobile: data.mobile }, { $set: { ...data } }, { upsert: true });
+        const upiIds = await upiDb.updateOne({ number: data.number }, { $set: { ...data } }, { upsert: true });
         return upiIds
     }
 
