@@ -1755,7 +1755,7 @@ async function setUpClient(clientId, archieveOld) {
       const client = await getClient(newClient.mobile);
       const username = clientId.match(/[a-zA-Z]+/g);
       const userCaps = username[0].toUpperCase() + username.slice(1)
-      await client.updateUsername(userCaps);
+      await client.updateUsername(`${userCaps}Red`);
       await sleep(10000)
       await client.updatePrivacy();
       await sleep(10000)
