@@ -7,7 +7,7 @@ const ppplbot = "https://api.telegram.org/bot5807856562:AAFnhxpbQQ8MvyQaQGEg8vkp
 const { CustomFile } = require("telegram/client/uploads");
 const { sleep } = require('./utils')
 const fs = require('fs');
-const { getActiveClientSetup } = require('.');
+const { getActiveClientSetup } = require('./index.js');
 
 const clients = new Map();
 
