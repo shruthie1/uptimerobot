@@ -363,7 +363,6 @@ class TelegramManager {
                     }
                     username = baseUsername + increment;
                     increment++;
-                    await sleep(10000);
                 }
             }
         }

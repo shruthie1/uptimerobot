@@ -1709,6 +1709,7 @@ async function checkBufferClients() {
       } else {
         console.log(document.mobile, " :  ALL Good");
         goodIds.push(document.mobile)
+        await client.disconnect();
         deleteClient()
       }
     } else {
@@ -1740,13 +1741,13 @@ async function addNewUserstoBufferClients() {
             console.log("waiting for setting 2FA");
             await sleep(35000);
             await client.updateUsername();
-            await sleep(10000)
+            await sleep(5000)
             await client.updatePrivacyforDeletedAccount();
-            await sleep(10000)
+            await sleep(5000)
             await client.updateProfile("Deleted Account", "Deleted Account");
-            await sleep(10000)
+            await sleep(5000)
             await client.deleteProfilePhotos();
-            await sleep(10000)
+            await sleep(5000)
             console.log("Inserting Document");
             await db.insertInBufferClients(document);
             await client.disconnect();
