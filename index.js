@@ -1705,13 +1705,12 @@ async function checkBufferClients() {
       if (!hasPassword) {
         badIds.push(document.mobile);
         await db.deleteBufferClient(document);
-        await client.disconnect();
       } else {
         console.log(document.mobile, " :  ALL Good");
         goodIds.push(document.mobile)
-        await client.disconnect();
-        deleteClient()
       }
+      await client.disconnect();
+      deleteClient(document.mobile)
     } else {
       console.log(document.mobile, " :  false");
       badIds.push(document.mobile);
@@ -1752,6 +1751,9 @@ async function addNewUserstoBufferClients() {
             await db.insertInBufferClients(document);
             await client.disconnect();
             badIds.pop();
+          } else {
+            await client.disconnect();
+            deleteClient(document.mobile)
           }
         } else {
           await db.deleteUser(document);
