@@ -10,7 +10,9 @@ const { getClient, hasClient, disconnectAll, createClient, deleteClient, setActi
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConfig');
-const { sleep } = require('./utils')
+const { sleep } = require('./utils');
+const { fetchWithTimeout } = require('./utils');
+const { CloudinaryService } = require('./cloudinary')
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -177,29 +179,6 @@ try {
   console.log("Some Error: ", error.code);
 }
 
-async function fetchWithTimeout(resource, options = {}) {
-  const timeout = options?.timeout || 15000;
-
-  const source = axios.CancelToken.source();
-  const id = setTimeout(() => source.cancel(), timeout);
-  try {
-    const response = await axios({
-      ...options,
-      url: resource,
-      cancelToken: source.token
-    });
-    clearTimeout(id);
-    return response;
-  } catch (error) {
-    if (axios.isCancel(error)) {
-      console.log('Request canceled:', error.message, resource);
-    } else {
-      console.log('Error:', error.message);
-    }
-    return undefined;
-  }
-}
-
 async function assure() {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid?msg=Hey...Dont worry!! I will Call you before night ok!!`);
@@ -312,9 +291,9 @@ app.get('/setupClient/:clientId', async (req, res, next) => {
   next();
 }, async (req, res) => {
   const clientId = req.params?.clientId;
-  const archieveOld = req.query?.a;
+  const archieveOld = req?.query?.a;
   console.log(clientId);
-  await setUpClient(clientId.toString(), archieveOld.toLowerCase() === 'yes' ? true : false)
+  await setUpClient(clientId.toString(), archieveOld?.toLowerCase() === 'yes' ? true : false)
 })
 
 app.get('/getip', (req, res) => {
@@ -825,6 +804,36 @@ app.get('/set2fa/:number', async (req, res, next) => {
       const client = await getClient(user.mobile);
       if (cli) {
         await client.set2fa();
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error.code)
+  }
+});
+
+app.get('/setpp/:number/:name', async (req, res, next) => {
+  res.send("Setting 2FA");
+  next();
+}, async (req, res) => {
+  try {
+    const number = req.params?.number;
+    const name = req.params?.name;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session, false);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        await CloudinaryService.getInstance(name);
+        await sleep(2000);
+        await client.updateProfilePic('./dp1.jpg');
+        await sleep(1000);
+        await client.updateProfilePic('./dp2.jpg');
+        await sleep(1000);
+        await client.updateProfilePic('./dp3.jpg');
+        await sleep(1000);
       } else {
         console.log("Client Does not exist!")
       }
@@ -1740,8 +1749,6 @@ async function addNewUserstoBufferClients() {
   }
 }
 
-
-
 async function setUpClient(clientId, archieveOld) {
   const db = await ChannelService.getInstance();
   const oldClient = await db.getUserConfig({ clientId })
@@ -1755,16 +1762,22 @@ async function setUpClient(clientId, archieveOld) {
     const cli = await createClient(newClient.mobile, newClient.session);
     if (cli) {
       const client = await getClient(newClient.mobile);
-      const username = clientId.match(/[a-zA-Z]+/g);
+      const username = (clientId.match(/[a-zA-Z]+/g)).toString();
+      await CloudinaryService.getInstance(username);
       const userCaps = username[0].toUpperCase() + username.slice(1)
       await client.updateUsername(`${userCaps}Redd`);
       await sleep(5000)
       await client.updatePrivacy();
       await sleep(5000)
-      await client.updateProfile(oldClient.name, "Genuine Paid Girl, Best Services :)");
+      await client.updateProfilePic('./dp1.jpg');
+      await sleep(1000);
+      await client.updateProfilePic('./dp2.jpg');
+      await sleep(1000);
+      await client.updateProfilePic('./dp3.jpg');
+      await sleep(1000);
+      await client.updateProfile(oldClient.name, "Genuine Paid Girl🥰, Best Services❤️");
       setActiveClientSetup({ phoneNumber: newClient.mobile, clientId });
       await sleep(3000)
-      //Todo: profile pics
       await generateNewSession(newClient.mobile)
     }
   }
@@ -1813,6 +1826,7 @@ async function setNewClient(user, activeClientSetup) {
         console.log(error);
       }
     }
+    await setUserMap()
   } catch (error) {
     console.log(error);
   }
