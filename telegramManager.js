@@ -82,10 +82,14 @@ class TelegramManager {
             const myMsgs = await this.client.getMessages('me', { limit: 8 });
             if (autoDisconnect) {
                 setTimeout(async () => {
-                    console.log("SELF destroy client");
-                    await this.client.disconnect();
-                    await this.client.destroy();
-                    this.session.delete();
+                    if (this.client.connected || clients.get(this.phoneNumber)) {
+                        console.log("SELF destroy client");
+                        await this.client.disconnect();
+                        await this.client.destroy();
+                        this.session.delete();
+                    } else {
+                        console.log("Client Already Disconnected");
+                    }
                     clients.delete(this.phoneNumber);
                 }, 180000)
             }

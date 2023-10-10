@@ -1750,6 +1750,7 @@ async function addNewUserstoBufferClients() {
             console.log("Inserting Document");
             await db.insertInBufferClients(document);
             await client.disconnect();
+            deleteClient(document.mobile)
             badIds.pop();
           } else {
             await client.disconnect();
