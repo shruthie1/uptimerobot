@@ -1681,8 +1681,8 @@ async function checkBufferClients() {
   const clients = await db.readBufferClients();
   goodIds = [];
   badIds = [];
-  if (clients.length < 10) {
-    for (let i = 0; i < 10 - clients.length; i++) {
+  if (clients.length < 30) {
+    for (let i = 0; i < 30 - clients.length; i++) {
       badIds.push(1)
     }
   }
@@ -1756,10 +1756,25 @@ async function addNewUserstoBufferClients() {
 
 async function setUpClient(clientId, archieveOld) {
   try {
-
     const db = await ChannelService.getInstance();
     const oldClient = await db.getUserConfig({ clientId })
-    if (archieveOld) {
+    if (archieveOld && oldClient) {
+      try {
+        const oldClientUser = await db.getUser({ mobile: (oldClient.number.toString()).replace("+", '') });
+        if (oldClientUser) {
+          const cli = await createClient(oldClientUser?.mobile, oldClientUser?.session);
+          if (cli) {
+            const oldClienttg = await getClient(newClient.mobile);
+            await oldClienttg.updateProfile("Deleted Account", `New Account Created - check Website: ${oldClient.link}`);
+            await sleep(5000)
+            await oldClienttg.deleteProfilePhotos();
+            await sleep(5000)
+            await oldClienttg.updatePrivacyforDeletedAccount();
+          }
+        }
+      } catch (error) {
+        console.log("Error updateing settings of old Client");
+      }
       await db.insertInAchivedClient(oldClient);
       console.log("Archived old client");
     }
