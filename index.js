@@ -30,6 +30,7 @@ const userMap = new Map();
 let ip;
 let clients;
 let upiIds;
+const pings = {}
 
 fetchWithTimeout('https://ipinfo.io/json')
   .then(result => {
@@ -80,6 +81,7 @@ async function setUserMap() {
   upiIds = await db.getAllUpis()
   users.forEach(user => {
     userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, lastPingTime: Date.now(), clientId: user.clientId })
+    pings[user.userName.toLowerCase()] = Date.now();
   })
 }
 
@@ -1205,6 +1207,7 @@ app.get('/receive', async (req, res, next) => {
     const data = userMap.get(userName.toLowerCase());
     if (data) {
       userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
+      pings[userName.toLowerCase()] = Date.now();
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), userName, 'Ping!! Received!!')
     } else {
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
@@ -1379,10 +1382,11 @@ class checkerclass {
 
       Array.from(userMap.keys()).map(async (key) => {
         const val = userMap.get(key);
+
         if (val) {
-          if (Date.now() - val.lastPingTime > (5 * 60 * 1000)) {
+          if ((Date.now() - pings[key]) > (5 * 60 * 1000)) {
             try {
-              if (Date.now() - val.lastPingTime > (7 * 60 * 1000)) {
+              if ((Date.now() - pings[key]) > (7 * 60 * 1000)) {
                 const url = val.url.includes('glitch') ? `${val.url}exec/refresh` : val.deployKey;
                 await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
               } else {
