@@ -63,6 +63,7 @@ class TelegramManager {
         this.phoneNumber = phoneNumber;
         this.client = null;
         this.expired = false;
+        this.channelArray = []
     }
 
     async disconnect() {
@@ -112,6 +113,38 @@ class TelegramManager {
         })
         return (resp)
     }
+    async channelInfo(sendIds = false) {
+        const chats = await this.client?.getDialogs({ limit: 600 });
+        let canSendTrueCount = 0;
+        let canSendFalseCount = 0;
+        let totalCount = 0
+        this.channelArray.length = 0;
+        console.log(chats["total"]);
+        chats.map(async (chat) => {
+            if (chat.isChannel || chat.isGroup) {
+                try {
+                    const chatEntity = await chat.entity.toJSON();
+                    const { broadcast, defaultBannedRights } = chatEntity;
+                    totalCount++;
+                    if (!broadcast && !defaultBannedRights?.sendMessages) {
+                        canSendTrueCount++;
+                        this.channelArray.push(chatEntity.id.toString());
+                    } else {
+                        canSendFalseCount++;
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        });
+        const responseObj = {
+            chatsArrayLength: totalCount,
+            canSendTrueCount,
+            canSendFalseCount,
+            ids: sendIds ? this.channelArray : []
+        };
+        return responseObj
+    }
 
     async joinChannels(str) {
         const channels = str.split('|');
@@ -139,6 +172,7 @@ class TelegramManager {
             }
             await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000));
         }
+        await this.client.disconnect();
     }
     async removeOtherAuths() {
         const result = await this.client.invoke(new Api.account.GetAuthorizations({}));

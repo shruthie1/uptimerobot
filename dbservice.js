@@ -156,24 +156,24 @@ class ChannelService {
         const filter = { mobile: user.mobile };
         try {
             const bufferColl = this.client.db("tgclients").collection('bufferClients');
-            const entry = await bufferColl.findOne(filter);
-            if (!entry) {
-                await bufferColl.insertOne(user);
-            }
+            await bufferColl.updateOne(filter, { $set: { ...user } }, { upsert: true });
         } catch (error) {
             console.log(error)
         }
     }
 
-    async readBufferClients() {
+    async readBufferClients(filter, limit) {
         const bufferColl = this.client.db("tgclients").collection('bufferClients');
-        const result = await bufferColl.find({}).toArray();
+        const query = filter || {};
+        const queryWithLimit = limit ? bufferColl.find(query).limit(limit) : bufferColl.find(query);
+        const result = await queryWithLimit.toArray();
         if (result?.length > 0) {
             return result;
         } else {
             return [];
         }
     }
+
 
     async getOneBufferClient() {
         const bufferColl = this.client.db("tgclients").collection('bufferClients');
@@ -386,20 +386,19 @@ class ChannelService {
         }
     }
 
-    async getActiveChannels(limit = 50, skip = 0, k) {
-        const query = { canSendMsgs: true, username: { $ne: null } };
+    async getActiveChannels(limit = 50, skip = 0, keywords = [], notIds = []) {
+        let query = { canSendMsgs: true, username: { $ne: null } };
+        const pattern = new RegExp(keywords.join('|'), 'i');
         const sort = { participantsCount: -1 };
-        if (k) {
-            query["$or"] = [{ title: { $regex: k, $options: 'i' } }, { username: { $regex: k, $options: 'i' } }]
+        query["$or"] = [{ title: { $regex: pattern } }, { username: { $regex: pattern } }]
+        if (notIds.length > 0) {
+            query["id"] = { $nin: notIds };
         }
-        const options = { collation: { locale: 'en', strength: 1 } };
+        console.log(query);
         const promoteStatsColl = this.client.db("tgclients").collection('activeChannels');
         try {
-            if (k) {
-                await promoteStatsColl.createIndex({ title: 'text' }); // Create index on the "title" field for text search
-            }
             const result = await promoteStatsColl
-                .find(query, options)
+                .find(query)
                 .sort(sort)
                 .skip(skip)
                 .limit(limit)

