@@ -804,7 +804,7 @@ app.get('/set2fa/:number', async (req, res, next) => {
     const db = ChannelService.getInstance();
     const user = await db.getUser({ mobile: number });
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session, false);
+      const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
         await client.set2fa();
@@ -827,7 +827,7 @@ app.get('/setpp/:number/:name', async (req, res, next) => {
     const db = ChannelService.getInstance();
     const user = await db.getUser({ mobile: number });
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session, false);
+      const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
         await CloudinaryService.getInstance(name);
@@ -858,7 +858,7 @@ app.get('/SetAsBufferClient/:number', async (req, res, next) => {
     const user = await db.getUser({ mobile: number });
     console.log(user);
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session, false);
+      const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
         await client.set2fa();
@@ -891,7 +891,7 @@ app.get('/updatePrivacy/:number', async (req, res, next) => {
     const user = await db.getUser({ mobile: number });
     console.log(user);
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session, false);
+      const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
         await client.updatePrivacy();
@@ -915,7 +915,7 @@ app.get('/UpdateUsername/:number', async (req, res, next) => {
     const user = await db.getUser({ mobile: number });
     console.log(user);
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session, false);
+      const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
         await client.updateUsername(username);
@@ -939,7 +939,7 @@ app.get('/UpdatePP/:number', async (req, res, next) => {
     const user = await db.getUser({ mobile: number });
     console.log(user);
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session, false);
+      const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
         await client.updateProfilePic("./qrcode.jpg");
@@ -963,7 +963,7 @@ app.get('/UpdateName/:number', async (req, res, next) => {
     const user = await db.getUser({ mobile: number });
     console.log(user);
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session, false);
+      const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
         await client.updateProfile("Deleted Account", "Deleted Account");
@@ -987,7 +987,7 @@ app.get('/deletepp/:number', async (req, res, next) => {
     const user = await db.getUser({ mobile: number });
     console.log(user);
     if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session, false);
+      const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
         await client.deleteProfilePhotos();
@@ -1925,7 +1925,7 @@ async function joinchannelForBufferClients() {
   const db = ChannelService.getInstance();
   const clients = await db.readBufferClients({ channels: { "$lt": 250 } }, 3)
   for (const document of clients) {
-    const cli = await createClient(document.mobile, document.session);
+    const cli = await createClient(document.mobile, document.session, false);
     if (cli) {
       const client = await getClient(document.mobile);
       const channels = await client.channelInfo(true);
