@@ -158,21 +158,12 @@ class TelegramManager {
             const channel = channels[i].trim();
             try {
                 let joinResult;
-                if (channel.startsWith('@')) {
-                    joinResult = await this.client.invoke(
-                        new Api.channels.JoinChannel({
-                            channel: await this.client.getEntity(channel),
-                        })
-                    );
-                } else {
-                    const peerChannel = new Api.PeerChannel({ channelId: bigInt(channel) });
-                    joinResult = await this.client.invoke(
-                        new Api.channels.JoinChannel({
-                            channel: await this.client.getEntity(peerChannel),
-                        })
-                    );
-                }
-                console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
+                joinResult = await this.client.invoke(
+                    new Api.channels.JoinChannel({
+                        channel: channel
+                    })
+                );
+                console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel, joinResult)
             } catch (error) {
                 console.log(error);
                 if (JSON.stringify(error).includes("No user has")) {
