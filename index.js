@@ -708,6 +708,17 @@ app.get('/lastpings', async (req, res, next) => {
   res.send(resp);
 });
 
+app.get('/lastpingsjson', async (req, res, next) => {
+  checkerclass.getinstance();
+  let resp = '<html><head><style>pre { font-size: 18px; }</style></head><body><pre>';
+  for (const userdata in pings) {
+    resp = resp + `${userdata}  :  ${Number(((Date.now() - pings[userdata]) / 60000).toFixed(2))}\n`
+  }
+  resp += '</pre></body></html>';
+  res.setHeader('Content-Type', 'text/html');
+  res.send(resp);
+});
+
 app.get('/exitglitches', async (req, res, next) => {
   res.send("ok")
   next();
