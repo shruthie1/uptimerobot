@@ -1415,7 +1415,7 @@ class checkerclass {
           }
         }
 
-        const userData = userMap.get(val);
+        const userData = userMap.get(key);
         if (Date.now() - userData.lastPingTime > (5 * 60 * 1000)) {
           try {
             const data = userMap.get(key);
