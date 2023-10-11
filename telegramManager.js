@@ -152,7 +152,6 @@ class TelegramManager {
     }
 
     async joinChannels(str) {
-        console.log(this.phoneNumber, " - ", str);
         const channels = str.split('|');
         for (let i = 0; i < channels.length; i++) {
             const channel = channels[i].trim();
