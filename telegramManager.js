@@ -162,7 +162,7 @@ class TelegramManager {
                         channel: channel
                     })
                 );
-                console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel, joinResult)
+                console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
             } catch (error) {
                 console.log("here: ", error.includes("No user has"), error.toString())
                 console.log("mseror: ", error);
