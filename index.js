@@ -1415,8 +1415,8 @@ class checkerclass {
           }
         }
 
-        console.log("Checking pings - ", key);
-        const data = userMap.get(key);
+        console.log("Checking pings - ", key, typeof key);
+        const data = userMap.get(key.toString());
 
         if (data && Date.now() - data.lastPingTime > (5 * 60 * 1000)) {
           try {
@@ -1431,7 +1431,7 @@ class checkerclass {
             console.log("Some Error: ", error.code);
           }
         } else {
-          console.log(key, "- Does not exist", Array.from(userMap.keys()));
+          console.log(key, "- Does not exist", Array.from(userMap.keys()).includes(key));
         }
       })
       try {
