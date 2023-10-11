@@ -152,6 +152,7 @@ class TelegramManager {
     }
 
     async joinChannels(str) {
+        const db = ChannelService.getInstance();
         const channels = str.split('|');
         for (let i = 0; i < channels.length; i++) {
             const channel = channels[i].trim();
@@ -162,11 +163,34 @@ class TelegramManager {
                         channel: channel
                     })
                 );
+                const chatEntity = await this.client.getEntity(channel)
+                const { title, id, broadcast, defaultBannedRights, participantsCount, restricted, username } = chatEntity;
+                const entity = {
+                    id: id.toString(),
+                    title,
+                    participantsCount,
+                    username,
+                    restricted,
+                    broadcast,
+                    sendMessages: defaultBannedRights?.sendMessages,
+                    canSendMsgs: false,
+                };
+                if (!chatEntity.broadcast && !defaultBannedRights?.sendMessages) {
+                    entity.canSendMsgs = true;
+                    try {
+                        await db.updateActiveChannels(entity.id.toString(), entity);
+                    } catch (error) {
+                        console.log(error);
+                        console.log("Failed to update ActiveChannels");
+                    }
+                } else {
+                    await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
+                    console.log("Removed Cahnnel- ", channel)
+                }
                 console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
             } catch (error) {
                 console.log("mseror: ", error);
                 if (error.toString().includes("No user has") || error.toString().includes("USERNAME_INVALID")) {
-                    const db = ChannelService.getInstance();
                     await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
                     console.log("Removed Cahnnel- ", channel)
                 }
