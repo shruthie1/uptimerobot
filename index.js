@@ -1597,11 +1597,11 @@ async function joinchannels(value) {
           console.log(channel.username);
           const username = channel?.username?.replace("@", '');
           if (username) {
-            await fetchWithTimeout(`${url}joinchannel?username=${username}`);
+            await fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
             await sleep(180000);
           }
         } catch (error) {
-          console.log("Some Error: ", error.code)
+          console.log("Some Error: ", error)
         }
       }
     }
