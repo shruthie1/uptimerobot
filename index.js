@@ -1406,6 +1406,7 @@ class checkerclass {
             }
           }
         }
+
         if (userPromoteStats?.isActive && (Date.now() - userPromoteStats?.lastUpdatedTimeStamp) / (1000 * 60) > 12) {
           try {
             const resp = await axios.get(`${val.url}promote`, { timeout: 120000 });
@@ -1413,14 +1414,16 @@ class checkerclass {
             console.log("Some Error: ", error.code);
           }
         }
-        if (Date.now() - val.lastPingTime > (5 * 60 * 1000)) {
+
+        const userData = userMap.get(val);
+        if (Date.now() - userData.lastPingTime > (5 * 60 * 1000)) {
           try {
             const data = userMap.get(key);
-            if (Date.now() - val.lastPingTime > (7 * 60 * 1000)) {
-              const url = val.url.includes('glitch') ? `${val.url}exec/refresh` : val.deployKey;
+            if (Date.now() - userData.lastPingTime > (7 * 60 * 1000)) {
+              const url = userData.url.includes('glitch') ? `${val.url}exec/refresh` : val.deployKey;
               await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
             } else {
-              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding - ${(Date.now() - val.lastPingTime) / 60000}`);
+              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding - ${(Date.now() - userData.lastPingTime) / 60000}`);
             }
           } catch (error) {
             await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Url not responding`);

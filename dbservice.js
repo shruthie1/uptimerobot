@@ -394,7 +394,6 @@ class ChannelService {
         if (notIds.length > 0) {
             query["id"] = { $nin: notIds };
         }
-        console.log(query);
         const promoteStatsColl = this.client.db("tgclients").collection('activeChannels');
         try {
             const result = await promoteStatsColl

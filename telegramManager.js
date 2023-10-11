@@ -166,7 +166,7 @@ class TelegramManager {
                         })
                     );
                 }
-                console.log("Joined channel Sucess")
+                console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
             } catch (error) {
                 console.log(error);
             }
