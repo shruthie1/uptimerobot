@@ -1376,64 +1376,64 @@ class checkerclass {
       }
 
       const db = ChannelService.getInstance();
-      userMap.forEach(async (val, key) => {
-        const userPromoteStats = await db.readSinglePromoteStats(val.clientId);
-        // console.log(userPromoteStats)
-        if (val.downTime > 2) {
-          console.log(val.clientId, " - ", val.downTime)
-        }
-        try {
-          const resp = await axios.get(`${val.url}`, { timeout: 120000 });
-          userMap.set(key, { ...val, downTime: 0 })
-        }
-        catch (e) {
-          userMap.set(key, { ...val, downTime: val.downTime + 1 })
-          console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable - ${val.downTime}`);
-          // await fetchWithTimeout(`${ppplbot()}&text=${key} is  NOT Reachable - ${val.downTime}`);
-          if (val.downTime > 5) {
-            userMap.set(key, { ...val, downTime: -5 })
+
+      Array.from(userMap.keys()).map(async (key) => {
+        const val = userMap.get(key);
+        if (val) {
+          if (Date.now() - val.lastPingTime > (5 * 60 * 1000)) {
             try {
-              const resp = await axios.get(`${val.deployKey}`, { timeout: 120000 });
-              if (resp?.status == 200 || resp.status == 201) {
-                await fetchWithTimeout(`${ppplbot()}&text=Restarted ${key}`);
+              if (Date.now() - val.lastPingTime > (7 * 60 * 1000)) {
+                const url = val.url.includes('glitch') ? `${val.url}exec/refresh` : val.deployKey;
+                await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
               } else {
+                await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding - ${(Date.now() - val.lastPingTime) / 60000}`);
+              }
+            } catch (error) {
+              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Url not responding`);
+              console.log("Some Error: ", error.code);
+            }
+          }
+
+          if (val.downTime > 2) {
+            console.log(val.clientId, " - ", val.downTime)
+          }
+          try {
+            const resp = await axios.get(`${val.url}`, { timeout: 120000 });
+            userMap.set(key, { ...val, downTime: 0 })
+          }
+          catch (e) {
+            console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable - ${val.downTime}`);
+            userMap.set(key, { ...val, downTime: val.downTime + 1 })
+            if (val.downTime > 5) {
+              userMap.set(key, { ...val, downTime: -5 })
+              try {
+                const resp = await axios.get(`${val.deployKey}`, { timeout: 120000 });
+                if (resp?.status == 200 || resp.status == 201) {
+                  await fetchWithTimeout(`${ppplbot()}&text=Restarted ${key}`);
+                } else {
+                  console.log(`Failed to Restart ${key}`);
+                  await fetchWithTimeout(`${ppplbot()}&text=Failed to Restart ${key}`);
+                }
+              } catch (error) {
                 console.log(`Failed to Restart ${key}`);
                 await fetchWithTimeout(`${ppplbot()}&text=Failed to Restart ${key}`);
               }
+            }
+          }
+
+          const userPromoteStats = await db.readSinglePromoteStats(val.clientId);
+          if (userPromoteStats?.isActive && (Date.now() - userPromoteStats?.lastUpdatedTimeStamp) / (1000 * 60) > 12) {
+            try {
+              const resp = await axios.get(`${val.url}promote`, { timeout: 120000 });
             } catch (error) {
-              console.log(`Failed to Restart ${key}`);
-              await fetchWithTimeout(`${ppplbot()}&text=Failed to Restart ${key}`);
+              console.log("Some Error: ", error.code);
             }
-          }
-        }
-
-        if (userPromoteStats?.isActive && (Date.now() - userPromoteStats?.lastUpdatedTimeStamp) / (1000 * 60) > 12) {
-          try {
-            const resp = await axios.get(`${val.url}promote`, { timeout: 120000 });
-          } catch (error) {
-            console.log("Some Error: ", error.code);
-          }
-        }
-
-        console.log("Checking pings - ", key, typeof key);
-        const data = userMap.get(key.toString());
-
-        if (data && Date.now() - data.lastPingTime > (5 * 60 * 1000)) {
-          try {
-            if (Date.now() - data.lastPingTime > (7 * 60 * 1000)) {
-              const url = data.url.includes('glitch') ? `${val.url}exec/refresh` : val.deployKey;
-              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
-            } else {
-              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding - ${(Date.now() - data.lastPingTime) / 60000}`);
-            }
-          } catch (error) {
-            await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Url not responding`);
-            console.log("Some Error: ", error.code);
           }
         } else {
-          console.log(key, "- Does not exist", Array.from(userMap.keys()).includes(key));
+          console.log(key, "- Does not exist");
         }
       })
+
       try {
         const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 55000 });
       }
