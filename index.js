@@ -1415,20 +1415,23 @@ class checkerclass {
           }
         }
 
-        const userData = userMap.get(key);
-        if (Date.now() - userData.lastPingTime > (5 * 60 * 1000)) {
+        console.log("Checking pings - ", key);
+        const data = userMap.get(key);
+
+        if (data && Date.now() - data.lastPingTime > (5 * 60 * 1000)) {
           try {
-            const data = userMap.get(key);
-            if (Date.now() - userData.lastPingTime > (7 * 60 * 1000)) {
-              const url = userData.url.includes('glitch') ? `${val.url}exec/refresh` : val.deployKey;
+            if (Date.now() - data.lastPingTime > (7 * 60 * 1000)) {
+              const url = data.url.includes('glitch') ? `${val.url}exec/refresh` : val.deployKey;
               await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
             } else {
-              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding - ${(Date.now() - userData.lastPingTime) / 60000}`);
+              await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding - ${(Date.now() - data.lastPingTime) / 60000}`);
             }
           } catch (error) {
             await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Url not responding`);
             console.log("Some Error: ", error.code);
           }
+        } else {
+          console.log(key, "- Does not exist", Array.from(userMap.keys()));
         }
       })
       try {
