@@ -164,7 +164,8 @@ class TelegramManager {
                 );
                 console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel, joinResult)
             } catch (error) {
-                console.log(error);
+                console.log("here: ", JSON.stringify(error))
+                console.log("mseror: ", error);
                 if (JSON.stringify(error).includes("No user has")) {
                     const db = ChannelService.getInstance();
                     await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
