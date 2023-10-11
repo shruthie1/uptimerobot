@@ -387,13 +387,24 @@ class ChannelService {
     }
 
     async getActiveChannels(limit = 50, skip = 0, keywords = [], notIds = []) {
-        let query = { canSendMsgs: true, username: { $ne: null } };
-        const pattern = new RegExp(keywords.join('|'), 'i');
-        const sort = { participantsCount: -1 };
-        query["$or"] = [{ title: { $regex: pattern } }, { username: { $regex: pattern } }]
+        let query = {
+            $and: [
+                { canSendMsgs: true },
+                { username: { $ne: null } },
+                {
+                    $or: [
+                        { title: { $regex: pattern } },
+                        { username: { $regex: pattern } }
+                    ]
+                }
+            ]
+        };
+
         if (notIds.length > 0) {
-            query["id"] = { $nin: notIds };
+            query.$and.push({ id: { $nin: notIds } });
         }
+
+        const sort = { participantsCount: -1 };
         const promoteStatsColl = this.client.db("tgclients").collection('activeChannels');
         try {
             const result = await promoteStatsColl
