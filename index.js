@@ -1232,6 +1232,17 @@ app.get('/joinchannel', async (req, res, next) => {
   }
 });
 
+app.get('/joinchannelBf', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    joinchannelForBufferClients()
+  } catch (error) {
+    console.log("Some Error: ", error.code);
+  }
+});
+
 app.get('/requestcall', async (req, res, next) => {
   res.send('Hello World!');
   next();
