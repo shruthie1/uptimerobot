@@ -1181,7 +1181,7 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
         const connectResp = await axios.get(`${url}getprocessid`, { timeout: 10000 });
         if (connectResp.data.ProcessId === processId) {
           userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-          connetionQueue.push({ userName, processId });
+          pushToconnectionQueue(userName, processId)
         } else {
           console.log(`Actual Process Id from ${url}getprocessid : `, connectResp.data.ProcessId);
           console.log("Request received from Unknown process")
@@ -1927,5 +1927,14 @@ async function joinchannelForBufferClients() {
       console.log("joingn Starting")
       client.joinChannels(resp);
     }
+  }
+}
+
+function pushToconnectionQueue(userName, processId) {
+  const existingIndex = connetionQueue.findIndex(entry => entry.userName === userName);
+  if (existingIndex !== -1) {
+    connetionQueue[existingIndex].processId = processId;
+  } else {
+    connetionQueue.push({ userName, processId });
   }
 }
