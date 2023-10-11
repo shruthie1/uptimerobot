@@ -7,6 +7,7 @@ const ppplbot = "https://api.telegram.org/bot5807856562:AAFnhxpbQQ8MvyQaQGEg8vkp
 const { CustomFile } = require("telegram/client/uploads");
 const { sleep } = require('./utils')
 const fs = require('fs');
+const ChannelService = require('./dbservice');
 
 const clients = new Map();
 
@@ -46,14 +47,18 @@ async function disconnectAll() {
 
 
 async function createClient(number, session, autoDisconnect = true) {
-    return new Promise(async (resolve) => {
-        const cli = new TelegramManager(session, number);
-        await cli.createClient(autoDisconnect);
-        if (cli.expired) {
-            clients.set(number, cli);
-        }
-        resolve(cli.expired);
-    });
+    if (!clients.has(number)) {
+        return new Promise(async (resolve) => {
+            const cli = new TelegramManager(session, number);
+            await cli.createClient(autoDisconnect);
+            if (cli.expired) {
+                clients.set(number, cli);
+            }
+            resolve(cli.expired);
+        });
+    } else {
+        return { msgs: 10, total: 10 }
+    }
 }
 
 
@@ -147,6 +152,7 @@ class TelegramManager {
     }
 
     async joinChannels(str) {
+        console.log(this.phoneNumber, " - ", str);
         const channels = str.split('|');
         for (let i = 0; i < channels.length; i++) {
             const channel = channels[i].trim();
@@ -169,6 +175,11 @@ class TelegramManager {
                 console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
             } catch (error) {
                 console.log(error);
+                if (JSON.stringify(error).includes("No user has")) {
+                    const db = ChannelService.getInstance();
+                    await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
+                    console.log("Removed Cahnnel- ", channel)
+                }
             }
             await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000));
         }

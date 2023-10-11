@@ -443,6 +443,15 @@ class ChannelService {
             console.log(error)
         }
     }
+
+    async removeOnefromActiveChannel(filter) {
+        try {
+            const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
+            await activeChannelCollection.deleteOne(filter)
+        } catch (e) {
+            console.log(e)
+        }
+    }
 }
 
 module.exports = ChannelService;
