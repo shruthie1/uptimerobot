@@ -305,7 +305,6 @@ app.get('/setupClient/:clientId', async (req, res, next) => {
 })
 
 app.get('/getip', (req, res) => {
-  setUpClient
   res.json(ip);
 });
 
