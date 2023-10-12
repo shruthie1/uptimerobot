@@ -388,7 +388,7 @@ class ChannelService {
 
     async getActiveChannels(limit = 50, skip = 0, keywords = [], notIds = []) {
         const pattern = new RegExp(keywords.join('|'), 'i');
-        const notPattern = new RegExp('online|book|study|youtube|sub|open|trad|cric|exch|movie|search|film|offer|ott|deal|quiz|academ|insti', "i")
+        const notPattern = new RegExp('online|book|study|youtube|sub|open|trad|cric|exch|movie|search|film|offer|ott|deal|quiz|academ|insti|talkies|screen|series|webser', "i")
         let query = {
             $and: [
                 { canSendMsgs: true },
