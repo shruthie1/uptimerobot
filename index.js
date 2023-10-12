@@ -336,7 +336,7 @@ app.get('/channels/:limit/:skip', async (req, res, next) => {
   const channels = await db.getChannels(parseInt(limit), parseInt(skip), k);
   let resp = 'joinchannel:'
   channels.forEach((channel) => {
-    resp = resp + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
+    resp = resp + "|" + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
   })
   res.send(resp);
 });
@@ -793,9 +793,10 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
         const channels = await client.channelInfo(true);
         const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
         const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k ? [k] : keys, channels.ids, 'channels');
+        console.log("DbChannelsLen: ", result.length);
         let resp = ''
         result.forEach((channel) => {
-          resp = resp + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
+          resp = resp + "|" + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
         })
         await client.removeOtherAuths();
         client.joinChannels(resp);
@@ -1957,9 +1958,10 @@ async function joinchannelForBufferClients() {
       const channels = await client.channelInfo(true);
       const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
       const result = await db.getActiveChannels(150, 0, keys, channels.ids, "channels");
+      console.log("DbChannelsLen: ", result.length);
       let resp = ''
       result.forEach((channel) => {
-        resp = resp + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
+        resp = resp + "|" + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
       })
       console.log("joingn Starting")
       client.joinChannels(resp);

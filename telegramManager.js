@@ -161,7 +161,7 @@ class TelegramManager {
         console.log(this.phoneNumber, " - channelsLen - ", channels.length)
         for (let i = 0; i < channels.length; i++) {
             const channel = channels[i].trim();
-            console.log(this.phoneNumber - "Trying: ", channel)
+            console.log(this.phoneNumber, "Trying: ", channel)
             try {
                 let joinResult = await this.client.invoke(
                     new Api.channels.JoinChannel({
