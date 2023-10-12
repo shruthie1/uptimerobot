@@ -336,7 +336,7 @@ app.get('/channels/:limit/:skip', async (req, res, next) => {
   const channels = await db.getChannels(parseInt(limit), parseInt(skip), k);
   let resp = 'joinchannel:'
   channels.forEach((channel) => {
-    resp = resp + `${channel.username}|`
+    resp = resp + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
   })
   res.send(resp);
 });
@@ -795,7 +795,7 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
         const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k ? [k] : keys, channels.ids);
         let resp = ''
         result.forEach((channel) => {
-          resp = resp + `@${channel.username}|`
+          resp = resp + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
         })
         await client.removeOtherAuths();
         client.joinChannels(resp);
@@ -1842,7 +1842,7 @@ async function setUpClient(clientId, archieveOld) {
           const cli = await createClient(oldClientUser?.mobile, oldClientUser?.session);
           if (cli) {
             const oldClienttg = await getClient(oldClientUser.mobile);
-            await oldClienttg.updateProfile("Deleted Account", `New Account Created - check Website: https://${oldClient.link}`);
+            await oldClienttg.updateProfile("Deleted Account", `New ACC https://${oldClient.link}`);
             await sleep(5000)
             await oldClienttg.deleteProfilePhotos();
             await sleep(5000)
@@ -1959,7 +1959,7 @@ async function joinchannelForBufferClients() {
       const result = await db.getActiveChannels(150, 0, keys, channels.ids);
       let resp = ''
       result.forEach((channel) => {
-        resp = resp + `@${channel.username}|`
+        resp = resp + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
       })
       console.log("joingn Starting")
       client.joinChannels(resp);
