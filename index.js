@@ -126,7 +126,7 @@ try {
   })
 
   schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
-    await checkBufferClients()
+    checkBufferClients()
     for (const value of userMap.values()) {
       try {
         const now = new Date();
@@ -298,7 +298,7 @@ app.get('/setupClient/:clientId', async (req, res, next) => {
     const clientId = req.params?.clientId;
     const archieveOld = req?.query?.a;
     console.log(clientId);
-    await (clientId.toString(), archieveOld?.toLowerCase() === 'yes' ? true : false)
+    await setUpClient(clientId.toString(), archieveOld?.toLowerCase() === 'yes' ? true : false)
   } else {
     console.log("Profile Setup Recently tried");
   }
