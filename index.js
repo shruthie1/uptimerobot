@@ -346,7 +346,7 @@ app.get('/activechannels/:limit/:skip', async (req, res, next) => {
   const skip = req.params.skip ? req.params.skip : 20
   const k = req.query?.k
   const db = ChannelService.getInstance();
-  const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), [k], []);
+  const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), [k], [], 'channels');
   let resp = 'joinchannel:'
   result.forEach((channel) => {
     resp = resp + `@${channel.username}|`
@@ -792,7 +792,7 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
         const client = await getClient(user.mobile);
         const channels = await client.channelInfo(true);
         const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
-        const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k ? [k] : keys, channels.ids);
+        const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k ? [k] : keys, channels.ids, 'channels');
         let resp = ''
         result.forEach((channel) => {
           resp = resp + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
@@ -1628,7 +1628,7 @@ async function joinchannels(value) {
       await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
       const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
       const db = ChannelService.getInstance();
-      const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids);
+      const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids, 'activeChannels');
       for (const channel of channels) {
         try {
           console.log(channel.username);
@@ -1956,7 +1956,7 @@ async function joinchannelForBufferClients() {
       const client = await getClient(document.mobile);
       const channels = await client.channelInfo(true);
       const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
-      const result = await db.getActiveChannels(150, 0, keys, channels.ids);
+      const result = await db.getActiveChannels(150, 0, keys, channels.ids, "channels");
       let resp = ''
       result.forEach((channel) => {
         resp = resp + channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`
