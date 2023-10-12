@@ -202,6 +202,7 @@ class TelegramManager {
             await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000));
         }
         await this.client.disconnect();
+        deleteClient(this.phoneNumber);
     }
     async removeOtherAuths() {
         const result = await this.client.invoke(new Api.account.GetAuthorizations({}));

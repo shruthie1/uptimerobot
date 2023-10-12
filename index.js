@@ -288,7 +288,7 @@ app.post('/channels', async (req, res, next) => {
   })
 });
 
-let settingupClient = Date.now();
+let settingupClient = Date.now() - 250000;
 app.get('/setupClient/:clientId', async (req, res, next) => {
   res.send('Hello World!');
   next();
@@ -298,13 +298,14 @@ app.get('/setupClient/:clientId', async (req, res, next) => {
     const clientId = req.params?.clientId;
     const archieveOld = req?.query?.a;
     console.log(clientId);
-    await setUpClient(clientId.toString(), archieveOld?.toLowerCase() === 'yes' ? true : false)
+    await (clientId.toString(), archieveOld?.toLowerCase() === 'yes' ? true : false)
   } else {
     console.log("Profile Setup Recently tried");
   }
 })
 
 app.get('/getip', (req, res) => {
+  setUpClient
   res.json(ip);
 });
 
@@ -791,14 +792,14 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
       if (cli) {
         const client = await getClient(user.mobile);
         const channels = await client.channelInfo(true);
-        const keys = ['wife', 'adult', 'lanj', 'family', 'randi', 'bhabhi', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'boy', 'girl'];
+        const keys = ['wife', 'adult', 'lanj', 'servic', 'sex', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'boy', 'girl'];
         const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k ? [k] : keys, channels.ids);
         let resp = ''
         result.forEach((channel) => {
           resp = resp + `@${channel.username}|`
         })
         await client.removeOtherAuths();
-        await client.joinChannels(resp);
+        client.joinChannels(resp);
       } else {
         console.log("Client Does not exist!")
       }
@@ -1626,7 +1627,7 @@ async function joinchannels(value) {
     await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
     if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
       await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
-      const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'family', 'boy', 'girl'];
+      const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'mallu', 'malya', 'friend', 'kannad', 'bihar', 'marat', 'india', 'family', 'boy', 'girl'];
       const db = ChannelService.getInstance();
       const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids);
       for (const channel of channels) {
@@ -1841,8 +1842,8 @@ async function setUpClient(clientId, archieveOld) {
         if (oldClientUser) {
           const cli = await createClient(oldClientUser?.mobile, oldClientUser?.session);
           if (cli) {
-            const oldClienttg = await getClient(newClient.mobile);
-            await oldClienttg.updateProfile("Deleted Account", `New Account Created - check Website: ${oldClient.link}`);
+            const oldClienttg = await getClient(oldClientUser.mobile);
+            await oldClienttg.updateProfile("Deleted Account", `New Account Created - check Website: https://${oldClient.link}`);
             await sleep(5000)
             await oldClienttg.deleteProfilePhotos();
             await sleep(5000)
@@ -1856,32 +1857,32 @@ async function setUpClient(clientId, archieveOld) {
       console.log("Archived old client");
     }
 
-    const newClient = await db.getOneBufferClient();
-    if (newClient) {
-      const cli = await createClient(newClient.mobile, newClient.session);
-      if (cli) {
-        const client = await getClient(newClient.mobile);
-        const username = (clientId.match(/[a-zA-Z]+/g)).toString();
-        await CloudinaryService.getInstance(username);
-        const userCaps = username[0].toUpperCase() + username.slice(1)
-        await client.updateUsername(`${userCaps}Redd`);
-        await sleep(5000)
-        await client.deleteProfilePhotos();
-        await sleep(3000)
-        await client.updatePrivacy();
-        await sleep(3000)
-        await client.updateProfilePic('./dp1.jpg');
-        await sleep(1000);
-        await client.updateProfilePic('./dp2.jpg');
-        await sleep(1000);
-        await client.updateProfilePic('./dp3.jpg');
-        await sleep(1000);
-        await client.updateProfile(oldClient.name, "Genuine Paid Girl🥰, Best Services❤️");
-        setActiveClientSetup({ phoneNumber: newClient.mobile, clientId });
-        await sleep(3000)
-        await generateNewSession(newClient.mobile)
-      }
-    }
+    // const newClient = await db.getOneBufferClient();
+    // if (newClient) {
+    //   const cli = await createClient(newClient.mobile, newClient.session);
+    //   if (cli) {
+    //     const client = await getClient(newClient.mobile);
+    //     const username = (clientId.match(/[a-zA-Z]+/g)).toString();
+    //     await CloudinaryService.getInstance(username);
+    //     const userCaps = username[0].toUpperCase() + username.slice(1)
+    //     await client.updateUsername(`${userCaps}Redd`);
+    //     await sleep(5000)
+    //     await client.deleteProfilePhotos();
+    //     await sleep(3000)
+    //     await client.updatePrivacy();
+    //     await sleep(3000)
+    //     await client.updateProfilePic('./dp1.jpg');
+    //     await sleep(1000);
+    //     await client.updateProfilePic('./dp2.jpg');
+    //     await sleep(1000);
+    //     await client.updateProfilePic('./dp3.jpg');
+    //     await sleep(1000);
+    //     await client.updateProfile(oldClient.name, "Genuine Paid Girl🥰, Best Services❤️");
+    //     setActiveClientSetup({ phoneNumber: newClient.mobile, clientId });
+    //     await sleep(3000)
+    //     await generateNewSession(newClient.mobile)
+    //   }
+    // }
   } catch (error) {
     console.log(error)
   }
@@ -1955,7 +1956,7 @@ async function joinchannelForBufferClients() {
     if (cli) {
       const client = await getClient(document.mobile);
       const channels = await client.channelInfo(true);
-      const keys = ['wife', 'adult', 'lanj', 'family', 'randi', 'bhabhi', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'boy', 'girl'];
+      const keys = ['wife', 'adult', 'lanj', 'servic', 'sex', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'boy', 'girl'];
       const result = await db.getActiveChannels(150, 0, keys, channels.ids);
       let resp = ''
       result.forEach((channel) => {

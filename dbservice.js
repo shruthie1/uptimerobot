@@ -388,7 +388,7 @@ class ChannelService {
 
     async getActiveChannels(limit = 50, skip = 0, keywords = [], notIds = []) {
         const pattern = new RegExp(keywords.join('|'), 'i');
-        const notPattern = new RegExp('online|book|study|youtube|sub|open', "i")
+        const notPattern = new RegExp('online|book|study|youtube|sub|open|trad|cric|exch', "i")
         let query = {
             $and: [
                 { canSendMsgs: true },
@@ -456,7 +456,6 @@ class ChannelService {
                     }
                 }
             }
-            console.log("hi3")
         } catch (error) {
             console.log(error)
         }
