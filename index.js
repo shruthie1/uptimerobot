@@ -133,7 +133,7 @@ try {
         if (now.getUTCDate() % 3 === 1) {
           await fetchWithTimeout(`${value.url}leavechannels`);
         }
-        await joinchannels(value)
+        joinchannels(value)
       } catch (error) {
         console.log("Some Error: ", error.code);
       }
@@ -1634,7 +1634,7 @@ async function joinchannels(value) {
           console.log(channel.username);
           const username = channel?.username?.replace("@", '');
           if (username) {
-            await fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
+            fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
             await sleep(180000);
           }
         } catch (error) {

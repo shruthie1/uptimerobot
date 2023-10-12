@@ -388,19 +388,25 @@ class ChannelService {
 
     async getActiveChannels(limit = 50, skip = 0, keywords = [], notIds = []) {
         const pattern = new RegExp(keywords.join('|'), 'i');
-        const notPattern = new RegExp('online|book|study|youtube|sub', "i")
+        const notPattern = new RegExp('online|book|study|youtube|sub|open', "i")
         let query = {
             $and: [
                 { canSendMsgs: true },
                 { username: { $ne: null } },
                 {
                     $or: [
-                        { title: { $regex: pattern, $not: { $regex: notPattern } } },
-                        { username: { $regex: pattern, $not: { $regex: notPattern } } }
+                        { title: { $regex: pattern } },
+                        { username: { $regex: pattern } }
                     ]
                 },
                 {
                     id: { $nin: notIds }
+                },
+                {
+                    title: { $not: { $regex: notPattern } }
+                },
+                {
+                    username: { $not: { $regex: notPattern } }
                 }
             ]
         };
