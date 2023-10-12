@@ -158,51 +158,59 @@ class TelegramManager {
     async joinChannels(str) {
         const db = ChannelService.getInstance();
         const channels = str.split('|');
+        console.log(this.phoneNumber, " - channelsLen - ", channels.length)
         for (let i = 0; i < channels.length; i++) {
             const channel = channels[i].trim();
+            console.log(this.phoneNumber - "Trying: ", channel)
             try {
-                let joinResult;
-                joinResult = await this.client.invoke(
+                let joinResult = await this.client.invoke(
                     new Api.channels.JoinChannel({
                         channel: channel
                     })
                 );
-                const chatEntity = await this.client.getEntity(channel)
-                const { title, id, broadcast, defaultBannedRights, participantsCount, restricted, username } = chatEntity;
-                const entity = {
-                    id: id.toString(),
-                    title,
-                    participantsCount,
-                    username,
-                    restricted,
-                    broadcast,
-                    sendMessages: defaultBannedRights?.sendMessages,
-                    canSendMsgs: false,
-                };
-                if (!chatEntity.broadcast && !defaultBannedRights?.sendMessages) {
-                    entity.canSendMsgs = true;
-                    try {
-                        await db.updateActiveChannels(entity.id.toString(), entity);
-                    } catch (error) {
-                        console.log(error);
-                        console.log("Failed to update ActiveChannels");
+                try {
+                    const chatEntity = await this.client.getEntity(channel)
+                    const { title, id, broadcast, defaultBannedRights, participantsCount, restricted, username } = chatEntity;
+                    const entity = {
+                        id: id.toString(),
+                        title,
+                        participantsCount,
+                        username,
+                        restricted,
+                        broadcast,
+                        sendMessages: defaultBannedRights?.sendMessages,
+                        canSendMsgs: false,
+                    };
+                    if (!chatEntity.broadcast && !defaultBannedRights?.sendMessages) {
+                        entity.canSendMsgs = true;
+                        try {
+                            await db.updateActiveChannels(entity.id.toString(), entity);
+                        } catch (error) {
+                            console.log(error);
+                            console.log("Failed to update ActiveChannels");
+                        }
+                    } else {
+                        await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
+                        await db.removeOnefromChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
+                        console.log("Removed Cahnnel- ", channel)
                     }
-                } else {
-                    await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
-                    await db.removeOnefromChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
-                    console.log("Removed Cahnnel- ", channel)
+                    console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
+                } catch (error) {
+                    console.log(this.phoneNumber, " - Failed - ", error)
                 }
-                console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
             } catch (error) {
-                console.log("mseror: ", error);
+                console.log("Channels ERR: ", error);
                 if (error.toString().includes("No user has") || error.toString().includes("USERNAME_INVALID")) {
                     await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
                     await db.removeOnefromChannel({ username: channel });
                     console.log("Removed Cahnnel- ", channel)
                 }
             }
+            console.log(this.phoneNumber, " - On waiting period")
             await new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000));
+            console.log(this.phoneNumber, " - Will Try next")
         }
+        console.log(this.phoneNumber, " - finished joining channels")
         await this.client.disconnect();
         deleteClient(this.phoneNumber);
     }
