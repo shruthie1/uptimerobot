@@ -388,10 +388,9 @@ class ChannelService {
 
     async getActiveChannels(limit = 50, skip = 0, keywords = [], notIds = []) {
         const pattern = new RegExp(keywords.join('|'), 'i');
-        const notPattern = new RegExp('online|PROFIT|like|earn|popcorn|TANISHUV|mall|win|casino|shop|promot|english|fix|money|book|anim|angime|support|cinema|bet|predic|study|youtube|sub|open|trad|cric|exch|movie|search|film|offer|ott|deal|quiz|academ|insti|talkies|screen|series|webser', "i")
+        const notPattern = new RegExp('online|PROFIT|like|earn|popcorn|TANISHUV|bitcoin|crypto|mall|work|folio|health|civil|win|casino|shop|promot|english|fix|money|book|anim|angime|support|cinema|bet|predic|study|youtube|sub|open|trad|cric|exch|movie|search|film|offer|ott|deal|quiz|academ|insti|talkies|screen|series|webser', "i")
         let query = {
             $and: [
-                { canSendMsgs: true },
                 { username: { $ne: null } },
                 {
                     $or: [
@@ -400,7 +399,7 @@ class ChannelService {
                     ]
                 },
                 {
-                    id: { $nin: notIds }
+                    channelId: { $nin: notIds }
                 },
                 {
                     title: { $not: { $regex: notPattern } }
@@ -412,7 +411,7 @@ class ChannelService {
         };
 
         const sort = { participantsCount: -1 };
-        const promoteStatsColl = this.client.db("tgclients").collection('activeChannels');
+        const promoteStatsColl = this.client.db("tgclients").collection('channels');
         try {
             const result = await promoteStatsColl
                 .find(query)

@@ -792,7 +792,7 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
       if (cli) {
         const client = await getClient(user.mobile);
         const channels = await client.channelInfo(true);
-        const keys = ['wife', 'adult', 'lanj', 'servic', 'sex', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'boy', 'girl'];
+        const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
         const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k ? [k] : keys, channels.ids);
         let resp = ''
         result.forEach((channel) => {
@@ -1627,7 +1627,7 @@ async function joinchannels(value) {
     await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
     if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
       await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
-      const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'mallu', 'malya', 'friend', 'kannad', 'bihar', 'marat', 'india', 'family', 'boy', 'girl'];
+      const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
       const db = ChannelService.getInstance();
       const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids);
       for (const channel of channels) {
@@ -1956,7 +1956,7 @@ async function joinchannelForBufferClients() {
     if (cli) {
       const client = await getClient(document.mobile);
       const channels = await client.channelInfo(true);
-      const keys = ['wife', 'adult', 'lanj', 'servic', 'sex', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'boy', 'girl'];
+      const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
       const result = await db.getActiveChannels(150, 0, keys, channels.ids);
       let resp = ''
       result.forEach((channel) => {
