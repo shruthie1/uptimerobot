@@ -1403,11 +1403,10 @@ class checkerclass {
 
       Array.from(userMap.keys()).map(async (key) => {
         const val = userMap.get(key);
-
         if (val) {
-          if ((Date.now() - pings[key]) > (5 * 60 * 1000)) {
+          if ((Date.now() - pings[key]) > (5 * 60 * 1000) && (Date.now() - val.lastPingTime) > (5 * 60 * 1000)) {
             try {
-              if ((Date.now() - pings[key]) > (7 * 60 * 1000)) {
+              if ((Date.now() - pings[key]) > (7 * 60 * 1000) && (Date.now() - val.lastPingTime) > (7 * 60 * 1000)) {
                 const url = val.url.includes('glitch') ? `${val.url}exec/refresh` : val.deployKey;
                 await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
               } else {
