@@ -1235,14 +1235,24 @@ app.get('/joinchannel', async (req, res, next) => {
 }, async (req, res) => {
   try {
     const userName = req.query.userName;
-    const data = userMap.get(userName.toLowerCase());
-    if (data) {
-      await joinchannels(data)
+    if (userName) {
+      const data = userMap.get(userName.toLowerCase());
+      if (data) {
+        await joinchannels(data)
+      } else {
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
+      }
     } else {
-      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
+      for (const value of userMap.values()) {
+        try {
+          await joinchannels(value)
+        } catch (error) {
+          console.log("Some Error: ", error.code);
+        }
+      }
     }
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", error);
   }
 });
 
@@ -1617,7 +1627,7 @@ async function joinchannels(value) {
     await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
     if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
       await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
-      const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'family', 'chat', 'boy', 'girl'];
+      const keys = ['wife', 'adult', 'lanj', 'randi', 'bhabhi', 'telugu', 'tamil', 'friend', 'kannad', 'bihar', 'marat', 'india', 'family', 'boy', 'girl'];
       const db = ChannelService.getInstance();
       const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids);
       for (const channel of channels) {
@@ -1828,7 +1838,7 @@ async function setUpClient(clientId, archieveOld) {
     const oldClient = await db.getUserConfig({ clientId })
     if (archieveOld && oldClient) {
       try {
-        const oldClientUser = await db.getUser({ mobile: (oldClient.number.toString()).replace("+", '') });
+        const oldClientUser = await db.getUser({ mobile: (oldClient?.number.toString()).replace("+", '') });
         if (oldClientUser) {
           const cli = await createClient(oldClientUser?.mobile, oldClientUser?.session);
           if (cli) {
@@ -1841,7 +1851,7 @@ async function setUpClient(clientId, archieveOld) {
           }
         }
       } catch (error) {
-        console.log("Error updateing settings of old Client");
+        console.log("Error updateing settings of old Client - ", error);
       }
       await db.insertInAchivedClient(oldClient);
       console.log("Archived old client");

