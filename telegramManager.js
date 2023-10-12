@@ -189,6 +189,7 @@ class TelegramManager {
                     }
                 } else {
                     await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
+                    await db.removeOnefromChannel({ username: channel.replace("@", '') });
                     console.log("Removed Cahnnel- ", channel)
                 }
                 console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
@@ -196,6 +197,7 @@ class TelegramManager {
                 console.log("mseror: ", error);
                 if (error.toString().includes("No user has") || error.toString().includes("USERNAME_INVALID")) {
                     await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
+                    await db.removeOnefromChannel({ username: channel.replace("@", '') });
                     console.log("Removed Cahnnel- ", channel)
                 }
             }
