@@ -1238,14 +1238,14 @@ app.get('/joinchannel', async (req, res, next) => {
     if (userName) {
       const data = userMap.get(userName.toLowerCase());
       if (data) {
-        await joinchannels(data)
+        joinchannels(data)
       } else {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
       }
     } else {
       for (const value of userMap.values()) {
         try {
-          await joinchannels(value)
+          joinchannels(value)
         } catch (error) {
           console.log("Some Error: ", error.code);
         }
