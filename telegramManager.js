@@ -384,7 +384,7 @@ class TelegramManager {
                 new Api.account.SetPrivacy({
                     key: new Api.InputPrivacyKeyAbout({}),
                     rules: [
-                        new Api.InputPrivacyValueDisallowAll()
+                        new Api.InputPrivacyValueAllowAll()
                     ],
                 })
             );
