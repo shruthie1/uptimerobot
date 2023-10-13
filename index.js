@@ -1629,7 +1629,7 @@ async function joinchannels(value) {
     await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
     if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
       await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
-      const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
+      const keys = ['wife', 'adult', 'lanj', 'servic', 'paid', 'randi', 'bhab', 'boy', 'girl'];
       const db = ChannelService.getInstance();
       const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids, 'activeChannels');
       for (const channel of channels) {
@@ -1952,7 +1952,7 @@ function fetchNumbersFromString(inputString) {
 
 async function joinchannelForBufferClients() {
   const db = ChannelService.getInstance();
-  const clients = await db.readBufferClients({ channels: { "$lt": 250 } }, 3)
+  const clients = await db.readBufferClients({ channels: { "$lt": 150 } }, 3)
   for (const document of clients) {
     const cli = await createClient(document.mobile, document.session, false);
     if (cli) {

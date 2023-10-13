@@ -165,9 +165,10 @@ class TelegramManager {
             try {
                 let joinResult = await this.client.invoke(
                     new Api.channels.JoinChannel({
-                        channel: channel
+                        channel: await this.client.getEntity(channel)
                     })
                 );
+                console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
                 try {
                     const chatEntity = await this.client.getEntity(channel)
                     const { title, id, broadcast, defaultBannedRights, participantsCount, restricted, username } = chatEntity;
@@ -185,6 +186,7 @@ class TelegramManager {
                         entity.canSendMsgs = true;
                         try {
                             await db.updateActiveChannels(entity.id.toString(), entity);
+                            console.log("updated ActiveChannels");
                         } catch (error) {
                             console.log(error);
                             console.log("Failed to update ActiveChannels");
@@ -194,7 +196,6 @@ class TelegramManager {
                         await db.removeOnefromChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
                         console.log("Removed Cahnnel- ", channel)
                     }
-                    console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
                 } catch (error) {
                     console.log(this.phoneNumber, " - Failed - ", error)
                 }
