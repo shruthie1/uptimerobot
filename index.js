@@ -1855,6 +1855,7 @@ async function setUpClient(clientId, archieveOld) {
       } catch (error) {
         console.log("Error updateing settings of old Client - ", error);
       }
+      delete oldClient['_id']
       await db.insertInAchivedClient(oldClient);
       console.log("Archived old client");
     }
