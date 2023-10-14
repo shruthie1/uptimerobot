@@ -297,8 +297,22 @@ app.get('/setupClient/:clientId', async (req, res, next) => {
     settingupClient = Date.now();
     const clientId = req.params?.clientId;
     const archieveOld = req?.query?.a;
-    console.log(clientId);
+    console.log(clientId, archieveOld);
     await setUpClient(clientId.toString(), archieveOld?.toLowerCase() === 'yes' ? true : false)
+  } else {
+    console.log("Profile Setup Recently tried");
+  }
+})
+
+app.get('/updateClient/:clientId', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  if (Date.now() > (settingupClient + 240000)) {
+    settingupClient = Date.now();
+    const clientId = req.params?.clientId;
+    console.log(clientId);
+    await updateClient(clientId.toString())
   } else {
     console.log("Profile Setup Recently tried");
   }
@@ -792,7 +806,7 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
       if (cli) {
         const client = await getClient(user.mobile);
         const channels = await client.channelInfo(true);
-        const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
+        const keys = ['wife', 'adult', 'lanj', 'lesb', 'paid', 'randi', 'bhab', 'boy', 'girl'];
         const result = await db.getActiveChannels(parseInt(limit), parseInt(skip), k ? [k] : keys, channels.ids, 'channels');
         console.log("DbChannelsLen: ", result.length);
         let resp = '';
@@ -1834,6 +1848,44 @@ async function addNewUserstoBufferClients() {
   }
 }
 
+
+async function updateClient(clientId) {
+  try {
+    const db = await ChannelService.getInstance();
+    const oldClient = await db.getUserConfig({ clientId })
+    if (oldClient) {
+      try {
+        const oldClientUser = await db.getUser({ mobile: (oldClient?.number.toString()).replace("+", '') });
+        if (oldClientUser) {
+          const cli = await createClient(oldClientUser?.mobile, oldClientUser?.session);
+          if (cli) {
+            const client = await getClient(oldClientUser.mobile);
+            const username = (clientId.match(/[a-zA-Z]+/g)).toString();
+            await CloudinaryService.getInstance(username);
+            const userCaps = username[0].toUpperCase() + username.slice(1)
+            await client.updateUsername(`${userCaps}Redd`);
+            await sleep(5000)
+            await client.deleteProfilePhotos();
+            await sleep(3000)
+            await client.updatePrivacy();
+            await sleep(3000)
+            await client.updateProfilePic('./dp1.jpg');
+            await sleep(1000);
+            await client.updateProfilePic('./dp2.jpg');
+            await sleep(1000);
+            await client.updateProfilePic('./dp3.jpg');
+            await sleep(1000);
+            await client.updateProfile(oldClient.name, "Genuine Paid Girl🥰, Best Services❤️");
+          }
+        }
+      } catch (error) {
+        console.log("Error updateing settings of old Client - ", error);
+      }
+    }
+  } catch (e) {
+
+  }
+}
 async function setUpClient(clientId, archieveOld) {
   try {
     const db = await ChannelService.getInstance();
@@ -1960,7 +2012,7 @@ async function joinchannelForBufferClients() {
     if (cli) {
       const client = await getClient(document.mobile);
       const channels = await client.channelInfo(true);
-      const keys = ['wife', 'adult', 'lanj', 'servic', 'lesb', 'hyder', 'bang', 'chenna', 'mysore', 'paid', 'inces', 'bab', 'mallu', 'malya', 'randi', 'bhab', 'telugu', 'tamil', 'friend', 'kannad', 'bangla', 'gujar', 'delhi', 'bihar', 'marat', 'india', 'boy', 'girl'];
+      const keys = ['wife', 'adult', 'lanj', 'lesb', 'paid', 'randi', 'bhab', 'boy', 'girl'];
       const result = await db.getActiveChannels(150, 0, keys, channels.ids, "channels");
       console.log("DbChannelsLen: ", result.length);
       let resp = '';
