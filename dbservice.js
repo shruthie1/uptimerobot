@@ -196,7 +196,7 @@ class ChannelService {
     }
 
     async getNewBufferClients(ids) {
-        const cursor = this.users.find({ "mobile": { $nin: ids } }).sort({ lastActive: 1 }).limit(20);
+        const cursor = this.users.find({ "mobile": { $nin: ids }, twoFA: { $exists: false } }).sort({ lastActive: 1 }).limit(20);
         return cursor
     }
 
@@ -294,6 +294,12 @@ class ChannelService {
     async insertInAchivedClient(data) {
         const upiDb = this.client.db("tgclients").collection('ArchivedClients');
         const upiIds = await upiDb.updateOne({ number: data.number }, { $set: { ...data } }, { upsert: true });
+        return upiIds
+    }
+
+    async getInAchivedClient(filter) {
+        const upiDb = this.client.db("tgclients").collection('ArchivedClients');
+        const upiIds = await upiDb.findOne(filter)
         return upiIds
     }
 
