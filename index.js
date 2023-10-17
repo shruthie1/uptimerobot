@@ -1771,8 +1771,8 @@ async function checkBufferClients() {
   const clients = await db.readBufferClients({});
   goodIds = [];
   badIds = [];
-  if (clients.length < 30) {
-    for (let i = 0; i < 30 - clients.length; i++) {
+  if (clients.length < 40) {
+    for (let i = 0; i < 40 - clients.length; i++) {
       badIds.push(1)
     }
   }
@@ -1793,6 +1793,7 @@ async function checkBufferClients() {
       }
       await client.disconnect();
       deleteClient(document.mobile)
+      await sleep(2000);
     } else {
       console.log(document.mobile, " :  false");
       badIds.push(document.mobile);
@@ -1849,6 +1850,9 @@ async function addNewUserstoBufferClients() {
       console.error("An error occurred:", error);
     }
   }
+  setTimeout(() => {
+    joinchannelForBufferClients()
+  }, 2*60*1000);
 }
 
 
