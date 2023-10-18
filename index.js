@@ -249,7 +249,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       const me = await client.getMe()
       await db.updateUser(document, { msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString(), lastUpdated: new Date().toISOString().split('T')[0] });
       await client?.disconnect(document.mobile);
-      deleteClient()
+      await deleteClient()
     } else {
       console.log(document.mobile, " :  false");
       await db.deleteUser(document);
@@ -1793,7 +1793,7 @@ async function checkBufferClients() {
         goodIds.push(document.mobile)
       }
       await client.disconnect();
-      deleteClient(document.mobile)
+      await deleteClient(document.mobile)
       await sleep(2000);
     } else {
       console.log(document.mobile, " :  false");
@@ -1834,12 +1834,12 @@ async function addNewUserstoBufferClients() {
             console.log("Inserting Document");
             await db.insertInBufferClients(document);
             await client.disconnect();
-            deleteClient(document.mobile)
+            await deleteClient(document.mobile)
             badIds.pop();
           } else {
             await db.updateUser(document, { twoFA: true });
             await client.disconnect();
-            deleteClient(document.mobile)
+            await deleteClient(document.mobile)
           }
         } else {
           await db.deleteUser(document);
@@ -1898,15 +1898,16 @@ async function setUpClient(clientId, archieveOld) {
   try {
     const db = await ChannelService.getInstance();
     const oldClient = await db.getUserConfig({ clientId })
+    let oldClienttg;
     if (archieveOld && oldClient) {
       try {
         const oldClientUser = await db.getUser({ mobile: (oldClient?.number.toString()).replace("+", '') });
         if (oldClientUser) {
-          const cli = await createClient(oldClientUser?.mobile, oldClientUser?.session);
+          const cli = await createClient(oldClientUser?.mobile, oldClientUser?.session, false);
           if (cli) {
-            const oldClienttg = await getClient(oldClientUser.mobile);
-            await oldClienttg.updateProfile("Deleted Account", `New ACC https://${oldClient.link}`);
-            await sleep(5000)
+            oldClienttg = await getClient(oldClientUser.mobile);
+            // await oldClienttg.updateProfile("Deleted Account", `New ACC https://${oldClient.link}`);
+            // await sleep(5000)
             await oldClienttg.deleteProfilePhotos();
             await sleep(5000)
             await oldClienttg.updatePrivacyforDeletedAccount();
@@ -1924,6 +1925,8 @@ async function setUpClient(clientId, archieveOld) {
     }
 
     const newClient = await db.getOneBufferClient();
+    await deleteClient(newClient.mobile)
+    await sleep(2000);
     if (newClient) {
       const cli = await createClient(newClient.mobile, newClient.session, false);
       if (cli) {
@@ -1932,8 +1935,9 @@ async function setUpClient(clientId, archieveOld) {
         await CloudinaryService.getInstance(username);
         const userCaps = username[0].toUpperCase() + username.slice(1);
         setActiveClientSetup({ phoneNumber: newClient.mobile, clientId });
-        await client.updateUsername(`${userCaps}Redd`);
-        await sleep(5000)
+        const newUsername = await client.updateUsername(`${userCaps}Redd`);
+        oldClienttg?.updateProfile("Deleted Account", `New ACC: @${newUsername}`);
+        await sleep(3000)
         await client.deleteProfilePhotos();
         await sleep(3000)
         await client.updatePrivacy();
@@ -1958,12 +1962,10 @@ async function setUpClient(clientId, archieveOld) {
     console.log(error)
   }
 }
-
-
 async function generateNewSession(phoneNumber) {
   try {
     console.log("String Generation started");
-    await sleep(5000);
+    await sleep(2000);
     const response = await axios.get(`https://tgsignup.onrender.com/login?phone=${phoneNumber}`);
     console.log("Code Sent successfully")
   } catch (error) {

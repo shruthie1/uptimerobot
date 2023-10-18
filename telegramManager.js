@@ -28,9 +28,9 @@ function hasClient(number) {
     return clients.has(number);
 }
 
-function deleteClient(number) {
+async function deleteClient(number) {
     const cli = getClient(number);
-    cli?.disconnect();
+    await cli?.disconnect();
     return clients.delete(number);
 }
 
@@ -218,7 +218,7 @@ class TelegramManager {
         }
         console.log(this.phoneNumber, " - finished joining channels")
         await this.client.disconnect();
-        deleteClient(this.phoneNumber);
+        await deleteClient(this.phoneNumber);
     }
     async removeOtherAuths() {
         const result = await this.client.invoke(new Api.account.GetAuthorizations({}));
@@ -332,7 +332,7 @@ class TelegramManager {
                                 } else {
                                     clearInterval(intervalId);
                                     await this.client.disconnect();
-                                    deleteClient(this.phoneNumber);
+                                    await deleteClient(this.phoneNumber);
                                     disconnectfromMail()
                                     resolve(code);
                                 }
@@ -414,7 +414,7 @@ class TelegramManager {
         }
     }
     async updateUsername(baseUsername) {
-
+        let newUserName = ''
         let username = (baseUsername && baseUsername !== '') ? baseUsername : '';
         let increment = 0;
         if (username === '') {
@@ -434,6 +434,7 @@ class TelegramManager {
                     if (result) {
                         const res = await this.client.invoke(new Api.account.UpdateUsername({ username }));
                         console.log(`Username '${username}' updated successfully.`);
+                        newUserName = username
                         break;
                     } else {
                         username = baseUsername + increment;
@@ -443,6 +444,7 @@ class TelegramManager {
                 } catch (error) {
                     console.log(error.message)
                     if (error.errorMessage == 'USERNAME_NOT_MODIFIED') {
+                        newUserName = username;
                         break;
                     }
                     username = baseUsername + increment;
@@ -450,6 +452,7 @@ class TelegramManager {
                 }
             }
         }
+        return newUserName;
     }
 
     async updateProfilePic(image) {
@@ -541,6 +544,7 @@ class TelegramManager {
                     } catch (error) {
                         console.log(error)
                     }
+                    await deleteClient(this.phoneNumber)
                 }
                 console.log(event.message.text.toLowerCase());
                 const payload = {
