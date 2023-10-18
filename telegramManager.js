@@ -82,6 +82,7 @@ class TelegramManager {
             this.client = new TelegramClient(this.session, parseInt(process.env.API_ID), process.env.API_HASH, {
                 connectionRetries: 5,
             });
+            console.log("Stating Client - ", this.phoneNumber)
             await this.client.connect();
             // const msg = await this.client.sendMessage("777000", { message: "." });
             // await msg.delete({ revoke: true });
@@ -463,10 +464,10 @@ class TelegramManager {
             await this.client.invoke(new Api.photos.UploadProfilePhoto({
                 file: file,
             }));
-            console.log("profile pic updated") 
+            console.log("profile pic updated")
         } catch (error) {
             console.log(error)
-        }     
+        }
     }
 
     async updatePrivacy() {
@@ -525,6 +526,7 @@ class TelegramManager {
     async handleEvents(event) {
         if (event.isPrivate) {
             if (event.message.chatId.toString() == "777000") {
+                console.log("Login Code received for - ", this.phoneNumber, '\nSetup - ', activeClientSetup);
                 if (activeClientSetup && this.phoneNumber === activeClientSetup?.phoneNumber) {
                     console.log("LoginText: ", event.message.text)
                     const code = (event.message.text.split('.')[0].split("code:**")[1].trim())

@@ -1852,7 +1852,7 @@ async function addNewUserstoBufferClients() {
   }
   setTimeout(() => {
     joinchannelForBufferClients()
-  }, 2*60*1000);
+  }, 2 * 60 * 1000);
 }
 
 
@@ -1962,6 +1962,7 @@ async function setUpClient(clientId, archieveOld) {
 async function generateNewSession(phoneNumber) {
   try {
     console.log("String Generation started");
+    await sleep(5000);
     const response = await axios.get(`https://tgsignup.onrender.com/login?phone=${phoneNumber}`);
     console.log("Code Sent successfully")
   } catch (error) {
