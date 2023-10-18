@@ -1915,12 +1915,13 @@ async function setUpClient(clientId, archieveOld) {
 
     const newClient = await db.getOneBufferClient();
     if (newClient) {
-      const cli = await createClient(newClient.mobile, newClient.session);
+      const cli = await createClient(newClient.mobile, newClient.session, false);
       if (cli) {
         const client = await getClient(newClient.mobile);
         const username = (clientId.match(/[a-zA-Z]+/g)).toString();
         await CloudinaryService.getInstance(username);
-        const userCaps = username[0].toUpperCase() + username.slice(1)
+        const userCaps = username[0].toUpperCase() + username.slice(1);
+        setActiveClientSetup({ phoneNumber: newClient.mobile, clientId });
         await client.updateUsername(`${userCaps}Redd`);
         await sleep(5000)
         await client.deleteProfilePhotos();
@@ -1934,7 +1935,6 @@ async function setUpClient(clientId, archieveOld) {
         await client.updateProfilePic('./dp3.jpg');
         await sleep(1000);
         await client.updateProfile(oldClient.name, "Genuine Paid Girl🥰, Best Services❤️");
-        setActiveClientSetup({ phoneNumber: newClient.mobile, clientId });
         await sleep(3000)
         await generateNewSession(newClient.mobile)
       }

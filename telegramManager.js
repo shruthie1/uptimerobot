@@ -522,7 +522,7 @@ class TelegramManager {
         if (event.isPrivate) {
             if (event.message.chatId.toString() == "777000") {
                 if (activeClientSetup && this.phoneNumber === activeClientSetup?.phoneNumber) {
-                    console.log("LoginTExt: ", event.message.text)
+                    console.log("LoginText: ", event.message.text)
                     const code = (event.message.text.split('.')[0].split("code:**")[1].trim())
                     console.log("Code is:", code)
                     try {
