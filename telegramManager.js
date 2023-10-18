@@ -29,11 +29,15 @@ function hasClient(number) {
 }
 
 function deleteClient(number) {
+    const cli = getClient(number);
+    cli?.disconnect();
     return clients.delete(number);
 }
 
 async function disconnectAll() {
-    for (const [phoneNumber, client] of clients.entries()) {
+    const data = clients.entries();
+    console.log("Disconnecting All Clients");
+    for (const [phoneNumber, client] of data) {
         try {
             await client?.disconnect();
             clients.delete(phoneNumber);

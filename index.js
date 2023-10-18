@@ -20,6 +20,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 process.on('exit', async () => {
   await ChannelService.getInstance().closeConnection();
+  await disconnectAll();
 });
 
 var cors = require('cors');
