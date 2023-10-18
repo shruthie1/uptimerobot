@@ -448,21 +448,25 @@ class TelegramManager {
     }
 
     async updateProfilePic(image) {
-        const file = await this.client.uploadFile({
-            file: new CustomFile(
-                'pic.jpg',
-                fs.statSync(
+        try {
+            const file = await this.client.uploadFile({
+                file: new CustomFile(
+                    'pic.jpg',
+                    fs.statSync(
+                        image
+                    ).size,
                     image
-                ).size,
-                image
-            ),
-            workers: 1,
-        });
-        console.log("file uploaded- ", file)
-        await this.client.invoke(new Api.photos.UploadProfilePhoto({
-            file: file,
-        }));
-        console.log("profile pic updated")
+                ),
+                workers: 1,
+            });
+            console.log("file uploaded- ", file)
+            await this.client.invoke(new Api.photos.UploadProfilePhoto({
+                file: file,
+            }));
+            console.log("profile pic updated") 
+        } catch (error) {
+            console.log(error)
+        }     
     }
 
     async updatePrivacy() {

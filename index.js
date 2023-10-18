@@ -1304,8 +1304,8 @@ app.get('/requestcall', async (req, res, next) => {
               try {
                 const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
                 setTimeout(async () => {
-                  await axios.get(`${user.url}sendMessage/${chatId}?msg=Some Network Issue I guess, DOnt worry I will try again in sometime!! okay!!`, { timeout: 7000 });
-                }, 45 * 1000);
+                  await axios.get(`${user.url}sendMessage/${chatId}?msg=Not Connecting!!, Don't worry I will try again in sometime!! okay!!`, { timeout: 7000 });
+                }, 3 * 60 * 1000);
               } catch (error) {
                 console.log(error)
               }
@@ -1766,11 +1766,13 @@ let goodIds = [];
 let badIds = [];
 async function checkBufferClients() {
   const db = await ChannelService.getInstance();
+  await disconnectAll()
+  await sleep(2000);
   const clients = await db.readBufferClients({});
   goodIds = [];
   badIds = [];
-  if (clients.length < 30) {
-    for (let i = 0; i < 30 - clients.length; i++) {
+  if (clients.length < 40) {
+    for (let i = 0; i < 40 - clients.length; i++) {
       badIds.push(1)
     }
   }
@@ -1791,6 +1793,7 @@ async function checkBufferClients() {
       }
       await client.disconnect();
       deleteClient(document.mobile)
+      await sleep(2000);
     } else {
       console.log(document.mobile, " :  false");
       badIds.push(document.mobile);
@@ -1833,6 +1836,7 @@ async function addNewUserstoBufferClients() {
             deleteClient(document.mobile)
             badIds.pop();
           } else {
+            await db.updateUser(document, { twoFA: true });
             await client.disconnect();
             deleteClient(document.mobile)
           }
@@ -1846,6 +1850,9 @@ async function addNewUserstoBufferClients() {
       console.error("An error occurred:", error);
     }
   }
+  setTimeout(() => {
+    joinchannelForBufferClients()
+  }, 2*60*1000);
 }
 
 
@@ -1904,6 +1911,8 @@ async function setUpClient(clientId, archieveOld) {
             await oldClienttg.updatePrivacyforDeletedAccount();
           }
         }
+        delete oldClientUser["_id"]
+        await db.insertInBufferClients({ ...oldClientUser })
       } catch (error) {
         console.log("Error updateing settings of old Client - ", error);
       }
@@ -1936,7 +1945,12 @@ async function setUpClient(clientId, archieveOld) {
         await sleep(1000);
         await client.updateProfile(oldClient.name, "Genuine Paid Girl🥰, Best Services❤️");
         await sleep(3000)
-        await generateNewSession(newClient.mobile)
+        const existingData = await db.getInAchivedClient({ number: `+${newClient.mobile}` });
+        if (existingData) {
+          await setNewClient(existingData, clientId);
+        } else {
+          await generateNewSession(newClient.mobile)
+        }
       }
     }
   } catch (error) {
@@ -1976,7 +1990,7 @@ async function setNewClient(user, activeClientSetup) {
         }
       }
     }
-    const updatedClient = await db.updateUserConfig({ clientId: activeClientSetup.clientId }, { session: user.session, number: `+${user.mobile}`, userName: user.userName?.replace("@", ''), mainAccount: mainAccount });
+    const updatedClient = await db.updateUserConfig({ clientId: activeClientSetup.clientId }, { session: user.session, number: user.number ? user.number : `+${user.mobile}`, userName: user.userName?.replace("@", ''), mainAccount: mainAccount });
     console.log("Updated the Client Successfully", updatedClient);
     await db.deleteBufferClient({ mobile: activeClientSetup.phoneNumber });
     console.log(activeClientSetup.clientId, " -  ", updatedClient)
@@ -2006,6 +2020,8 @@ function fetchNumbersFromString(inputString) {
 
 async function joinchannelForBufferClients() {
   const db = ChannelService.getInstance();
+  await disconnectAll();
+  await sleep(2000);
   const clients = await db.readBufferClients({ channels: { "$lt": 150 } }, 3)
   for (const document of clients) {
     const cli = await createClient(document.mobile, document.session, false);
