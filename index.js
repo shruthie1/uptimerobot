@@ -1398,6 +1398,13 @@ class checkerclass {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=TgSignup  NOT Reachable`);
       }
+      try {
+        const resp = await axios.get(`https://tgcms.glitch.me/`, { timeout: 55000 });
+      }
+      catch (e) {
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot()}&text=uptime2  NOT Reachable`);
+      }
     }, 60000);
 
     // setInterval(async () => {
