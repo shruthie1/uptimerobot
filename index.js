@@ -522,6 +522,35 @@ app.get('/setactiveqr', async (req, res, next) => {
   })
 });
 
+app.get('/joinchannel', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const userName = req.query.userName;
+    if (userName) {
+      const data = userMap.get(userName.toLowerCase());
+      if (data) {
+        joinchannels(data)
+      } else {
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
+      }
+    } else {
+      Array.from(userMap.values()).map(async (value) => {
+        try {
+          joinchannels(value);
+          await sleep(3000);
+        } catch (error) {
+          console.log("Some Error: ", error.code);
+        }
+      })
+    }
+  } catch (error) {
+    console.log("Some Error: ", error);
+  }
+});
+
+
 app.get('/getUpiId', async (req, res) => {
   checkerclass.getinstance();
   const app = req.query.app ? req.query.app : "paytm3"
@@ -1622,5 +1651,33 @@ function pushToconnectionQueue(userName, processId) {
     connetionQueue[existingIndex].processId = processId;
   } else {
     connetionQueue.push({ userName, processId });
+  }
+}
+
+
+async function joinchannels(value) {
+  try {
+    let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
+    await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
+    if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
+      await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
+      const keys = ['wife', 'adult', 'lanj', 'servic', 'paid', 'randi', 'bhab', 'boy', 'girl'];
+      const db = ChannelService.getInstance();
+      const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids, 'activeChannels');
+      for (const channel of channels) {
+        try {
+          console.log(channel.username);
+          const username = channel?.username?.replace("@", '');
+          if (username) {
+            fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
+            await sleep(200000);
+          }
+        } catch (error) {
+          console.log("Some Error: ", error)
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error)
   }
 }
