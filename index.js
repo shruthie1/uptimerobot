@@ -1147,6 +1147,21 @@ app.get('/receiveNumber/:num', async (req, res, next) => {
   }
 });
 
+app.get('/disconnectUser', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const userName = req.query.userName;
+    const data = userMap.get(userName.toLowerCase());
+    if (data) {
+      await axios.get(`${data.url}exit`, { timeout: 7000 });
+    }
+  } catch (error) {
+    console.log("Some Error: ", error.code);
+  }
+});
+
 app.get('/tgclientoff/:num', async (req, res, next) => {
   res.send('Hello World!');
   next();
