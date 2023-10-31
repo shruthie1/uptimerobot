@@ -479,6 +479,11 @@ class ChannelService {
         }
     }
 
+    async updateActiveChannel(id, data) {
+        const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
+        await activeChannelCollection.updateOne({ channelId: id }, { $set: data }, { upsert: true })
+    }
+
     async removeOnefromActiveChannel(filter) {
         try {
             const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');

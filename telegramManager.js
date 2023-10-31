@@ -176,28 +176,26 @@ class TelegramManager {
                 console.log(this.phoneNumber, " - Joined channel Sucesss - ", channel)
                 try {
                     const chatEntity = await this.client.getEntity(channel)
-                    const { title, id, broadcast, defaultBannedRights, participantsCount, restricted, username } = chatEntity;
+                    const { title, id, broadcast, defaultBannedRights, participantsCount, megagroup, username } = chatEntity;
                     const entity = {
-                        id: id.toString(),
                         title,
-                        participantsCount,
+                        id: id.toString(),
                         username,
-                        restricted,
-                        broadcast,
-                        sendMessages: defaultBannedRights?.sendMessages,
-                        canSendMsgs: false,
+                        megagroup,
+                        participantsCount,
+                        broadcast
                     };
                     if (!chatEntity.broadcast && !defaultBannedRights?.sendMessages) {
                         entity.canSendMsgs = true;
                         try {
-                            await db.updateActiveChannels(entity.id.toString(), entity);
+                            await db.updateActiveChannel(entity.id.toString(), entity);
                             console.log("updated ActiveChannels");
                         } catch (error) {
                             console.log(error);
                             console.log("Failed to update ActiveChannels");
                         }
                     } else {
-                        await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
+                        await db.removeOnefromActiveChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
                         await db.removeOnefromChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
                         console.log("Removed Cahnnel- ", channel)
                     }
@@ -207,8 +205,8 @@ class TelegramManager {
             } catch (error) {
                 console.log("Channels ERR: ", error);
                 if (error.toString().includes("No user has") || error.toString().includes("USERNAME_INVALID")) {
-                    await db.removeOnefromActiveChannel({ username: channel.replace("@", '') });
-                    await db.removeOnefromChannel({ username: channel });
+                    await db.removeOnefromActiveChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
+                    await db.removeOnefromChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
                     console.log("Removed Cahnnel- ", channel)
                 }
             }
