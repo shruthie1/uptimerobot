@@ -826,6 +826,26 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
   }
 });
 
+app.get('/getuser/:number/:u', async (req, res, next) => {
+  try {
+    const number = req.params?.number;
+    const username = req.params?.u;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        return (await client.getchatId(username))
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error.code)
+  }
+});
+
 app.get('/set2fa/:number', async (req, res, next) => {
   res.send("Setting 2FA");
   next();
@@ -1575,7 +1595,7 @@ class checkerclass {
               console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
               await axios.get(`${ppplbot()}& text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${resp.data.status} `);
               try {
-                const connectResp = await axios.get(`${url} tryToConnect / ${processId} `, { timeout: 10000 });
+                const connectResp = await axios.get(`${url}tryToConnect/${processId} `, { timeout: 10000 });
                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
                 await axios.get(`${ppplbot()}& text=${(connectResp.data.userName).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
               } catch (e) {
