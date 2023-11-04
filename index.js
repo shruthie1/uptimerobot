@@ -786,13 +786,15 @@ app.get('/getuser/:number/:u', async (req, res, next) => {
     if (!hasClient(user.mobile)) {
       const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
+      console.log("Connected");
       if (cli) {
+        console.log("checking for :", username)
         const res = await client.getchatId(username)
         return (res)
       } else {
         console.log("Client Does not exist!")
       }
-    }else{
+    } else {
       const client = await getClient(user.mobile);
       if (cli) {
         const res = await client.getchatId(username)

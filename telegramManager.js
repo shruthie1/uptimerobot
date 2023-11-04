@@ -82,7 +82,9 @@ class TelegramManager {
     }
 
     async getchatId(username) {
-        return await this.client.getInputEntity(username);
+        const tt = await this.client.getInputEntity(username);
+        console.log(tt)
+        return tt
     }
 
     async createClient(autoDisconnect = true) {
