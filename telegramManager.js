@@ -81,6 +81,12 @@ class TelegramManager {
         this.session.delete();
     }
 
+    async getchatId(username) {
+        const tt = await this.client.getInputEntity(username);
+        console.log(tt)
+        return tt
+    }
+
     async createClient(autoDisconnect = true) {
         try {
             this.client = new TelegramClient(this.session, parseInt(process.env.API_ID), process.env.API_HASH, {
