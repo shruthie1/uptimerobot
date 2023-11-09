@@ -46,7 +46,6 @@ class ChannelService {
             console.log('MongoConnection ALready Existing');
         }
     }
-
     async insertChannel(channelData) {
         const {
             title,
@@ -57,13 +56,10 @@ class ChannelService {
             broadcast
         } = channelData
         const cannotSendMsgs = channelData.defaultBannedRights?.sendMessages
-        const filter = { channelId: id.toString() };
-        const chat = await this.db?.findOne(filter);
-        if (!chat && !cannotSendMsgs && !broadcast) {
-            await this.db.insertOne({ channelId: id.toString(), username: username ? `@${username}` : null, title, megagroup, participantsCount });
+        if (!cannotSendMsgs && !broadcast) {
+            await this.db.updateOne({ channelId: id.toString() }, { $set: { username: username ? `@${username}` : null, title, megagroup, participantsCount, broadcast }}, { upsert: true });
         }
     }
-
     async getChannels(limit = 50, skip = 0, k) {
         const query = { megagroup: true, username: { $ne: null } };
         const sort = { participantsCount: -1 };
@@ -331,7 +327,7 @@ class ChannelService {
     }
 
     async processUsers(limit = undefined, skip = undefined) {
-        const weekAgo = new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
+        const weekAgo = new Date(Date.now() - (30 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
         const cursor = this.users.find({
             $or: [
                 { "lastUpdated": { $lt: weekAgo } },
