@@ -57,7 +57,7 @@ class ChannelService {
         } = channelData
         const cannotSendMsgs = channelData.defaultBannedRights?.sendMessages
         if (!cannotSendMsgs && !broadcast) {
-            await this.db.updateOne({ channelId: id.toString() }, { $set: { username: username ? `@${username}` : null, title, megagroup, participantsCount, broadcast }}, { upsert: true });
+            await this.db.updateOne({ channelId: id.toString() }, { $set: { username: username ? `@${username}` : null, title, megagroup, participantsCount, broadcast } }, { upsert: true });
         }
     }
     async getChannels(limit = 50, skip = 0, k) {
@@ -105,6 +105,20 @@ class ChannelService {
                     ...data
                 },
             }, { upsert: true });
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async resetPaidUsers() {
+        try {
+            const collection = this.client.db("tgclients").collection('userData');
+            const entry = await collection.updateMany({ payAmount: { $gt: 10 } }, {
+                $set: {
+                    totalCount: 10,
+                    limitTime: Dtae.now()
+                }
+            });
         } catch (error) {
             console.log(error)
         }
