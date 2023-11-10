@@ -148,7 +148,7 @@ try {
     await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
     const db = ChannelService.getInstance();
     const now = new Date();
-    if (now.getUTCDate() % 3 === 1) {
+    if (now.getUTCDate() % 2 === 1) {
       await db.resetPaidUsers();
     }
     await db.updateActiveChannels();
