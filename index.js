@@ -103,7 +103,7 @@ try {
       if (hour && hour % 3 === 0) {
         await fetchWithTimeout(`${value.url}calltopaid`);
       }
-      await sleep(2000)
+      await sleep(3000);
     }
     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
   })
@@ -123,6 +123,7 @@ try {
   schedule.scheduleJob('test3', ' 0 7,13,20,23 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}asktopay`);
+      await fetchWithTimeout(`${value.url}replyunread`);
     });
   })
 
