@@ -120,7 +120,7 @@ try {
     })
   })
 
-  schedule.scheduleJob('test3', ' 0 7,13,20,23 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test3', ' 15 7,13,20,23 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}asktopay`);
       await fetchWithTimeout(`${value.url}replyunread`);
