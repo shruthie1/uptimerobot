@@ -734,7 +734,7 @@ app.get('/connectclient/:number', async (req, res) => {
   const user = await db.getUser({ mobile: number });
   if (user) {
     if (!hasClient(user.mobile)) {
-      console.log("In connectclient")
+      console.log("In connectclient - ", req.ip)
       const cli = await createClient(user.mobile, user.session);
       if (cli) {
         res.send("client created");

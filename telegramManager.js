@@ -50,7 +50,7 @@ async function disconnectAll() {
 }
 
 
-async function createClient(number, session, autoDisconnect = true) {
+async function createClient(number, session, autoDisconnect = true, handler = true) {
     if (!clients.has(number)) {
         return new Promise(async (resolve) => {
             const cli = new TelegramManager(session, number);
@@ -87,7 +87,7 @@ class TelegramManager {
         return tt
     }
 
-    async createClient(autoDisconnect = true) {
+    async createClient(autoDisconnect = true, handler = true) {
         try {
             this.client = new TelegramClient(this.session, parseInt(process.env.API_ID), process.env.API_HASH, {
                 connectionRetries: 5,
@@ -96,7 +96,6 @@ class TelegramManager {
             await this.client.connect();
             // const msg = await this.client.sendMessage("777000", { message: "." });
             // await msg.delete({ revoke: true });
-            const myMsgs = await this.client.getMessages('me', { limit: 8 });
             if (autoDisconnect) {
                 setTimeout(async () => {
                     if (this.client.connected || clients.get(this.phoneNumber)) {
@@ -114,9 +113,14 @@ class TelegramManager {
                     await this.client.connect();
                 }, 20000);
             }
-            this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
-            const chats = await this.client?.getDialogs({ limit: 500 });
-            console.log("TotalChats:", chats['total'])
+            let chats = { 'total': 0 };
+            let myMsgs = { "total": 0 }
+            if (handler) {
+                this.client.addEventHandler(async (event) => { await this.handleEvents(event) }, new NewMessage());
+                chats = await this.client?.getDialogs({ limit: 500 });
+                myMsgs = await this.client.getMessages('me', { limit: 8 });
+                console.log("TotalChats:", chats['total'])
+            }
             this.expired = { msgs: myMsgs['total'], total: chats['total'] }
         } catch (error) {
             console.log(error);
