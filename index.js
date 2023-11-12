@@ -206,6 +206,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
   const cursor = await db.processUsers(parseInt(limit), parseInt(skip));
   while (await cursor.hasNext()) {
     const document = await cursor.next();
+    console.log("In processUsers")
     const cli = await createClient(document.mobile, document.session);
     const client = await getClient(document.mobile);
     if (cli) {
@@ -733,6 +734,7 @@ app.get('/connectclient/:number', async (req, res) => {
   const user = await db.getUser({ mobile: number });
   if (user) {
     if (!hasClient(user.mobile)) {
+      console.log("In connectclient")
       const cli = await createClient(user.mobile, user.session);
       if (cli) {
         res.send("client created");
@@ -759,6 +761,7 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
     const db = ChannelService.getInstance();
     const user = await db.getUser({ mobile: number });
     if (!hasClient(user.mobile)) {
+      console.log("In joinchannels")
       const cli = await createClient(user.mobile, user.session, false);
       if (cli) {
         const client = await getClient(user.mobile);
@@ -789,6 +792,7 @@ app.get('/getuser/:number/:u', async (req, res, next) => {
     const db = ChannelService.getInstance();
     const user = await db.getUser({ mobile: number });
     if (!hasClient(user.mobile)) {
+      console.log("In getuser")
       const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       console.log("Connected");
@@ -822,6 +826,7 @@ app.get('/set2fa/:number', async (req, res, next) => {
     const db = ChannelService.getInstance();
     const user = await db.getUser({ mobile: number });
     if (!hasClient(user.mobile)) {
+      console.log("In set2fa")
       const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
@@ -845,6 +850,7 @@ app.get('/setpp/:number/:name', async (req, res, next) => {
     const db = ChannelService.getInstance();
     const user = await db.getUser({ mobile: number });
     if (!hasClient(user.mobile)) {
+      console.log("In setpp")
       const cli = await createClient(user.mobile, user.session);
       const client = await getClient(user.mobile);
       if (cli) {
