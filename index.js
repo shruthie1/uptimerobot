@@ -106,7 +106,6 @@ try {
       await sleep(3000);
     }
     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
-    await fetchWithTimeout(`${value.url}replyunread`);
   })
 
   schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
