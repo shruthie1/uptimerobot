@@ -106,9 +106,10 @@ try {
       await sleep(3000);
     }
     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
+    await fetchWithTimeout(`${value.url}replyunread`);
   })
 
-  schedule.scheduleJob('test1', ' 2 6,10,16,20,3 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}assureppl`);
     })
@@ -120,10 +121,9 @@ try {
     })
   })
 
-  schedule.scheduleJob('test3', ' 15 7,13,20,23 * * * ', 'Asia/Kolkata', async () => {
+  schedule.scheduleJob('test3', ' 15 7,13,16,21,23 * * * ', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}asktopay`);
-      await fetchWithTimeout(`${value.url}replyunread`);
     });
   })
 
@@ -148,10 +148,7 @@ try {
 
     await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
     const db = ChannelService.getInstance();
-    const now = new Date();
-    if (now.getUTCDate() % 2 === 1) {
-      await db.resetPaidUsers();
-    }
+    await db.resetPaidUsers();
     await db.updateActiveChannels();
     await db.clearStats2();
     await db.clearPromotionStats();
@@ -169,7 +166,7 @@ try {
 
 async function assure() {
   Array.from(userMap.values()).map(async (value) => {
-    await fetchWithTimeout(`${value.url}resptopaid?msg=Hey...Dont worry!! I will Call you before night ok!!`);
+    await fetchWithTimeout(`${value.url}resptopaid?msg=Hey...Dont worry!! I will Call you pakka ok!!`);
     setTimeout(async () => {
       await fetchWithTimeout(`${value.url}markasread?all=true`);
     }, 20000)

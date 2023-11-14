@@ -116,7 +116,7 @@ class ChannelService {
             const entry = await collection.updateMany({ payAmount: { $gt: 10 } }, {
                 $set: {
                     totalCount: 10,
-                    limitTime: Dtae.now()
+                    limitTime: Date.now()
                 }
             });
         } catch (error) {
