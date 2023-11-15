@@ -462,7 +462,7 @@ app.get('/keepready', async (req, res, next) => {
   });
   const db = ChannelService.getInstance();
   await db.clearStats();
-  res.send(`Responding!!\nMsg = ${msg}`);
+  res.send(`Responding!!\=url:resptopaid?msg=${msg ? msg : "Oye..."}`);
 });
 
 app.get('/asktopay', async (req, res, next) => {
@@ -729,21 +729,39 @@ app.get('/connectclient/:number', async (req, res) => {
   const db = ChannelService.getInstance();
   const user = await db.getUser({ mobile: number });
   if (user) {
-    if (!hasClient(user.mobile)) {
-      console.log("In connectclient - ", req.ip)
-      const cli = await createClient(user.mobile, user.session);
-      if (cli) {
-        res.send("client created");
-      } else {
-        res.send("client EXPIRED");
+    const buttonHtml = `<button onclick="triggerHtmlRequest('${user.mobile}', '${user.session}')">Create Client</button>
+    <script>
+      function triggerHtmlRequest(mobile, session) {
+        console.log(${number})
+        const request = new XMLHttpRequest();
+        request.open('GET', 'https://uptimechecker.onrender.com/cc/' + ${number}, true);
+        request.send();
       }
-    } else {
-      res.send("Client Already existing");
-    }
+    </script>`
+    res.send(`<html><body>User Exists${buttonHtml}</body></html>`);
   } else {
-    res.send("User Does not exist");
+    res.send("<html><body>User Does not exist</body></html>");
   }
 });
+
+// Second API to create the client when the button is clicked
+app.get('/cc/:number', async (req, res) => {
+  const number = req.params?.number;
+  if (!hasClient(number)) {
+    console.log("In createclient - ", req.ip);
+    const cli = await createClient(number, /* Add user session here */);
+    if (cli) {
+      res.send("client created");
+    } else {
+      res.send("client EXPIRED");
+    }
+  } else {
+    res.send("Client Already existing");
+  }
+});
+
+// You can add the necessary logic to get the user session in the second API.
+
 
 app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
   res.send("joiningChannels");
