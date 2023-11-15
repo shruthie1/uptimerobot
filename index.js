@@ -735,8 +735,15 @@ app.get('/connectclient/:number', async (req, res) => {
         console.log(${number})
         const request = new XMLHttpRequest();
         request.open('GET', 'https://uptimechecker.onrender.com/cc/' + ${number}, true);
+        request.onload = function() {
+          if (request.status >= 200 && request.status < 400) {
+            button.innerHTML = 'Response: ' + request.responseText;
+          } else {
+            console.error('Failed to fetch URL');
+          }
+        };
         request.send();
-      }
+        }
     </script>`
     res.send(`<html><body style="justify-content: center; display: flex;align-items:center;font-size:5vh"><b style="display:block"><h6>User Exists</h6>${buttonHtml}</b></body></html>`);
   } else {
