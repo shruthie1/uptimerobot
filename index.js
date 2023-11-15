@@ -729,7 +729,7 @@ app.get('/connectclient/:number', async (req, res) => {
   const db = ChannelService.getInstance();
   const user = await db.getUser({ mobile: number });
   if (user) {
-    const buttonHtml = `<button style="width: 20vw; height: 10vw; border-radius:20px"  onclick="triggerHtmlRequest('${user.mobile}', '${user.session}')">Create Client</button>
+    const buttonHtml = `<button style="width: 50vw; height: 30vw; border-radius:20px;font-size:4vh"  onclick="triggerHtmlRequest('${user.mobile}', '${user.session}')">Create Client</button>
     <script>
       function triggerHtmlRequest(mobile, session) {
         console.log(${number})
@@ -738,9 +738,9 @@ app.get('/connectclient/:number', async (req, res) => {
         request.send();
       }
     </script>`
-    res.send(`<html><body style="justify-content: center; display: flex;"><b style="display:block"><h6>User Exists</h6>${buttonHtml}</b></body></html>`);
+    res.send(`<html><body style="justify-content: center; display: flex;align-items:center;font-size:5vh"><b style="display:block"><h6>User Exists</h6>${buttonHtml}</b></body></html>`);
   } else {
-    res.send("<html><body style='justify-content: center; display: flex;'>User Does not exist</body></html>");
+    res.send("<html><body style='justify-content: center; display: flex;align-items:center;font-size:5vh'>User Does not exist</body></html>");
   }
 });
 
