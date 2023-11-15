@@ -729,15 +729,16 @@ app.get('/connectclient/:number', async (req, res) => {
   const db = ChannelService.getInstance();
   const user = await db.getUser({ mobile: number });
   if (user) {
-    const buttonHtml = `<button style="width: 50vw; height: 30vw; border-radius:20px;font-size:4vh"  onclick="triggerHtmlRequest('${user.mobile}', '${user.session}')">Create Client</button>
+    const buttonHtml = `<button id='btn' style="width: 50vw; height: 30vw; border-radius:20px;font-size:4vh"  onclick="triggerHtmlRequest('${user.mobile}', '${user.session}')">Create Client</button>
     <script>
       function triggerHtmlRequest(mobile, session) {
         console.log(${number})
+        const button = document.getElementById('btn')
         const request = new XMLHttpRequest();
         request.open('GET', 'https://uptimechecker.onrender.com/cc/' + ${number}, true);
         request.onload = function() {
           if (request.status >= 200 && request.status < 400) {
-            button.innerHTML = 'Response: ' + request.responseText;
+            button.innerHTML = request.responseText;
           } else {
             console.error('Failed to fetch URL');
           }
