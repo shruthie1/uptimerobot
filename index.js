@@ -724,7 +724,7 @@ app.get('/exitsecondary', async (req, res, next) => {
   }
 });
 
-app.get('/connectclient/:number', async (req, res) => {
+app.get('/connectclient2/:number', async (req, res) => {
   const number = req.params?.number;
   const db = ChannelService.getInstance();
   const user = await db.getUser({ mobile: number });
@@ -768,7 +768,27 @@ app.get('/cc/:number', async (req, res) => {
   }
 });
 
-// You can add the necessary logic to get the user session in the second API.
+
+app.get('/connectclient/:number', async (req, res) => {
+  const number = req.params?.number;
+  const db = ChannelService.getInstance();
+  const user = await db.getUser({ mobile: number });
+  if (user) {
+    if (!hasClient(user.mobile)) {
+      console.log("In connectclient - ", req.ip)
+      const cli = await createClient(user.mobile, user.session);
+      if (cli) {
+        res.send("client created");
+      } else {
+        res.send("client EXPIRED");
+      }
+    } else {
+      res.send("Client Already existing");
+    }
+  } else {
+    res.send("User Does not exist");
+  }
+});
 
 
 app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
