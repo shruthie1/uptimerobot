@@ -403,11 +403,11 @@ app.get('/sendtoall', async (req, res, next) => {
   const queries = req.query
   let newQuery = '';
   Object.keys(req.query).map((key) => {
-    newQuery += `${queries[key]}/`
+    newQuery += `${queries[key]}`
   });
   console.log(newQuery);
   for (const value of userMap.values()) {
-    const url = `${value.url}${newQuery}`;
+    const url = `${value.urlslice(0, -1)}${newQuery}`;
     console.log(url);
     await sleep(1000);
     await fetchWithTimeout(url);
