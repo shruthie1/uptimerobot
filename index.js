@@ -403,7 +403,7 @@ app.get('/sendtoall', async (req, res, next) => {
   const queries = req.query
   let newQuery = '';
   Object.keys(req.query).map((key) => {
-    newQuery += `${queries[key]}`
+    newQuery += `/${queries[key]}`
   });
   console.log(newQuery);
   for (const value of userMap.values()) {
