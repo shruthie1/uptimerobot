@@ -407,7 +407,7 @@ app.get('/sendtoall', async (req, res, next) => {
   });
   console.log(newQuery);
   for (const value of userMap.values()) {
-    const url = `${value.urlslice(0, -1)}${newQuery}`;
+    const url = `${value.url.slice(0, -1)}${newQuery}`;
     console.log(url);
     await sleep(1000);
     await fetchWithTimeout(url);
