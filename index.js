@@ -1316,7 +1316,8 @@ app.get('/requestcall', async (req, res, next) => {
               try {
                 const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
                 setTimeout(async () => {
-                  await axios.get(`${user.url}sendMessage/${chatId}?msg=Not Connecting!!, Don't worry I will try again in sometime!! okay!!`, { timeout: 7000 });
+                  const msg = encodeURIComponent("Not Connecting!!\nI will try again in sometime!\n\nDont worry okay....!!\nI will not cheat!!, I will call you pakka okay!!")
+                  await axios.get(`${user.url}sendMessage/${chatId}?msg=Not Connecting!! I will try again in sometime!,  Dont worry okay....!!,  I will not cheat!!, I will call you pakka okay!!`, { timeout: 7000 });
                 }, 3 * 60 * 1000);
               } catch (error) {
                 console.log(error)
