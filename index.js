@@ -1333,7 +1333,7 @@ app.get('/requestcall', async (req, res, next) => {
         data: JSON.stringify(payload),
       };
       const result = await fetchWithTimeout("https://arpithared.onrender.com/events/schedule", options, 3);
-      console.log(result)
+      console.log(result?.data)
       // setTimeout(async () => {
       //   try {
       //     const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
