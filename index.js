@@ -1332,7 +1332,7 @@ app.get('/requestcall', async (req, res, next) => {
         headers: { 'Content-Type': 'application/json' },
         data: JSON.stringify(payload),
       };
-      const result = await fetchWithTimeout("https://arpithared.onrender.com/schedule", options, 3);
+      const result = await fetchWithTimeout("https://arpithared.onrender.com/events/schedule", options, 3);
       console.log(result)
       // setTimeout(async () => {
       //   try {
