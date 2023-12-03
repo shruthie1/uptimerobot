@@ -1307,29 +1307,37 @@ app.get('/requestcall', async (req, res, next) => {
     // await fetchWithTimeout(`${ppplbot()}&text=Call Request Recived: ${userName} | ${chatId}`);
     console.log(`Call Request Recived: ${userName} | ${chatId}`)
     if (user) {
-      setTimeout(async () => {
-        try {
-          const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
-          if (data.data) {
-            console.log(`Call Request Sent: ${userName} | ${chatId}`)
-            setTimeout(async () => {
-              try {
-                const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
-                setTimeout(async () => {
-                  await axios.get(`${user.url}sendMessage/${chatId}?msg=Not Connecting!!, Don't worry I will try again in sometime!! okay!!`, { timeout: 7000 });
-                }, 3 * 60 * 1000);
-              } catch (error) {
-                console.log(error)
-              }
-            }, 2 * 60 * 1000);
-          } else {
-            console.log(`Call Request Sent Not Sucess: ${userName} | ${chatId}`);
-          }
-        } catch (error) {
-          console.log("Failed", user);
-        }
+      const payload = { chatId, profile: user.clientId }
+      const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        data: JSON.stringify(payload),
+      };
+      const result = await fetchWithTimeout("https://arpithared.onrender.com/schedule", options, 3);
+      console.log(result)
+      // setTimeout(async () => {
+      //   try {
+      //     const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
+      //     if (data.data) {
+      //       console.log(`Call Request Sent: ${userName} | ${chatId}`)
+      //       setTimeout(async () => {
+      //         try {
+      //           const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
+      //           setTimeout(async () => {
+      //             await axios.get(`${user.url}sendMessage/${chatId}?msg=Not Connecting!!, Don't worry I will try again in sometime!! okay!!`, { timeout: 7000 });
+      //           }, 3 * 60 * 1000);
+      //         } catch (error) {
+      //           console.log(error)
+      //         }
+      //       }, 2 * 60 * 1000);
+      //     } else {
+      //       console.log(`Call Request Sent Not Sucess: ${userName} | ${chatId}`);
+      //     }
+      //   } catch (error) {
+      //     console.log("Failed", user);
+      //   }
 
-      }, 3 * 60 * 1000);
+      // }, 3 * 60 * 1000);
     } else {
       console.log("USer not exist!!")
     }
