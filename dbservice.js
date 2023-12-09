@@ -405,6 +405,7 @@ class ChannelService {
                 data: {},
                 totalCount: 0,
                 uniqueChannels: 0,
+                releaseDay:Date.now(),
                 lastupdatedTimeStamp: Date.now()
             }
 
