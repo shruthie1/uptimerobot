@@ -602,7 +602,7 @@ app.get('/getUserConfig', async (req, res) => {
   res.json(userConfig);
 });
 
-app.get('/updateUserData/:chatId', async (req, res) => {
+app.post('/updateUserData/:chatId', async (req, res) => {
   const data = req.body
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
