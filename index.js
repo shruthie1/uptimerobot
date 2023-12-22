@@ -360,6 +360,17 @@ app.get('/refreshupis', async (req, res, next) => {
   }
 });
 
+
+app.get('/getviddata', async (req, res, next) => {
+  checkerclass.getinstance()
+  const chatId = req.query.chatId;
+  const profile = req.query.profile;
+  const db = ChannelService.getInstance();
+  const data = await db.getuserdata({ chatId, profile });
+  res.json(data);
+});
+
+
 app.get('/getuserdata', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');

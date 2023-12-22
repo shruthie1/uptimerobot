@@ -144,6 +144,16 @@ class ChannelService {
         }
     }
 
+    async getuserdata(filter) {
+        try {
+            const entry = await this.users.findOne(filter);
+            return entry
+        } catch (error) {
+            console.log(error)
+            return undefined
+        }
+    }
+
     async getTempUser() {
         try {
             const entry = await this.users.findOne({});
