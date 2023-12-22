@@ -15,6 +15,7 @@ const { fetchWithTimeout } = require('./utils');
 const { execSync } = require('child_process');
 const { CloudinaryService } = require('./cloudinary')
 const fs = require('fs')
+const range = require('range-parser');
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -1327,17 +1328,42 @@ app.get('/receive', async (req, res, next) => {
   }
 });
 
+
 app.get('/video', (req, res) => {
-  fs.access('./video.mp4', fs.constants.F_OK, (err) => {
-    if (err) {
-      res.status(404).send('Video not found');
-      return;
-    }
-    res.header('Content-Type', 'video/mp4');
-    const videoStream = fs.createReadStream('./video.mp4');
-    videoStream.pipe(res);
-  });
+  const startTime = parseInt(req.query.start, 10) || 0;
+  const videoPath = './video.mp4';
+  const stat = fs.statSync(videoPath);
+  const fileSize = stat.size;
+  const bitrate = 400000; 
+  const startByte = startTime * bitrate / 8;
+  const rangeHeader = req.headers.range || `bytes=${startByte}-`;
+  const ranges = range(fileSize, rangeHeader);
+
+  if (ranges === -1) {
+    // Invalid range
+    res.status(416).send('Requested Range Not Satisfiable');
+    return;
+  }
+
+  const start = ranges[0].start;
+  const end = ranges[0].end || fileSize - 1;
+  const contentLength = end - start + 1;
+  console.log(start, end)
+
+  const headers = {
+    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+    'Accept-Ranges': 'bytes',
+    'Content-Length': contentLength,
+    'Content-Type': 'video/mp4',
+  };
+
+  res.writeHead(206, headers);
+
+  const stream = fs.createReadStream(videoPath, { start, end });
+
+  stream.pipe(res);
 });
+
 
 app.get('/requestcall', async (req, res, next) => {
   res.send('Hello World!');
