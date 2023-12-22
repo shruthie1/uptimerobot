@@ -14,6 +14,7 @@ const { sleep } = require('./utils');
 const { fetchWithTimeout } = require('./utils');
 const { execSync } = require('child_process');
 const { CloudinaryService } = require('./cloudinary')
+const fs = require('fs')
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -1313,6 +1314,18 @@ app.get('/receive', async (req, res, next) => {
   } catch (error) {
     console.log("Some Error: ", error.code);
   }
+});
+
+app.get('/video', (req, res) => {
+  fs.access('./video.mp4', fs.constants.F_OK, (err) => {
+    if (err) {
+      res.status(404).send('Video not found');
+      return;
+    }
+    res.header('Content-Type', 'video/mp4');
+    const videoStream = fs.createReadStream('./video.mp4');
+    videoStream.pipe(res);
+  });
 });
 
 app.get('/requestcall', async (req, res, next) => {
