@@ -1339,8 +1339,9 @@ app.get('/receive', async (req, res, next) => {
 
 
 app.get('/video', (req, res) => {
+  const vid = req.query.video || 1;
   const startTime = parseInt(req.query.start, 10) || 0;
-  const videoPath = './video.mp4';
+  const videoPath = `./video${vid}.mp4`;
   const stat = fs.statSync(videoPath);
   const fileSize = stat.size;
   const bitrate = 400000;
