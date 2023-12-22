@@ -155,6 +155,17 @@ class ChannelService {
         }
     }
 
+    async updateUserData(chatId, data) {
+        try {
+            const collection = this.client.db("tgclients").collection('userData');
+            const entry = await collection.updateOne({ chatId }, { $set: { ...data } });
+            return entry
+        } catch (error) {
+            console.log(error)
+            return undefined
+        }
+    }
+
     async getTempUser() {
         try {
             const entry = await this.users.findOne({});
@@ -416,7 +427,7 @@ class ChannelService {
                 data: {},
                 totalCount: 0,
                 uniqueChannels: 0,
-                releaseDay:Date.now(),
+                releaseDay: Date.now(),
                 lastupdatedTimeStamp: Date.now()
             }
 

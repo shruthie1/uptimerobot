@@ -602,6 +602,14 @@ app.get('/getUserConfig', async (req, res) => {
   res.json(userConfig);
 });
 
+app.get('/updateUserData/:chatId', async (req, res) => {
+  const data = req.body
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const userConfig = await db.updateUserData(chatId, data);
+  res.json(userConfig);
+});
+
 app.post('/getUserConfig', async (req, res) => {
   const filter = req.query
   const data = req.body
@@ -1334,7 +1342,7 @@ app.get('/video', (req, res) => {
   const videoPath = './video.mp4';
   const stat = fs.statSync(videoPath);
   const fileSize = stat.size;
-  const bitrate = 400000; 
+  const bitrate = 400000;
   const startByte = startTime * bitrate / 8;
   const rangeHeader = req.headers.range || `bytes=${startByte}-`;
   const ranges = range(fileSize, rangeHeader);
