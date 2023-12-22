@@ -1355,7 +1355,7 @@ app.get('/video', (req, res) => {
     'Content-Range': `bytes ${lastPosition}-${fileSize - 1}/${fileSize}`,
   };
 
-  playbackPositions[userId] = lastPosition;
+  playbackPositions[chatId] = lastPosition;
 
   if (range) {
     const parts = range.replace(/bytes=/, '').split('-');
