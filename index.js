@@ -604,6 +604,7 @@ app.get('/getUserConfig', async (req, res) => {
 
 app.post('/updateUserData/:chatId', async (req, res) => {
   const data = req.body
+  const chatId = req.params.chatId
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
   const userConfig = await db.updateUserData(chatId, data);
