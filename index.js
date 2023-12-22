@@ -1337,41 +1337,47 @@ app.get('/receive', async (req, res, next) => {
   }
 });
 
+const playbackPositions = {};
 
 app.get('/video', (req, res) => {
   const vid = req.query.video || 1;
-  const startTime = parseInt(req.query.start, 10) || 0;
-  const videoPath = `./video${vid}.mp4`;
-  const stat = fs.statSync(videoPath);
+  const chatId = req.query.chatId
+  const filePath = `./video${vid}.mp4`;
+  const range = req.headers.range;
+  const lastPosition = playbackPositions[chatId] || 0;
+
+  const stat = fs.statSync(filePath);
   const fileSize = stat.size;
-  const bitrate = 400000;
-  const startByte = startTime * bitrate / 8;
-  const rangeHeader = req.headers.range || `bytes=${startByte}-`;
-  const ranges = range(fileSize, rangeHeader);
 
-  if (ranges === -1) {
-    // Invalid range
-    res.status(416).send('Requested Range Not Satisfiable');
-    return;
-  }
-
-  const start = ranges[0].start;
-  const end = ranges[0].end || fileSize - 1;
-  const contentLength = end - start + 1;
-  console.log(start, end)
-
-  const headers = {
-    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-    'Accept-Ranges': 'bytes',
-    'Content-Length': contentLength,
+  const head = {
+    'Content-Length': fileSize - lastPosition,
     'Content-Type': 'video/mp4',
+    'Content-Range': `bytes ${lastPosition}-${fileSize - 1}/${fileSize}`,
   };
 
-  res.writeHead(206, headers);
+  playbackPositions[userId] = lastPosition;
 
-  const stream = fs.createReadStream(videoPath, { start, end });
+  if (range) {
+    const parts = range.replace(/bytes=/, '').split('-');
+    const start = parseInt(parts[0], 10) + lastPosition;
+    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
 
-  stream.pipe(res);
+    const chunkSize = end - start + 1;
+    const file = fs.createReadStream(filePath, { start, end });
+    const headers = {
+      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+      'Accept-Ranges': 'bytes',
+      'Content-Length': chunkSize,
+      'Content-Type': 'video/mp4',
+    };
+
+    res.writeHead(206, headers);
+    file.pipe(res);
+  } else {
+    // If no 'Range' header, send the entire file
+    res.writeHead(200, head);
+    fs.createReadStream(filePath, { start: lastPosition }).pipe(res);
+  }
 });
 
 
