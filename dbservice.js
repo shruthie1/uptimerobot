@@ -146,7 +146,8 @@ class ChannelService {
 
     async getuserdata(filter) {
         try {
-            const entry = await this.users.findOne(filter);
+            const collection = this.client.db("tgclients").collection('userData');
+            const entry = await collection.findOne(filter);
             return entry
         } catch (error) {
             console.log(error)
