@@ -1337,6 +1337,24 @@ app.get('/receive', async (req, res, next) => {
   }
 });
 
+const isRecentUser = new Map()
+
+app.get('/isRecentUser', (req, res) => {
+  const chatId = req.query.chatId
+  const resp = isRecentUser.get(chatId);
+  isRecentUser.set(chatId, Date.now())
+  if(resp){
+    if(resp+3*60*1000> Date.now())
+    {
+      res.send(false)
+    }else{
+      res.send(true)
+    }
+  }else{
+    res.send(true)
+  }
+})
+
 const playbackPositions = new Map();
 
 app.get('/video', (req, res) => {
