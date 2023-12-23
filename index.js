@@ -1709,7 +1709,7 @@ async function createInitializedObject() {
   const db = ChannelService.getInstance();
   const users = await db.getAllUserClients();
   for (const user of users) {
-    if (extractNumberFromString(user.clientId) === 1)
+    if (extractNumberFromString(user.clientId) )
       initializedObject[user.clientId.toUpperCase()] = {
         profile: user.clientId.toUpperCase(),
         totalCount: 0,
