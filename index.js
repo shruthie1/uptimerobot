@@ -1337,23 +1337,19 @@ app.get('/receive', async (req, res, next) => {
   }
 });
 
-const isRecentUser = new Map()
+const isRecentUser = new Map();
 
 app.get('/isRecentUser', (req, res) => {
-  const chatId = req.query.chatId
-  const resp = isRecentUser.get(chatId);
-  isRecentUser.set(chatId, Date.now())
-  if(resp){
-    if(resp+3*60*1000> Date.now())
-    {
-      res.send(false)
-    }else{
-      res.send(true)
-    }
-  }else{
-    res.send(true)
-  }
-})
+  const chatId = req.query.chatId;
+  const lastAccessTime = isRecentUser.get(chatId) || 0;
+  const currentTime = Date.now();
+
+  isRecentUser.set(chatId, currentTime);
+
+  const isRecent = currentTime - lastAccessTime <= 3 * 60 * 1000;
+
+  res.send(!isRecent);
+});
 
 const playbackPositions = new Map();
 
@@ -1727,7 +1723,7 @@ async function createInitializedObject() {
   const db = ChannelService.getInstance();
   const users = await db.getAllUserClients();
   for (const user of users) {
-    if (extractNumberFromString(user.clientId) )
+    if (extractNumberFromString(user.clientId))
       initializedObject[user.clientId.toUpperCase()] = {
         profile: user.clientId.toUpperCase(),
         totalCount: 0,
