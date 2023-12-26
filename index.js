@@ -602,6 +602,14 @@ app.get('/getUserConfig', async (req, res) => {
   res.json(userConfig);
 });
 
+app.get('/getUserInfo', async (req, res) => {
+  const filter = req.query
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  const userConfig = await db.getUserInfo(filter);
+  res.json(userConfig);
+});
+
 app.post('/updateUserData/:chatId', async (req, res) => {
   const data = req.body
   const chatId = req.params.chatId

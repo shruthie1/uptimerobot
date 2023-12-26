@@ -317,6 +317,22 @@ class ChannelService {
         const client = await clientDb.findOne(filter);
         return client
     }
+    async getUserInfo(filter) {
+        const clientDb = this.client.db("tgclients").collection('clients');
+        const aggregationPipeline = [
+            { $match: filter },
+            {
+                $project: {
+                    "_id": 0,
+                    "session": 0,
+                    "number": 0,
+                    "password": 0,
+                }
+            }
+        ];
+        const result = await clientDb.aggregate(aggregationPipeline).toArray();
+        return result.length > 0 ? result[0] : null;
+    }
     async updateUserConfig(filter, data) {
         const upiDb = this.client.db("tgclients").collection('clients');
         const updatedDocument = await upiDb.findOneAndUpdate(filter, { $set: { ...data } }, { returnOriginal: false });
