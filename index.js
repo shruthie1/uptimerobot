@@ -27,7 +27,7 @@ process.on('exit', async () => {
 
 var cors = require('cors');
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000;
 const userMap = new Map();
 
 let ip;
