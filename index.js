@@ -1549,6 +1549,7 @@ class checkerclass {
           try {
             const resp = await axios.get(`${val.url}`, { timeout: 120000 });
             userMap.set(key, { ...val, downTime: 0 })
+            console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, `- Reached`);
           }
           catch (e) {
             console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable - ${val.downTime}`);
