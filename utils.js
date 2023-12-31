@@ -4,7 +4,7 @@ function sleep(ms) {
 }
 
 async function fetchWithTimeout(resource, options = {}, maxRetries = 0) {
-  const timeout = options?.timeout || 15000;
+  const timeout = options?.timeout || 20000;
 
   const source = axios.CancelToken.source();
   const id = setTimeout(() => source.cancel(), timeout);
@@ -24,7 +24,7 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 0) {
         console.log('Error:', error.message);
       }
       if (retryCount < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // 1 second delay
+        await new Promise(resolve => setTimeout(resolve, 5000)); // 1 second delay
       } else {
         console.error(`All ${maxRetries + 1} retries failed for ${resource}`);
         return undefined;
