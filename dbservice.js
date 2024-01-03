@@ -242,6 +242,25 @@ class ChannelService {
         }
     }
 
+    async checkIfPaidToOthers(chatId, profile) {
+        const resp = { paid: 0, demoGiven: 0 };
+        try {
+            const collection = this.client.db("tgclients").collection('userData');
+            const document = await collection.find({ chatId, profile: { $exists: true, "$ne": profile }, payAmount: { $gte: 10 } }).toArray();
+            const document2 = await collection.find({ chatId, profile: { $exists: true, "$ne": profile }, demoGiven: true }).toArray();
+            if (document.length > 0) {
+                resp.paid = document.length
+            }
+            if (document2.length > 0) {
+                resp.demoGiven = document2.length
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        return resp;
+    }
+
+
     async readSinglePromoteStats(clientId) {
         const promotColl = this.client.db("tgclients").collection('promoteStats');
         const result = await promotColl.findOne({ client: clientId }, { projection: { "client": 1, "totalCount": 1, "lastUpdatedTimeStamp": 1, "isActive": 1, "_id": 0 } });

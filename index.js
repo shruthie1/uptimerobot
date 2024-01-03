@@ -1357,6 +1357,15 @@ app.get('/isRecentUser', (req, res) => {
   res.send({ count: recentAccessData.length });
 });
 
+app.get('/paymentstats', async (req, res) => {
+  const chatId = req.query.chatId;
+  const profile = req.query.profile;
+  const db = ChannelService.getInstance();
+  const resp = await db.checkIfPaidToOthers(chatId, profile);
+  console.log(resp)
+  res.send(resp)
+})
+
 
 const playbackPositions = new Map();
 
