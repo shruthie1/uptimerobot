@@ -226,6 +226,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
 app.get('/refreshMap', async (req, res) => {
   checkerclass.getinstance();
   await setUserMap();
+  await fetchWithTimeout(`https://uptimerobot-production.up.railway.app/refreshMap`);
   res.send('Hello World!');
 });
 
