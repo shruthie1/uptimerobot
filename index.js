@@ -101,6 +101,8 @@ try {
     console.log("Promoting.....");
     const hour = getCurrentHourIST();
     for (const value of userMap.values()) {
+      await fetchWithTimeout(`${value.url}assureppl`);
+      await sleep(3000);
       await fetchWithTimeout(`${value.url}promote`);
       if (hour && hour % 3 === 0) {
         await fetchWithTimeout(`${value.url}calltopaid`);
@@ -110,11 +112,10 @@ try {
     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
   })
 
-  schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
-    Array.from(userMap.values()).map(async (value) => {
-      await fetchWithTimeout(`${value.url}assureppl`);
-    })
-  })
+  // schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
+  //   Array.from(userMap.values()).map(async (value) => {
+  //   })
+  // })
 
   schedule.scheduleJob('test2', '*/10 * * * *', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
