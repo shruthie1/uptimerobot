@@ -375,6 +375,19 @@ app.get('/getviddata', async (req, res, next) => {
   res.json(data);
 });
 
+app.post('/getviddata', async (req, res, next) => {
+  checkerclass.getinstance()
+  let profile = req.query.profile;
+  if (!profile && req.query.clientId) {
+    profile = req.query.clientId?.replace(/\d/g, '')
+  }
+  const body = req.body;
+  const chatId = body.chatId;
+  const db = ChannelService.getInstance();
+  const data = await db.updateUserData({ chatId }, data);
+  res.json(data);
+});
+
 
 app.get('/getuserdata', async (req, res, next) => {
   checkerclass.getinstance()
@@ -618,8 +631,9 @@ app.post('/updateUserData/:chatId', async (req, res) => {
   const data = req.body
   const chatId = req.params.chatId
   checkerclass.getinstance();
+  const filter = {chatId}
   const db = ChannelService.getInstance();
-  const userConfig = await db.updateUserData(chatId, data);
+  const userConfig = await db.updateUserData(filter, data);
   res.json(userConfig);
 });
 
