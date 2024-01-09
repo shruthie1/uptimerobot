@@ -384,10 +384,18 @@ app.post('/getviddata', async (req, res, next) => {
   const body = req.body;
   const chatId = body.chatId;
   const db = ChannelService.getInstance();
-  const data = await db.updateUserData({ chatId }, body);
+  const data = await db.updateUserData({ chatId, profile }, body);
   res.json(data);
 });
 
+app.get('/blockUser/:profile/:chatId', async (req, res, next) => {
+  checkerclass.getinstance()
+  let profile = req.params.profile;
+  const chatId = req.params.chatId;
+  const db = ChannelService.getInstance();
+  const data = await db.updateUserData({ chatId, profile }, {canReply:0, payAmount:0});
+  res.json(data);
+});
 
 app.get('/getuserdata', async (req, res, next) => {
   checkerclass.getinstance()
