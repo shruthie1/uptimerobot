@@ -155,10 +155,10 @@ class ChannelService {
         }
     }
 
-    async updateUserData(chatId, data) {
+    async updateUserData(filter, data) {
         try {
             const collection = this.client.db("tgclients").collection('userData');
-            const entry = await collection.updateMany({ chatId }, { $set: { ...data } });
+            const entry = await collection.updateMany(filter, { $set: { ...data } });
             return entry
         } catch (error) {
             console.log(error)
