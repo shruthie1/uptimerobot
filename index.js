@@ -366,7 +366,10 @@ app.get('/refreshupis', async (req, res, next) => {
 app.get('/getviddata', async (req, res, next) => {
   checkerclass.getinstance()
   const chatId = req.query.chatId;
-  const profile = req.query.profile;
+  let profile = req.query.profile;
+  if (!profile && req.query.clientId) {
+    profile = req.query.clientId?.replace(/\d/g, '')
+  }
   const db = ChannelService.getInstance();
   const data = await db.getuserdata({ chatId, profile });
   res.json(data);
