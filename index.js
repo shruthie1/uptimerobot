@@ -384,7 +384,7 @@ app.post('/getviddata', async (req, res, next) => {
   const body = req.body;
   const chatId = body.chatId;
   const db = ChannelService.getInstance();
-  const data = await db.updateUserData({ chatId }, data);
+  const data = await db.updateUserData({ chatId }, body);
   res.json(data);
 });
 
