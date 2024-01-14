@@ -397,6 +397,14 @@ app.get('/blockUser/:profile/:chatId', async (req, res, next) => {
   res.json(data);
 });
 
+app.get('/blockUserall/:chatId', async (req, res, next) => {
+  checkerclass.getinstance()
+  const chatId = req.params.chatId;
+  const db = ChannelService.getInstance();
+  const data = await db.updateUserData({ chatId }, {canReply:0, payAmount:0});
+  res.json(data);
+});
+
 app.get('/getuserdata', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
