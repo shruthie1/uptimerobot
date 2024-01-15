@@ -89,8 +89,9 @@ async function setUserMap() {
 }
 
 function getClientData(cid){
-  return Array.from(userMap.values()).find(async (value) => {
-    value.clientId == cid
+  const clients = Array.from(userMap.values())
+  return clients.find((value) => {
+    return value.clientId == cid
   })
 }
 
@@ -421,9 +422,9 @@ app.get('/sendvclink/:clientId/:chatId/:video', async (req, res, next) => {
   const chatId = req.params.chatId;
   const video = req.params.video;
   const client = getClientData(clientId);
-  const url = `${client.url}sendvclink/${chatId}/${video}`;
+  const url = `${client?.url}sendvclink/${chatId}/${video}`;
   console.log(url);
-  const data = await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
+  const data = await fetchWithTimeout(`${client?.url}sendvclink/${chatId}/${video}`);
   res.json(data);
 });
 
