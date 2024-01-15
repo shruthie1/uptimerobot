@@ -403,6 +403,18 @@ app.get('/blockUser/:profile/:chatId', async (req, res, next) => {
   res.json(data);
 });
 
+app.get('/sendvclink', async (req, res, next) => {
+  checkerclass.getinstance()
+  const chatId = req.query.chatId;
+  const video = req.query.video;
+  const profile = req.query.clientId;
+  const client = getClientData(profile);
+  const url = `${client?.url}sendvclink/${chatId}/${video}`;
+  console.log(url);
+  const data = await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
+  res.json(data);
+});
+
 app.get('/sendvclink/:clientId/:chatId/:video', async (req, res, next) => {
   checkerclass.getinstance()
   const clientId = req.params.clientId;
