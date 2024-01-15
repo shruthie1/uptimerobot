@@ -424,8 +424,8 @@ app.get('/sendvclink/:clientId/:chatId/:video', async (req, res, next) => {
   const client = getClientData(clientId);
   const url = `${client?.url}sendvclink/${chatId}/${video}`;
   console.log(url);
-  const data = await fetchWithTimeout(`${client?.url}sendvclink/${chatId}/${video}`);
-  res.json(data);
+  await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
+  res.send("done");
 });
 
 app.get('/blockUserall/:chatId', async (req, res, next) => {
