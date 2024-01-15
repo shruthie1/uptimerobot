@@ -412,8 +412,8 @@ app.get('/sendvclink', async (req, res, next) => {
   const client = getClientData(profile);
   const url = `${client?.url}sendvclink/${chatId}/${video}`;
   console.log(url);
-  const data = await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
-  res.send(data);
+  await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
+  res.send("done");
 });
 
 app.get('/sendvclink/:clientId/:chatId/:video', async (req, res, next) => {
