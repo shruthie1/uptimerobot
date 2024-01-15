@@ -88,6 +88,12 @@ async function setUserMap() {
   })
 }
 
+function getClientData(cid){
+  return Array.from(userMap.values()).find(async (value) => {
+    value.clientId == cid
+  })
+}
+
 function getCurrentHourIST() {
   const now = new Date();
   const istOffset = 5.5 * 60 * 60 * 1000;
@@ -393,7 +399,19 @@ app.get('/blockUser/:profile/:chatId', async (req, res, next) => {
   let profile = req.params.profile;
   const chatId = req.params.chatId;
   const db = ChannelService.getInstance();
-  const data = await db.updateUserData({ chatId, profile }, {canReply:0, payAmount:0});
+  const data = await db.updateUserData({ chatId, profile }, { canReply: 0, payAmount: 0 });
+  res.json(data);
+});
+
+app.get('/sendvclink/:clientId/:chatId/:video', async (req, res, next) => {
+  checkerclass.getinstance()
+  const clientId = req.params.clientId;
+  const chatId = req.params.chatId;
+  const video = req.params.video;
+  const client = getClientData(clientId);
+  const url = `${client.url}sendvclink/${chatId}/${video}`;
+  console.log(url);
+  const data = await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
   res.json(data);
 });
 
@@ -401,7 +419,7 @@ app.get('/blockUserall/:chatId', async (req, res, next) => {
   checkerclass.getinstance()
   const chatId = req.params.chatId;
   const db = ChannelService.getInstance();
-  const data = await db.updateUserData({ chatId }, {canReply:0, payAmount:0});
+  const data = await db.updateUserData({ chatId }, { canReply: 0, payAmount: 0 });
   res.json(data);
 });
 
@@ -647,7 +665,7 @@ app.post('/updateUserData/:chatId', async (req, res) => {
   const data = req.body
   const chatId = req.params.chatId
   checkerclass.getinstance();
-  const filter = {chatId}
+  const filter = { chatId }
   const db = ChannelService.getInstance();
   const userConfig = await db.updateUserData(filter, data);
   res.json(userConfig);
