@@ -802,8 +802,10 @@ app.get('/exitprimary', async (req, res, next) => {
   const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    if (value.clientId.toLowerCase().includes('1'))
+    if (value.clientId.toLowerCase().includes('1')){
       await fetchWithTimeout(`${value.url}exit`);
+     await sleep(1000);
+    }
   }
 });
 
@@ -814,8 +816,10 @@ app.get('/exitsecondary', async (req, res, next) => {
   const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    if (value.clientId.toLowerCase().includes('2'))
+    if (value.clientId.toLowerCase().includes('2')){
       await fetchWithTimeout(`${value.url}exit`);
+      await sleep(1000)
+    }
   }
 });
 
