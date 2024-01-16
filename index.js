@@ -415,8 +415,6 @@ app.get('/sendvclink', async (req, res, next) => {
   const url = `${client?.url}sendvclink/${chatId}/${video}`;
   console.log(url);
   await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
-  const db = ChannelService.getInstance();
-  db.clearStats()
   res.send("done");
 });
 
