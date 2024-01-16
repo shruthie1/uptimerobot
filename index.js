@@ -413,6 +413,8 @@ app.get('/sendvclink', async (req, res, next) => {
   const url = `${client?.url}sendvclink/${chatId}/${video}`;
   console.log(url);
   await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
+  const db = ChannelService.getInstance();
+  db.clearStats()
   res.send("done");
 });
 
@@ -802,8 +804,10 @@ app.get('/exitprimary', async (req, res, next) => {
   const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    if (value.clientId.toLowerCase().includes('1'))
+    if (value.clientId.toLowerCase().includes('1')){
       await fetchWithTimeout(`${value.url}exit`);
+     await sleep(80000);
+    }
   }
 });
 
@@ -814,8 +818,10 @@ app.get('/exitsecondary', async (req, res, next) => {
   const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    if (value.clientId.toLowerCase().includes('2'))
+    if (value.clientId.toLowerCase().includes('2')){
       await fetchWithTimeout(`${value.url}exit`);
+      await sleep(80000)
+    }
   }
 });
 
