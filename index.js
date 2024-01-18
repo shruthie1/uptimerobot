@@ -1422,7 +1422,7 @@ app.get('/isRecentUser', (req, res) => {
   const chatId = req.query.chatId;
   const accessData = userAccessData.get(chatId) || [];
   const currentTime = Date.now();
-  const recentAccessData = accessData.filter(timestamp => currentTime - timestamp <= 10 * 60 * 1000);
+  const recentAccessData = accessData.filter(timestamp => currentTime - timestamp <= 7 * 60 * 1000);
   recentAccessData.push(currentTime);
   userAccessData.set(chatId, recentAccessData);
   res.send({ count: recentAccessData.length });
