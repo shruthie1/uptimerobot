@@ -54,7 +54,7 @@ fetchWithTimeout('https://ipinfo.io/json')
 
 let count = 0;
 let botCount = 0
-const ppplbot = () => {
+const ppplbot = (chatId) => {
   let token;
   if (botCount % 2 == 1) {
     token = `bot6624618034:AAHoM3GYaw3_uRadOWYzT7c2OEp6a7A61mY`
@@ -62,7 +62,7 @@ const ppplbot = () => {
     token = `bot6607225097:AAG6DJg9Ll5XVxy24Nr449LTZgRb5bgshUA`
   }
 
-  return `https://api.telegram.org/${token}/sendMessage?chat_id=-1001801844217`
+  return `https://api.telegram.org/${token}/sendMessage?chat_id=${chatId?chatId:"-1001801844217"}`
 }
 const pingerbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001703065531`;
 
@@ -891,6 +891,18 @@ app.get('/connectclient/:number', async (req, res) => {
   }
 });
 
+app.get('/sendToChannel', async (req, res, next) => {
+  res.send("sendToChannel");
+  next();
+}, async (req, res) => {
+  try {
+    const message = req.query?.msg
+    const chatId = req.query?.chatId;
+       await fetchWithTimeout(`${ppplbot(chatId)}&text=${message}`,{}, 3)
+  } catch (e) { 
+    console.log(e);
+  }
+})
 
 app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
   res.send("joiningChannels");
