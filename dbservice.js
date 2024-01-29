@@ -418,10 +418,21 @@ class ChannelService {
         console.log(result);
     }
 
-    async clearPromotionStats() {
+    async reinitPromoteStats() {
         const promotColl = this.client.db("tgclients").collection('promoteStats');
-        const result = await promotColl.deleteMany({});
-        console.log(result);
+        const users = await this.getAllUserClients();
+        for (const user of users) {
+            await promotColl.updateOne({ client: user.clientId }, 
+                {
+                    $set: {
+                        data: Object.fromEntries((await promotColl.findOne({ client: user.clientId })).channels?.map(channel => [channel, 0])),
+                        totalCount: 0,
+                        uniqueChannels: 0,
+                        releaseDay: Date.now(),
+                        lastupdatedTimeStamp: Date.now()
+                    }
+                });
+        }
     }
 
     async closeConnection() {
@@ -450,27 +461,6 @@ class ChannelService {
 
         const uniqueChannelNames = Array.from(uniqueChannels);
         return uniqueChannelNames;
-    }
-
-
-    async initPromoteStats() {
-        const promotColl = this.client.db("tgclients").collection('promoteStats');
-        const users = await this.getAllUserClients();
-        for (const user of users) {
-            const obj = {
-                client: user.clientId,
-                data: {},
-                totalCount: 0,
-                uniqueChannels: 0,
-                releaseDay: Date.now(),
-                lastupdatedTimeStamp: Date.now()
-            }
-
-            const existingDocument = await promotColl.findOne({ client: user.clientId });
-            if (!existingDocument) {
-                await promotColl.insertOne(obj);
-            }
-        }
     }
 
     async getActiveChannels(limit = 50, skip = 0, keywords = [], notIds = [], collection = 'activeChannels') {
