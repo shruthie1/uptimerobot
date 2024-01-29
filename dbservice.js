@@ -508,30 +508,17 @@ class ChannelService {
         try {
             const promoteStatsColl = this.client.db("tgclients").collection('promoteStats');
             const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
-
-            const cursor = promoteStatsColl.find({});
-            const uniqueChannels = new Set();
-
-            await cursor.forEach((document) => {
-                for (const channel in document.data) {
-                    if (channel) {
-                        uniqueChannels.add(channel);
-                    }
-                }
-            });
-
-            const uniqueChannelNames = Array.from(uniqueChannels);
             const channelInfoCollection = this.client.db("tgclients").collection('channels');
+            const cursor = promoteStatsColl.find({});
 
-            for (const channelName of uniqueChannelNames) {
-                const existingChannel = await activeChannelCollection.findOne({ username: `@${channelName}` }, { projection: { "_id": 0 } });
-                if (!existingChannel) {
-                    const channelInfo = await channelInfoCollection.findOne({ username: `@${channelName}` }, { projection: { "_id": 0 } });
+            await cursor.forEach(async (document) => {
+                for (const channelId in document.data) {
+                    const channelInfo = await channelInfoCollection.findOne({channelId }, { projection: { "_id": 0 } });
                     if (channelInfo) {
-                        await activeChannelCollection.insertOne(channelInfo);
+                        await activeChannelCollection.updateOne({ channelId }, { $set: channelInfo }, { upsert: true });
                     }
                 }
-            }
+            });        
         } catch (error) {
             console.log(error)
         }
