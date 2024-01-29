@@ -47,9 +47,18 @@ class ChannelService {
         }
     }
     async insertChannel(channelData) {
+        const {
+            title,
+            id,
+            username,
+            megagroup,
+            participantsCount,
+            restricted,
+            broadcast
+        } = channelData
         const cannotSendMsgs = channelData.defaultBannedRights?.sendMessages
-        if (!cannotSendMsgs && !channelData.broadcast) {
-            await this.db.updateOne({ channelId: channelData.id.toString() }, { $set: channelData }, { upsert: true });
+        if (!cannotSendMsgs && !broadcast) {
+            await this.db.updateOne({ channelId: id.toString() }, { $set: { username: username, title, megagroup, participantsCount, broadcast, restricted, sendMessages: channelData.defaultBannedRights?.sendMessages, canSendMsgs: true } }, { upsert: true });
         }
     }
     async getChannels(limit = 50, skip = 0, k) {
