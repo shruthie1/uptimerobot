@@ -164,8 +164,7 @@ try {
     await db.resetPaidUsers();
     await db.updateActiveChannels();
     await db.clearStats2();
-    await db.clearPromotionStats();
-    await db.initPromoteStats();
+    await db.reinitPromoteStats();
     try {
       const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
       const resp2 = await axios.get(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
