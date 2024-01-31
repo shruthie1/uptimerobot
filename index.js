@@ -1613,7 +1613,7 @@ class checkerclass {
           } catch (error) {
             console.log("Some Error: ", error.code)
           }
-          await sleep(18000);
+          await sleep(5000);
         }
       }
 
