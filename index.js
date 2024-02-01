@@ -1441,6 +1441,12 @@ app.get('/isRecentUser', (req, res) => {
   res.send({ count: recentAccessData.length });
 });
 
+app.get('/resetRecentUser', (req, res) => {
+  const chatId = req.query.chatId;
+  userAccessData.set(chatId, []);
+  res.send({ count: recentAccessData.length });
+});
+
 app.get('/paymentstats', async (req, res) => {
   const chatId = req.query.chatId;
   const profile = req.query.profile;
