@@ -891,6 +891,19 @@ app.get('/connectclient/:number', async (req, res) => {
   }
 });
 
+app.get('/sendToChannel', async (req, res, next) => {
+  res.send("sendToChannel");
+  next();
+}, async (req, res) => {
+  try {
+    const message = req.query?.msg;
+    const chatId = req.query?.chatId;
+    const token = req.query?.token;
+    await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${decodeURIComponent(message)}`,{}, 3)
+  } catch (e) { 
+    console.log(e);
+  }
+})
 
 app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
   res.send("joiningChannels");
