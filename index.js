@@ -54,15 +54,17 @@ fetchWithTimeout('https://ipinfo.io/json')
 
 let count = 0;
 let botCount = 0
-const ppplbot = () => {
-  let token;
-  if (botCount % 2 == 1) {
-    token = `bot6624618034:AAHoM3GYaw3_uRadOWYzT7c2OEp6a7A61mY`
-  } else {
-    token = `bot6607225097:AAG6DJg9Ll5XVxy24Nr449LTZgRb5bgshUA`
+const ppplbot = (chatId, botToken) => {
+  let token = botToken;
+  if (!token) {
+    if (botCount % 2 == 1) {
+      token = `bot6624618034:AAHoM3GYaw3_uRadOWYzT7c2OEp6a7A61mY`
+    } else {
+      token = `bot6607225097:AAG6DJg9Ll5XVxy24Nr449LTZgRb5bgshUA`
+    }
+    botCount++;
   }
-
-  return `https://api.telegram.org/${token}/sendMessage?chat_id=-1001801844217`
+  return `https://api.telegram.org/${token}/sendMessage?chat_id=${chatId?chatId:"-1001801844217"}`
 }
 const pingerbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001703065531`;
 
@@ -162,8 +164,7 @@ try {
     await db.resetPaidUsers();
     await db.updateActiveChannels();
     await db.clearStats2();
-    await db.clearPromotionStats();
-    await db.initPromoteStats();
+    await db.reinitPromoteStats();
     try {
       const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
       const resp2 = await axios.get(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
@@ -1441,6 +1442,12 @@ app.get('/isRecentUser', (req, res) => {
   res.send({ count: recentAccessData.length });
 });
 
+app.get('/resetRecentUser', (req, res) => {
+  const chatId = req.query.chatId;
+  userAccessData.set(chatId, []);
+  res.send({ count: recentAccessData.length });
+});
+
 app.get('/paymentstats', async (req, res) => {
   const chatId = req.query.chatId;
   const profile = req.query.profile;
@@ -1613,7 +1620,7 @@ class checkerclass {
           } catch (error) {
             console.log("Some Error: ", error.code)
           }
-          await sleep(18000);
+          await sleep(5000);
         }
       }
 

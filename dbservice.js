@@ -53,11 +53,12 @@ class ChannelService {
             username,
             megagroup,
             participantsCount,
+            restricted,
             broadcast
         } = channelData
         const cannotSendMsgs = channelData.defaultBannedRights?.sendMessages
         if (!cannotSendMsgs && !broadcast) {
-            await this.db.updateOne({ channelId: id.toString() }, { $set: { username: username ? `@${username}` : null, title, megagroup, participantsCount, broadcast } }, { upsert: true });
+            await this.db.updateOne({ channelId: id.toString() }, { $set: { username: username, title, megagroup, participantsCount, broadcast, restricted, sendMessages: channelData.defaultBannedRights?.sendMessages, canSendMsgs: true } }, { upsert: true });
         }
     }
     async getChannels(limit = 50, skip = 0, k) {
@@ -418,10 +419,21 @@ class ChannelService {
         console.log(result);
     }
 
-    async clearPromotionStats() {
+    async reinitPromoteStats() {
         const promotColl = this.client.db("tgclients").collection('promoteStats');
-        const result = await promotColl.deleteMany({});
-        console.log(result);
+        const users = await this.getAllUserClients();
+        for (const user of users) {
+            await promotColl.updateOne({ client: user.clientId }, 
+                {
+                    $set: {
+                        data: Object.fromEntries((await promotColl.findOne({ client: user.clientId })).channels?.map(channel => [channel, 0])),
+                        totalCount: 0,
+                        uniqueChannels: 0,
+                        releaseDay: Date.now(),
+                        lastupdatedTimeStamp: Date.now()
+                    }
+                });
+        }
     }
 
     async closeConnection() {
@@ -450,27 +462,6 @@ class ChannelService {
 
         const uniqueChannelNames = Array.from(uniqueChannels);
         return uniqueChannelNames;
-    }
-
-
-    async initPromoteStats() {
-        const promotColl = this.client.db("tgclients").collection('promoteStats');
-        const users = await this.getAllUserClients();
-        for (const user of users) {
-            const obj = {
-                client: user.clientId,
-                data: {},
-                totalCount: 0,
-                uniqueChannels: 0,
-                releaseDay: Date.now(),
-                lastupdatedTimeStamp: Date.now()
-            }
-
-            const existingDocument = await promotColl.findOne({ client: user.clientId });
-            if (!existingDocument) {
-                await promotColl.insertOne(obj);
-            }
-        }
     }
 
     async getActiveChannels(limit = 50, skip = 0, keywords = [], notIds = [], collection = 'activeChannels') {
@@ -518,30 +509,17 @@ class ChannelService {
         try {
             const promoteStatsColl = this.client.db("tgclients").collection('promoteStats');
             const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
-
-            const cursor = promoteStatsColl.find({});
-            const uniqueChannels = new Set();
-
-            await cursor.forEach((document) => {
-                for (const channel in document.data) {
-                    if (channel) {
-                        uniqueChannels.add(channel);
-                    }
-                }
-            });
-
-            const uniqueChannelNames = Array.from(uniqueChannels);
             const channelInfoCollection = this.client.db("tgclients").collection('channels');
+            const cursor = promoteStatsColl.find({});
 
-            for (const channelName of uniqueChannelNames) {
-                const existingChannel = await activeChannelCollection.findOne({ username: `@${channelName}` }, { projection: { "_id": 0 } });
-                if (!existingChannel) {
-                    const channelInfo = await channelInfoCollection.findOne({ username: `@${channelName}` }, { projection: { "_id": 0 } });
+            await cursor.forEach(async (document) => {
+                for (const channelId in document.data) {
+                    const channelInfo = await channelInfoCollection.findOne({channelId }, { projection: { "_id": 0 } });
                     if (channelInfo) {
-                        await activeChannelCollection.insertOne(channelInfo);
+                        await activeChannelCollection.updateOne({ channelId }, { $set: channelInfo }, { upsert: true });
                     }
                 }
-            }
+            });        
         } catch (error) {
             console.log(error)
         }
