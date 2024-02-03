@@ -1435,7 +1435,7 @@ app.get('/isRecentUser', (req, res) => {
   const chatId = req.query.chatId;
   const accessData = userAccessData.get(chatId) || { timestamps: [], videoDetails: {} };
   const currentTime = Date.now();
-  const recentAccessData = accessData?.timestamps?.filter(timestamp => currentTime - timestamp <= 7 * 60 * 1000);
+  const recentAccessData = accessData?.timestamps?.filter(timestamp => currentTime - timestamp <= 15 * 60 * 1000);
   recentAccessData.push(currentTime);
   userAccessData.set(chatId, { videoDetails: accessData.videoDetails, timestamps: recentAccessData });
   res.send({ count: recentAccessData.length, videoDetails: accessData.videoDetails });
