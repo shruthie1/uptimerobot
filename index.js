@@ -1448,7 +1448,7 @@ app.post('/isRecentUser', (req, res) => {
   const accessData = userAccessData.get(chatId) || { timestamps: [], videoDetails: {} };
   videoDetails = { ...accessData.videoDetails, ...videoDetails }
   userAccessData.set(chatId, { videoDetails, timestamps: accessData.timestamps });
-  res.send({ count: recentAccessData.length, videoDetails: videoDetails });
+  res.send({ count: accessData.timestamps.length, videoDetails: videoDetails });
 });
 
 app.get('/resetRecentUser', (req, res) => {
