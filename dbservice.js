@@ -244,16 +244,26 @@ class ChannelService {
     }
 
     async checkIfPaidToOthers(chatId, profile) {
-        const resp = { paid: 0, demoGiven: 0 };
+        const resp = { paid: 0, demoGiven: 0, secondShow: 0, fullShow: 0 };
         try {
             const collection = this.client.db("tgclients").collection('userData');
             const document = await collection.find({ chatId, profile: { $exists: true, "$ne": profile }, payAmount: { $gte: 10 } }).toArray();
-            const document2 = await collection.find({ chatId, profile: { $exists: true, "$ne": profile }, demoGiven: true }).toArray();
+            const document2 = await collection.find({ chatId, profile: { $exists: true, "$ne": profile } }).toArray();
             if (document.length > 0) {
                 resp.paid = document.length
             }
             if (document2.length > 0) {
-                resp.demoGiven = document2.length
+                document2.map(doc => {
+                    if (doc.demoGiven) {
+                        resp.demoGiven = resp.demoGiven + 1
+                    }
+                    if (doc.secondShow) {
+                        resp.secondShow = resp.secondShow + 1
+                    }
+                    if (doc.fullShow) {
+                        resp.fullShow = resp.fullShow + 1
+                    }
+                })
             }
         } catch (error) {
             console.log(error);
@@ -423,7 +433,7 @@ class ChannelService {
         const promotColl = this.client.db("tgclients").collection('promoteStats');
         const users = await this.getAllUserClients();
         for (const user of users) {
-            await promotColl.updateOne({ client: user.clientId }, 
+            await promotColl.updateOne({ client: user.clientId },
                 {
                     $set: {
                         data: Object.fromEntries((await promotColl.findOne({ client: user.clientId })).channels?.map(channel => [channel, 0])),
@@ -514,12 +524,12 @@ class ChannelService {
 
             await cursor.forEach(async (document) => {
                 for (const channelId in document.data) {
-                    const channelInfo = await channelInfoCollection.findOne({channelId }, { projection: { "_id": 0 } });
+                    const channelInfo = await channelInfoCollection.findOne({ channelId }, { projection: { "_id": 0 } });
                     if (channelInfo) {
                         await activeChannelCollection.updateOne({ channelId }, { $set: channelInfo }, { upsert: true });
                     }
                 }
-            });        
+            });
         } catch (error) {
             console.log(error)
         }
