@@ -64,7 +64,7 @@ const ppplbot = (chatId, botToken) => {
     }
     botCount++;
   }
-  return `https://api.telegram.org/${token}/sendMessage?chat_id=${chatId?chatId:"-1001801844217"}`
+  return `https://api.telegram.org/${token}/sendMessage?chat_id=${chatId ? chatId : "-1001801844217"}`
 }
 const pingerbot = `https://api.telegram.org/bot5807856562:${process.env.apikey}/sendMessage?chat_id=-1001703065531`;
 
@@ -90,7 +90,7 @@ async function setUserMap() {
   })
 }
 
-function getClientData(cid){
+function getClientData(cid) {
   const clients = Array.from(userMap.values())
   return clients.find((value) => {
     return value.clientId == cid
@@ -805,9 +805,9 @@ app.get('/exitprimary', async (req, res, next) => {
   const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    if (value.clientId.toLowerCase().includes('1')){
+    if (value.clientId.toLowerCase().includes('1')) {
       await fetchWithTimeout(`${value.url}exit`);
-     await sleep(80000);
+      await sleep(80000);
     }
   }
 });
@@ -819,7 +819,7 @@ app.get('/exitsecondary', async (req, res, next) => {
   const userValues = Array.from(userMap.values());
   for (let i = 0; i < userValues.length; i++) {
     const value = userValues[i];
-    if (value.clientId.toLowerCase().includes('2')){
+    if (value.clientId.toLowerCase().includes('2')) {
       await fetchWithTimeout(`${value.url}exit`);
       await sleep(80000)
     }
@@ -900,8 +900,8 @@ app.get('/sendToChannel', async (req, res, next) => {
     const message = req.query?.msg;
     const chatId = req.query?.chatId;
     const token = req.query?.token;
-    await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${decodeURIComponent(message)}`,{}, 3)
-  } catch (e) { 
+    await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${decodeURIComponent(message)}`, {}, 3)
+  } catch (e) {
     console.log(e);
   }
 })
@@ -1434,18 +1434,27 @@ const userAccessData = new Map();
 
 app.get('/isRecentUser', (req, res) => {
   const chatId = req.query.chatId;
-  const accessData = userAccessData.get(chatId) || [];
+  const accessData = userAccessData.get(chatId) || { timestamps: [], videoDetails: {} };
   const currentTime = Date.now();
-  const recentAccessData = accessData.filter(timestamp => currentTime - timestamp <= 7 * 60 * 1000);
+  const recentAccessData = accessData?.timestamps?.filter(timestamp => currentTime - timestamp <= 7 * 60 * 1000);
   recentAccessData.push(currentTime);
-  userAccessData.set(chatId, recentAccessData);
-  res.send({ count: recentAccessData.length });
+  userAccessData.set(chatId, { videoDetails: accessData.videoDetails, timestamps: recentAccessData });
+  res.send({ count: recentAccessData.length, videoDetails: accessData.videoDetails });
+});
+
+app.post('/isRecentUser', (req, res) => {
+  const chatId = req.query.chatId;
+  const videoDetails = req.body;
+  const accessData = userAccessData.get(chatId) || { timestamps: [], videoDetails: {} };
+  videoDetails = { ...accessData.videoDetails, ...videoDetails }
+  userAccessData.set(chatId, { videoDetails, timestamps: accessData.timestamps });
+  res.send({ count: recentAccessData.length, videoDetails: videoDetails });
 });
 
 app.get('/resetRecentUser', (req, res) => {
   const chatId = req.query.chatId;
-  userAccessData.set(chatId, []);
-  res.send({ count: recentAccessData.length });
+  userAccessData.delete(chatId);
+  res.send({ count: 0 });
 });
 
 app.get('/paymentstats', async (req, res) => {
