@@ -1444,8 +1444,10 @@ app.get('/isRecentUser', (req, res) => {
 app.post('/isRecentUser', (req, res) => {
   const chatId = req.query.chatId;
   const videoDetails = req.body;
+  console.log("Isrecent user", chatId, videoDetails)
   const accessData = userAccessData.get(chatId) || { timestamps: [], videoDetails: {} };
   videoDetails = { ...accessData.videoDetails, ...videoDetails }
+  console.log("Updating Isrecent user", chatId, videoDetails)
   userAccessData.set(chatId, { videoDetails, timestamps: accessData.timestamps });
   res.send({ count: recentAccessData.length, videoDetails: videoDetails });
 });
