@@ -146,13 +146,12 @@ try {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getuserstats2`);
-
-      const now = new Date();
-      if (now.getUTCDate() % 3 === 1) {
-        setTimeout(async () => {
-          await fetchWithTimeout(`${value.url}getchannels`);
-        }, 30000);
-      }
+      // const now = new Date();
+      // if (now.getUTCDate() % 3 === 1) {
+      //   setTimeout(async () => {
+      //     await fetchWithTimeout(`${value.url}getchannels`);
+      //   }, 30000);
+      // }
       setTimeout(async () => {
         await fetchWithTimeout(`${value.url}asktopay`);
       }, 300000);
