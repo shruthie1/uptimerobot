@@ -1086,19 +1086,17 @@ app.get('/updatePrivacy/:number', async (req, res, next) => {
 });
 
 app.get('/forward*', async (req, res) => {
-  const targetHost = 'https://tgcms.glitch.me'; // Replace with the target host URL
-
+  let targetHost = 'https://tgcms.glitch.me';
+  if (req.query.host) {
+    targetHost = req.query.host;
+  } 
   try {
-    // Forward the request to the target host
     console.log(req.url);
     const finalUrl = `${targetHost}${req.url.replace('/forward', '')}`
     console.log("final:", finalUrl)
     const response = await fetchWithTimeout(finalUrl)
-
-    // Send the response from the target host back to the client
-    res.status(response.status).send(response.data);
+    res.status(response?.status).send(response?.data);
   } catch (error) {
-    // Handle errors
     console.log(error)
     res.status(500).send('Internal Server Error');
   }
