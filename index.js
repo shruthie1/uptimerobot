@@ -806,7 +806,7 @@ app.get('/exitprimary', async (req, res, next) => {
     const value = userValues[i];
     if (value.clientId.toLowerCase().includes('1')) {
       await fetchWithTimeout(`${value.url}exit`);
-      await sleep(80000);
+      await sleep(40000);
     }
   }
 });
@@ -820,7 +820,7 @@ app.get('/exitsecondary', async (req, res, next) => {
     const value = userValues[i];
     if (value.clientId.toLowerCase().includes('2')) {
       await fetchWithTimeout(`${value.url}exit`);
-      await sleep(80000)
+      await sleep(40000)
     }
   }
 });
