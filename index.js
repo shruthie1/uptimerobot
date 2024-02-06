@@ -412,21 +412,21 @@ app.get('/sendvclink', async (req, res, next) => {
   const video = req.query.video;
   const profile = req.query.clientId;
   const client = getClientData(profile);
-  const url = `${client?.url}sendvclink/${chatId}/${video}`;
+  const url = `${client?.url}sendvclink/${chatId}?${video ? `video=${video}` : ""}`;
   console.log(url);
-  await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
+  await fetchWithTimeout(url);
   res.send("done");
 });
 
-app.get('/sendvclink/:clientId/:chatId/:video', async (req, res, next) => {
+app.get('/sendvclink/:clientId/:chatId', async (req, res, next) => {
   checkerclass.getinstance()
   const clientId = req.params.clientId;
   const chatId = req.params.chatId;
-  const video = req.params.video;
+  const video = req.query.video;
   const client = getClientData(clientId);
-  const url = `${client?.url}sendvclink/${chatId}/${video}`;
+  const url = `${client?.url}sendvclink/${chatId}?${video ? `video=${video}` : ""}`;
   console.log(url);
-  await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
+  await fetchWithTimeout(url);
   res.send("done");
 });
 
@@ -806,7 +806,7 @@ app.get('/exitprimary', async (req, res, next) => {
     const value = userValues[i];
     if (value.clientId.toLowerCase().includes('1')) {
       await fetchWithTimeout(`${value.url}exit`);
-      await sleep(80000);
+      await sleep(40000);
     }
   }
 });
@@ -820,7 +820,7 @@ app.get('/exitsecondary', async (req, res, next) => {
     const value = userValues[i];
     if (value.clientId.toLowerCase().includes('2')) {
       await fetchWithTimeout(`${value.url}exit`);
-      await sleep(80000)
+      await sleep(40000)
     }
   }
 });
@@ -1088,7 +1088,7 @@ app.get('/forward*', async (req, res) => {
   let targetHost = 'https://tgcms.glitch.me';
   if (req.query.host) {
     targetHost = req.query.host;
-  } 
+  }
   try {
     console.log(req.url);
     const finalUrl = `${targetHost}${req.url.replace('/forward', '')}`
@@ -1549,7 +1549,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor() {
+  constructor () {
     this.main();
   };
 
