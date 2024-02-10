@@ -1964,7 +1964,7 @@ async function joinchannels(value) {
   try {
     let resp = await fetchWithTimeout(`${value.url}channelinfo`, { timeout: 200000 });
     await fetchWithTimeout(`${(ppplbot())}&text=ChannelCount SendTrue - ${value.clientId}: ${resp.data.canSendTrueCount}`)
-    if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 250) {
+    if (resp?.data?.canSendTrueCount && resp?.data?.canSendTrueCount < 300) {
       await fetchWithTimeout(`${ppplbot()}&text=Started Joining Channels- ${value.clientId}`)
       const keys = ['wife', 'adult', 'lanj', 'servic', 'paid', 'randi', 'bhab', 'boy', 'girl'];
       const db = ChannelService.getInstance();
