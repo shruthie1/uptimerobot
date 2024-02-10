@@ -498,6 +498,11 @@ class ChannelService {
                 },
                 {
                     username: { $not: { $regex: notPattern } }
+                },
+                {
+                    sendMessages: false,
+                    broadcast: false,
+                    restricted: false
                 }
             ]
         };
