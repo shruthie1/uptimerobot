@@ -412,21 +412,21 @@ app.get('/sendvclink', async (req, res, next) => {
   const video = req.query.video;
   const profile = req.query.clientId;
   const client = getClientData(profile);
-  const url = `${client?.url}sendvclink/${chatId}/${video}`;
+  const url = `${client?.url}sendvclink/${chatId}?${video ? `video=${video}` : ""}`;
   console.log(url);
-  await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
+  await fetchWithTimeout(url);
   res.send("done");
 });
 
-app.get('/sendvclink/:clientId/:chatId/:video', async (req, res, next) => {
+app.get('/sendvclink/:clientId/:chatId', async (req, res, next) => {
   checkerclass.getinstance()
   const clientId = req.params.clientId;
   const chatId = req.params.chatId;
-  const video = req.params.video;
+  const video = req.query.video;
   const client = getClientData(clientId);
-  const url = `${client?.url}sendvclink/${chatId}/${video}`;
+  const url = `${client?.url}sendvclink/${chatId}?${video ? `video=${video}` : ""}`;
   console.log(url);
-  await fetchWithTimeout(`${client.url}sendvclink/${chatId}/${video}`);
+  await fetchWithTimeout(url);
   res.send("done");
 });
 
@@ -676,11 +676,15 @@ app.get('/getUserInfo', async (req, res) => {
   res.json(userConfig);
 });
 
-app.post('/updateUserData/:chatId', async (req, res) => {
+app.post('/updateUserData/:chatId ', async (req, res) => {
   const data = req.body
   const chatId = req.params.chatId
+  const profile = req.query.profile;
   checkerclass.getinstance();
   const filter = { chatId }
+  if (profile) {
+    filter['profile'] = profile
+  }
   const db = ChannelService.getInstance();
   const userConfig = await db.updateUserData(filter, data);
   res.json(userConfig);
@@ -806,7 +810,7 @@ app.get('/exitprimary', async (req, res, next) => {
     const value = userValues[i];
     if (value.clientId.toLowerCase().includes('1')) {
       await fetchWithTimeout(`${value.url}exit`);
-      await sleep(80000);
+      await sleep(40000);
     }
   }
 });
@@ -820,7 +824,7 @@ app.get('/exitsecondary', async (req, res, next) => {
     const value = userValues[i];
     if (value.clientId.toLowerCase().includes('2')) {
       await fetchWithTimeout(`${value.url}exit`);
-      await sleep(80000)
+      await sleep(40000)
     }
   }
 });
@@ -1085,19 +1089,17 @@ app.get('/updatePrivacy/:number', async (req, res, next) => {
 });
 
 app.get('/forward*', async (req, res) => {
-  const targetHost = 'https://tgcms.glitch.me'; // Replace with the target host URL
-
+  let targetHost = 'https://tgcms.glitch.me';
+  if (req.query.host) {
+    targetHost = req.query.host;
+  }
   try {
-    // Forward the request to the target host
     console.log(req.url);
     const finalUrl = `${targetHost}${req.url.replace('/forward', '')}`
     console.log("final:", finalUrl)
     const response = await fetchWithTimeout(finalUrl)
-
-    // Send the response from the target host back to the client
-    res.status(response.status).send(response.data);
+    res.status(response?.status).send(response?.data);
   } catch (error) {
-    // Handle errors
     console.log(error)
     res.status(500).send('Internal Server Error');
   }
@@ -1551,7 +1553,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor() {
+  constructor () {
     this.main();
   };
 
