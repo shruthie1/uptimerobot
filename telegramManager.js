@@ -152,7 +152,7 @@ class TelegramManager {
                     totalCount++;
                     if (!broadcast && !defaultBannedRights?.sendMessages) {
                         canSendTrueCount++;
-                        this.channelArray.push(chatEntity.id.toString());
+                        this.channelArray.push(chatEntity.username);
                     } else {
                         canSendFalseCount++;
                     }

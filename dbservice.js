@@ -487,7 +487,11 @@ class ChannelService {
                     ]
                 },
                 {
-                    channelId: { $nin: notIds }
+                    username: {
+                        $not: {
+                            $regex: "^(" + notIds.map(id => "(?i)" + id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("|") + ")$"
+                        }
+                    }
                 },
                 {
                     title: { $not: { $regex: notPattern } }
