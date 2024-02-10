@@ -114,10 +114,11 @@ class ChannelService {
     async resetPaidUsers() {
         try {
             const collection = this.client.db("tgclients").collection('userData');
-            const entry = await collection.updateMany({ $and: [{ payAmount: { $gt: 10 }, totalCount: { $gt: 50 } }] }, {
+            const entry = await collection.updateMany({ $and: [{ payAmount: { $gt: 10 }, totalCount: { $gt: 30 } }] }, {
                 $set: {
                     totalCount: 10,
-                    limitTime: Date.now()
+                    limitTime: Date.now(),
+                    paidReply: true
                 }
             });
         } catch (error) {
