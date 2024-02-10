@@ -677,11 +677,15 @@ app.get('/getUserInfo', async (req, res) => {
   res.json(userConfig);
 });
 
-app.post('/updateUserData/:chatId', async (req, res) => {
+app.post('/updateUserData/:chatId ', async (req, res) => {
   const data = req.body
   const chatId = req.params.chatId
+  const profile = req.query.profile;
   checkerclass.getinstance();
   const filter = { chatId }
+  if (profile) {
+    filter['profile'] = profile
+  }
   const db = ChannelService.getInstance();
   const userConfig = await db.updateUserData(filter, data);
   res.json(userConfig);
