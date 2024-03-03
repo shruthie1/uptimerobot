@@ -617,14 +617,14 @@ app.get('/joinchannel', async (req, res, next) => {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
       }
     } else {
-      Array.from(userMap.values()).map(async (value) => {
+      for (const value of userMap.values()) {
         try {
           joinchannels(value);
           await sleep(3000);
         } catch (error) {
           console.log("Some Error: ", error.code);
         }
-      })
+      }
     }
   } catch (error) {
     console.log("Some Error: ", error);
@@ -633,19 +633,23 @@ app.get('/joinchannel', async (req, res, next) => {
 
 
 app.get('/leavechannel', async (req, res, next) => {
-  res.send('Hello World!');
+  const username = req.query.username;
+  console.log("leaving - ", username)
+  res.send(`Leaveing- ${username}`);
   next();
 }, async (req, res) => {
   try {
-    const username = req.query.userName;
-    Array.from(userMap.values()).map(async (value) => {
+    const username = req.query.username;
+    for (const value of userMap.values()) {
       try {
-        await fetchWithTimeout(`${value.url}leavechannel?username=${username}`)
+        const url = `${value.url}leavechannel?username=${username}`;
+        console.log(url)
+        await fetchWithTimeout(url)
         await sleep(3000);
       } catch (error) {
         console.log("Some Error: ", error.code);
       }
-    })
+    }
     const db = ChannelService.getInstance();
     await db.removeOnefromActiveChannel({ username });
   } catch (error) {
