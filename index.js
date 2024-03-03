@@ -632,6 +632,28 @@ app.get('/joinchannel', async (req, res, next) => {
 });
 
 
+app.get('/leavechannel', async (req, res, next) => {
+  res.send('Hello World!');
+  next();
+}, async (req, res) => {
+  try {
+    const username = req.query.userName;
+    Array.from(userMap.values()).map(async (value) => {
+      try {
+        await fetchWithTimeout(`${value.url}leavechannel?username=${username}`)
+        await sleep(3000);
+      } catch (error) {
+        console.log("Some Error: ", error.code);
+      }
+    })
+    const db = ChannelService.getInstance();
+    await db.removeOnefromActiveChannel({ username });
+  } catch (error) {
+    console.log("Some Error: ", error);
+  }
+});
+
+
 app.get('/getUpiId', async (req, res) => {
   checkerclass.getinstance();
   const app = req.query.app ? req.query.app : "paytm3"
@@ -903,8 +925,8 @@ app.get('/sendToChannel', async (req, res, next) => {
     const message = req.query?.msg;
     const chatId = req.query?.chatId;
     const token = req.query?.token;
-    await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${encodeURIComponent(message)}`,{}, 3)
-  } catch (e) { 
+    await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${encodeURIComponent(message)}`, {}, 3)
+  } catch (e) {
     console.log(e);
   }
 })
@@ -1553,7 +1575,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor () {
+  constructor() {
     this.main();
   };
 
