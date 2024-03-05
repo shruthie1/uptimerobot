@@ -384,6 +384,13 @@ app.get('/getviddata', async (req, res, next) => {
   res.json(data);
 });
 
+app.get('/resetAvailableMsgs', async (req, res, next) => {
+  checkerclass.getinstance()
+  const db = ChannelService.getInstance();
+  const data = await db.resetAvailableMsgs();
+  res.json(data);
+});
+
 app.post('/getviddata', async (req, res, next) => {
   checkerclass.getinstance()
   let profile = req.query.profile;
