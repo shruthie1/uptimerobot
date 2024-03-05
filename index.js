@@ -235,7 +235,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
 app.get('/refreshMap', async (req, res) => {
   checkerclass.getinstance();
   await setUserMap();
-  await fetchWithTimeout(`https://uptimerobot-production.up.railway.app/refreshMap`);
+  await fetchWithTimeout(`https://shruthie.onrender.com/refreshMap`);
   res.send('Hello World!');
 });
 
@@ -624,15 +624,41 @@ app.get('/joinchannel', async (req, res, next) => {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
       }
     } else {
-      Array.from(userMap.values()).map(async (value) => {
+      for (const value of userMap.values()) {
         try {
           joinchannels(value);
           await sleep(3000);
         } catch (error) {
           console.log("Some Error: ", error.code);
         }
-      })
+      }
     }
+  } catch (error) {
+    console.log("Some Error: ", error);
+  }
+});
+
+
+app.get('/leavechannel', async (req, res, next) => {
+  const username = req.query.username;
+  console.log("leaving - ", username)
+  res.send(`Leaveing- ${username}`);
+  next();
+}, async (req, res) => {
+  try {
+    const username = req.query.username;
+    for (const value of userMap.values()) {
+      try {
+        const url = `${value.url}leavechannel?username=${username}`;
+        console.log(url)
+        await fetchWithTimeout(url)
+        await sleep(3000);
+      } catch (error) {
+        console.log("Some Error: ", error.code);
+      }
+    }
+    const db = ChannelService.getInstance();
+    await db.removeOnefromActiveChannel({ username });
   } catch (error) {
     console.log("Some Error: ", error);
   }
@@ -910,8 +936,8 @@ app.get('/sendToChannel', async (req, res, next) => {
     const message = req.query?.msg;
     const chatId = req.query?.chatId;
     const token = req.query?.token;
-    await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${encodeURIComponent(message)}`,{}, 3)
-  } catch (e) { 
+    await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${encodeURIComponent(message)}`, {}, 3)
+  } catch (e) {
     console.log(e);
   }
 })
@@ -1560,7 +1586,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor () {
+  constructor() {
     this.main();
   };
 
