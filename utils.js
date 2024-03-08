@@ -1,4 +1,5 @@
 const axios = require('axios');
+let botCount = 0
 
 const ppplbot = (chatId, botToken) => {
   let token = botToken;
