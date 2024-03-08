@@ -68,7 +68,7 @@ async function tryWithReplit(url) {
     data: JSON.stringify(payload),
   };
   try {
-    const result = await axios({ ...options, url: "https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/check" });
+    const result = await axios({ ...options, url: "https://execuor-production.up.railway.app/check" });
     console.log("Replit result:", result.status, result.data);
     return result
   } catch (error) {
