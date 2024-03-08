@@ -1739,7 +1739,7 @@ class checkerclass {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=uptime2  NOT Reachable`);
       }
-    }, 60000);
+    }, 120000);
 
     // setInterval(async () => {
     //   userMap.forEach(async (val, key) => {
