@@ -1753,8 +1753,8 @@ class checkerclass {
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(payload),
           };
-          console.log("checking:", payload, options)
           const result = await fetchWithTimeout("https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/check", options, 3);
+          await sleep(3000)
         })
       }
     }, 120000);
