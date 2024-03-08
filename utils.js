@@ -18,7 +18,7 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function fetchWithTimeout(resource, options = {}, maxRetries = 0) {
+async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
   const timeout = options?.timeout || 15000;
   const source = axios.CancelToken.source();
   const id = setTimeout(() => source.cancel(), timeout);
