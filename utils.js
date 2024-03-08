@@ -25,7 +25,7 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
 
   for (let retryCount = 0; retryCount <= maxRetries; retryCount++) {
     if (retryCount > 0) {
-      await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent("Retrying with Replit")}`);
+      await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent("Retrying")}`);
       console.log("details :", options, resource);
     }
     try {
@@ -41,16 +41,8 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
       if (axios.isCancel(error)) {
         console.log('Request canceled:', error.message, resource);
       } else if (error.response && error.response.status === 403) {
-        const data = JSON.stringify(options);
-        options = {
-          url: resource,
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          data: data
-        }
-        resource = `https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/execute`;
-        console.log(options, resource);
-        await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent("Retrying with Replit")}`);
+        await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent("Glitch DOwn")}`);
+        await tryWithReplit(resource)
       } else {
         console.error('Error:', error.message);
         return undefined;
@@ -66,4 +58,18 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
   }
 }
 
+
+async function tryWithReplit(url) {
+  const payload = { url: url, method: "GET" }
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: JSON.stringify(payload),
+  };
+  try {
+    const result = await axios({ ...options, url: "https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/check" });
+  } catch (error) {
+    console.log(error)
+  }
+}
 module.exports = { sleep, fetchWithTimeout }

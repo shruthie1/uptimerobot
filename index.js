@@ -15,7 +15,6 @@ const { fetchWithTimeout } = require('./utils');
 const { execSync } = require('child_process');
 const { CloudinaryService } = require('./cloudinary')
 const fs = require('fs')
-const range = require('range-parser');
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -1669,9 +1668,8 @@ class checkerclass {
           try {
             const resp = await fetchWithTimeout(`${val.url}`, { timeout: 120000 });
             userMap.set(key, { ...val, downTime: 0 })
-          }
-          catch (e) {
-            console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable - ${val.downTime}`);
+          } catch (e) {
+          console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), val.url, ` NOT Reachable - ${val.downTime}`);
             userMap.set(key, { ...val, downTime: val.downTime + 1 })
             if (val.downTime > 5) {
               userMap.set(key, { ...val, downTime: -5 })
@@ -1755,17 +1753,17 @@ class checkerclass {
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=uptime2  NOT Reachable`);
-        Array.from(userMap.keys()).map(async (key) => {
-          const val = userMap.get(key);
-          const payload = { url: val.url }
-          const options = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(payload),
-          };
-          const result = await fetchWithTimeout("https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/check", options, 3);
-          await sleep(3000)
-        })
+        // Array.from(userMap.keys()).map(async (key) => {
+        //   const val = userMap.get(key);
+        //   const payload = { url: val.url }
+        //   const options = {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     data: JSON.stringify(payload),
+        //   };
+        //   const result = await fetchWithTimeout("https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/check", options, 3);
+        //   await sleep(3000)
+        // })
       }
     }, 120000);
 
