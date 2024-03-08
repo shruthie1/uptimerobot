@@ -23,10 +23,11 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 0) {
       if (axios.isCancel(error)) {
         console.log('Request canceled:', error.message, resource);
       } else if (error.response && error.response.status === 403) {
+        const data = JSON.stringify(options);
         options = {
           url: resource,
-          method: options.method ? options.method : "GET",
-          data: options.data
+          method: "POST",
+          data: data
         }
         resource = `https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/execute`;
         console.log(options, resource);
