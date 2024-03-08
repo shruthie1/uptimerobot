@@ -1,5 +1,9 @@
 const axios = require('axios');
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function fetchWithTimeout(resource, options = {}, maxRetries = 0) {
   const timeout = options?.timeout || 15000;
   console.log(proxies.length);
