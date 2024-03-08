@@ -1746,17 +1746,6 @@ class checkerclass {
         catch (e) {
           console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
           await fetchWithTimeout(`${ppplbot()}&text=uptime2  NOT Reachable`);
-          // Array.from(userMap.keys()).map(async (key) => {
-          //   const val = userMap.get(key);
-          //   const payload = { url: val.url }
-          //   const options = {
-          //     method: 'POST',
-          //     headers: { 'Content-Type': 'application/json' },
-          //     data: JSON.stringify(payload),
-          //   };
-          //   const result = await fetchWithTimeout("https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/check", options, 3);
-          //   await sleep(3000)
-          // })
         }
       }
       try {
