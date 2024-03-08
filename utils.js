@@ -42,6 +42,7 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
         console.log('Request canceled:', error.message, resource);
       } else if (error.response && error.response.status === 403) {
         // await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent("Glitch DOwn")}`);
+        console.log("Asking Replit");
         return await tryWithReplit(resource)
       } else {
         console.error('herError:', error.message);
