@@ -1780,7 +1780,7 @@ class checkerclass {
       try {
         const num = Math.floor(Math.random() * 101);
         const resp2 = await axios.get(`https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/?num=${num}`, { timeout: 55000 });
-        console.log(resp2)
+        console.log(resp2.data)
         if (parseInt(resp2.data?.num || 0) !== num + 3) {
           await fetchWithTimeout(`${ppplbot()}&text=REPLIT Manipulated`);
         }
