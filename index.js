@@ -1632,7 +1632,7 @@ class checkerclass {
 
     setInterval(async () => {
       count++;
-      if (count % 2) {
+      if (count % 4 == 0) {
         console.log(`-------------------------------------------------------------`)
         if (connetionQueue.length > 0 && !startedConnecting) {
           while (connetionQueue.length > 0) {
@@ -1778,12 +1778,16 @@ class checkerclass {
         }
       }
       try {
-        const resp2 = await axios.get(`https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/`, { timeout: 55000 });
+        const num = Math.floor(Math.random() * 101);
+        const resp2 = await axios.get(`https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/?num=${num}`, { timeout: 55000 });
+        if(resp.data.num !== num-3){
+          await fetchWithTimeout(`${ppplbot()}&text=REPLIT Manipulated`);
+        }
       } catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'REPLIT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=REPLIT  NOT Reachable`);
       }
-    }, 60000);
+    }, 30000);
 
     // setInterval(async () => {
     //   userMap.forEach(async (val, key) => {
