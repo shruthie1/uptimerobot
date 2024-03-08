@@ -6,7 +6,6 @@ function sleep(ms) {
 
 async function fetchWithTimeout(resource, options = {}, maxRetries = 0) {
   const timeout = options?.timeout || 15000;
-  console.log(proxies.length);
   const source = axios.CancelToken.source();
   const id = setTimeout(() => source.cancel(), timeout);
 
