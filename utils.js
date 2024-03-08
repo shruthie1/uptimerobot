@@ -44,7 +44,7 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
         // await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent("Glitch DOwn")}`);
         return await tryWithReplit(resource)
       } else {
-        console.error('Error:', error.message);
+        console.error('herError:', error.message);
         return undefined;
       }
 
