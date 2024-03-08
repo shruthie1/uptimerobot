@@ -68,7 +68,7 @@ async function tryWithReplit(url) {
   };
   try {
     const result = await axios({ ...options, url: "https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/check" });
-    console.log("Replit result:", result);
+    console.log("Replit result:", result.status, result.data);
     return result.data
   } catch (error) {
     console.log(error)
