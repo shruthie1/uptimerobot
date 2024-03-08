@@ -12,7 +12,6 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 0) {
   if (retryCount > 0) {
     const data = JSON.stringify(options);
     options = {
-      url: resource,
       method: "POST",
       data: data
     }
