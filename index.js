@@ -165,8 +165,8 @@ try {
     await db.clearStats2();
     await db.reinitPromoteStats();
     try {
-      const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
-      const resp2 = await axios.get(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
+      const resp = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
+      const resp2 = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
     } catch (error) {
       console.log("Some Error: ", error.code)
     }
@@ -1359,7 +1359,7 @@ app.get('/receiveNumber/:num', async (req, res, next) => {
     const num = parseInt(req.params.num);
     const data = userMap.get(userName.toLowerCase());
     if (data) {
-      await axios.get(`${data.url}receiveNumber/${num}`, { timeout: 7000 });
+      await fetchWithTimeout(`${data.url}receiveNumber/${num}`, { timeout: 7000 });
     }
   } catch (error) {
     console.log("Some Error: ", error.code);
@@ -1374,7 +1374,7 @@ app.get('/disconnectUser', async (req, res, next) => {
     const userName = req.query.userName;
     const data = userMap.get(userName.toLowerCase());
     if (data) {
-      await axios.get(`${data.url}exit`, { timeout: 7000 });
+      await fetchWithTimeout(`${data.url}exit`, { timeout: 7000 });
     }
   } catch (error) {
     console.log("Some Error: ", error.code);
@@ -1394,7 +1394,7 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
       const data = userMap.get(userName.toLowerCase());
       const url = data?.url;
       if (url) {
-        const connectResp = await axios.get(`${url}getprocessid`, { timeout: 10000 });
+        const connectResp = await fetchWithTimeout(`${url}getprocessid`, { timeout: 10000 });
         if (connectResp.data.ProcessId === processId) {
           userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
           pushToconnectionQueue(userName, processId)
@@ -1515,14 +1515,14 @@ app.get('/requestcall', async (req, res, next) => {
       console.log(result?.data)
       // setTimeout(async () => {
       //   try {
-      //     const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
+      //     const data = await fetchWithTimeout(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
       //     if (data.data) {
       //       console.log(`Call Request Sent: ${userName} | ${chatId}`)
       //       setTimeout(async () => {
       //         try {
-      //           const data = await axios.get(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
+      //           const data = await fetchWithTimeout(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
       //           setTimeout(async () => {
-      //             await axios.get(`${user.url}sendMessage/${chatId}?msg=Not Connecting!!, Don't worry I will try again in sometime!! okay!!`, { timeout: 7000 });
+      //             await fetchWithTimeout(`${user.url}sendMessage/${chatId}?msg=Not Connecting!!, Don't worry I will try again in sometime!! okay!!`, { timeout: 7000 });
       //           }, 3 * 60 * 1000);
       //         } catch (error) {
       //           console.log(error)
@@ -1568,17 +1568,17 @@ class checkerclass {
     //     console.log('--------------------------------------------');
     //     userMap.forEach(async (val, key) => {
     //         try {
-    //             const resp = await axios.get(`${val.url}checkHealth`, { timeout: 10000 });
+    //             const resp = await fetchWithTimeout(`${val.url}checkHealth`, { timeout: 10000 });
     //             if (resp.status === 200 || resp.status === 201) {
     //                 if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
     //                     console.log(resp.data.userName, ': All good');
     //                 } else {
     //                     console.log(resp.data.userName, ': DIAGNOSE - Checking Connection - ', resp.data.status);
-    //                     await axios.get(`${ppplbot()}&text=${(resp.data.userName).toUpperCase()}:healthCheckError${resp.data.status}`);
+    //                     await fetchWithTimeout(`${ppplbot()}&text=${(resp.data.userName).toUpperCase()}:healthCheckError${resp.data.status}`);
     //                     try {
-    //                         const connectResp = await axios.get(`${val.url}tryToConnect`, { timeout: 10000 });
+    //                         const connectResp = await fetchWithTimeout(`${val.url}tryToConnect`, { timeout: 10000 });
     //                         console.log(connectResp.data.userName, ': CONNECTION CHECK RESP - ', connectResp.data.status);
-    //                         await axios.get(`${ppplbot()}&text=${(connectResp.data.userName).toUpperCase()}:retryResponse -${connectResp.data.status}`);
+    //                         await fetchWithTimeout(`${ppplbot()}&text=${(connectResp.data.userName).toUpperCase()}:retryResponse -${connectResp.data.status}`);
     //                     } catch (e) {
     //                         console.log(val.url, `CONNECTION RESTART FAILED!!`);
     //                     }
@@ -1610,25 +1610,25 @@ class checkerclass {
             const data = userMap.get(userName.toLowerCase());
             const url = data?.url;
             if (url) {
-              const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
+              const connectResp = await fetchWithTimeout(`${url}tryToConnect/${processId}`, { timeout: 10000 });
               console.log(connectResp.status)
             }
             setTimeout(async () => {
               try {
-                const connectResp = await axios.get(`${url}promote`);
+                const connectResp = await fetchWithTimeout(`${url}promote`);
               } catch (error) {
                 console.log(error.code)
               }
               setTimeout(async () => {
                 try {
-                  const connectResp2 = await axios.get(`${url}markasread`);
+                  const connectResp2 = await fetchWithTimeout(`${url}markasread`);
                 } catch (error) {
                   console.log(error.code)
                 }
               }, 35000);
             }, 35000);
           } catch (error) {
-            console.log("Some Error: ", error.code)
+            console.log("Some Error at coneect: ", error.code)
           }
           await sleep(5000);
         }
@@ -1657,7 +1657,7 @@ class checkerclass {
             console.log(val.clientId, " - ", val.downTime)
           }
           try {
-            const resp = await axios.get(`${val.url}`, { timeout: 120000 });
+            const resp = await fetchWithTimeout(`${val.url}`, { timeout: 120000 });
             userMap.set(key, { ...val, downTime: 0 })
           }
           catch (e) {
@@ -1666,7 +1666,7 @@ class checkerclass {
             if (val.downTime > 5) {
               userMap.set(key, { ...val, downTime: -5 })
               try {
-                const resp = await axios.get(`${val.deployKey}`, { timeout: 120000 });
+                const resp = await fetchWithTimeout(`${val.deployKey}`, { timeout: 120000 });
                 if (resp?.status == 200 || resp.status == 201) {
                   await fetchWithTimeout(`${ppplbot()}&text=Restarted ${key}`);
                 } else {
@@ -1683,7 +1683,7 @@ class checkerclass {
           const userPromoteStats = await db.readSinglePromoteStats(val.clientId);
           if (userPromoteStats?.isActive && (Date.now() - userPromoteStats?.lastUpdatedTimeStamp) / (1000 * 60) > 12) {
             try {
-              const resp = await axios.get(`${val.url}promote`, { timeout: 120000 });
+              const resp = await fetchWithTimeout(`${val.url}promote`, { timeout: 120000 });
             } catch (error) {
               console.log("Some Error: ", error.code);
             }
@@ -1694,13 +1694,13 @@ class checkerclass {
       })
 
       try {
-        const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 55000 });
+        const resp = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=ChatGPT  NOT Reachable`);
         try {
-          const resp = await axios.get(`https://api.render.com/deploy/srv-cflkq853t39778sm0clg?key=e4QNTs9kDw4`, { timeout: 55000 });
+          const resp = await fetchWithTimeout(`https://api.render.com/deploy/srv-cflkq853t39778sm0clg?key=e4QNTs9kDw4`, { timeout: 55000 });
           if (resp?.status == 200 || resp.status == 201) {
             await fetchWithTimeout(`${ppplbot()}&text=Restarted CHATGPT`);
           }
@@ -1710,13 +1710,13 @@ class checkerclass {
         }
       }
       try {
-        const resp = await axios.get(`https://uptimechecker.onrender.com`, { timeout: 55000 });
+        const resp = await fetchWithTimeout(`https://uptimechecker.onrender.com`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'UpTimeBot', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=UpTimeBot  NOT Reachable`);
         try {
-          const resp = await axios.get(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 55000 });
+          const resp = await fetchWithTimeout(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 55000 });
           if (resp?.status == 200 || resp.status == 201) {
             await fetchWithTimeout(`${ppplbot()}&text=Restarted UpTimeBot`);
           }
@@ -1726,21 +1726,21 @@ class checkerclass {
         }
       }
       try {
-        const resp = await axios.get(`https://tgsignup.onrender.com/`, { timeout: 55000 });
+        const resp = await fetchWithTimeout(`https://tgsignup.onrender.com/`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=TgSignup  NOT Reachable`);
       }
       try {
-        const resp2 = await axios.get(`https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/`, { timeout: 55000 });
+        const resp2 = await fetchWithTimeout(`https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'REPLIT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=REPLIT  NOT Reachable`);
       }
       try {
-        const resp = await axios.get(`https://tgcms.glitch.me/`, { timeout: 55000 });
+        const resp = await fetchWithTimeout(`https://tgcms.glitch.me/`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
@@ -1764,20 +1764,20 @@ class checkerclass {
     //     if (val.timeStamp + 230000 < Date.now()) {
     //       userMap.set(key, { ...val, timeStamp: Date.now() });
     //       try {
-    //         await axios.get(`${ ppplbot() } & text=${ key } is DOWN!!`, { timeout: 10000 });
-    //         await axios.get(`${ val.url }`, { timeout: 10000 });
+    //         await fetchWithTimeout(`${ ppplbot() } & text=${ key } is DOWN!!`, { timeout: 10000 });
+    //         await fetchWithTimeout(`${ val.url }`, { timeout: 10000 });
     //         try {
-    //           const resp = await axios.get(`${ val.url }checkHealth`, { timeout: 10000 });
+    //           const resp = await fetchWithTimeout(`${ val.url }checkHealth`, { timeout: 10000 });
     //           if (resp.status === 200 || resp.status === 201) {
     //             if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
     //               console.log(resp.data.userName, ': All good');
     //             } else {
     //               console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
-    //               await axios.get(`${ ppplbot() } & text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${ resp.data.status } `);
+    //               await fetchWithTimeout(`${ ppplbot() } & text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${ resp.data.status } `);
     //               try {
-    //                 const connectResp = await axios.get(`${ val.url } tryToConnect`, { timeout: 10000 });
+    //                 const connectResp = await fetchWithTimeout(`${ val.url } tryToConnect`, { timeout: 10000 });
     //                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
-    //                 await axios.get(`${ ppplbot() }& text=${ (connectResp.data.userName).toUpperCase() }: RetryResponse - ${ connectResp.data.status } `);
+    //                 await fetchWithTimeout(`${ ppplbot() }& text=${ (connectResp.data.userName).toUpperCase() }: RetryResponse - ${ connectResp.data.status } `);
     //               } catch (e) {
     //                 s
     //                 console.log(val.url, `CONNECTION RESTART FAILED!!`);
@@ -1805,22 +1805,23 @@ class checkerclass {
     if (url) {
       userMap.set(userName, { ...data, timeStamp: Date.now() });
       try {
-        //await axios.get(`${ ppplbot() }& text=${ userName } is DOWN!!`, { timeout: 10000 });
-        //await axios.get(`${ url } `, { timeout: 10000 });
+        //await fetchWithTimeout(`${ ppplbot() }& text=${ userName } is DOWN!!`, { timeout: 10000 });
+        //await fetchWithTimeout(`${ url } `, { timeout: 10000 });
         try {
           console.log('Checking Health')
-          const resp = await axios.get(`${url} checkHealth`, { timeout: 10000 });
+          const resp = await fetchWithTimeout(`${url} checkHealth`, { timeout: 10000 });
           if (resp.status === 200 || resp.status === 201) {
             if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
               console.log(resp.data.userName, ': All good');
             } else {
               console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
-              await axios.get(`${ppplbot()}& text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${resp.data.status} `);
+              await fetchWithTimeout(`${ppplbot()}& text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${resp.data.status} `);
               try {
-                const connectResp = await axios.get(`${url}tryToConnect/${processId} `, { timeout: 10000 });
+                const connectResp = await fetchWithTimeout(`${url}tryToConnect/${processId} `, { timeout: 10000 });
                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
-                await axios.get(`${ppplbot()}& text=${(connectResp.data.userName).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
+                await fetchWithTimeout(`${ppplbot()}& text=${(connectResp.data.userName).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
               } catch (e) {
+                console.log(e)
                 console.log(url, `CONNECTION RESTART FAILED!!`);
               }
             }
