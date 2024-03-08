@@ -34,6 +34,8 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
         data: data
       }
       resource = `https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/execute`;
+    }
+    if (retryCount > 0) {
       console.log("details :", options, resource);
     }
     try {
