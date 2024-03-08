@@ -131,6 +131,7 @@ try {
   schedule.scheduleJob('test2', '*/10 * * * *', 'Asia/Kolkata', async () => {
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
+      await sleep(3000);
     })
   })
 
@@ -181,6 +182,7 @@ async function assure() {
     setTimeout(async () => {
       await fetchWithTimeout(`${value.url}markasread?all=true`);
     }, 20000)
+    await sleep(3000)
   })
 }
 
@@ -313,6 +315,7 @@ app.get('/getdata', async (req, res, next) => {
     refresTime = Date.now() + (5 * 60 * 1000);
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
+      await sleep(3000);
     })
   }
   res.setHeader('Content-Type', 'text/html');
@@ -471,6 +474,7 @@ app.get('/restartall', async (req, res, next) => {
 }, async (req, res) => {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.deployKey}`);
+    await sleep(3000)
   })
 });
 app.get('/sendtoall', async (req, res, next) => {
@@ -526,6 +530,7 @@ app.get('/keepready2', async (req, res, next) => {
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}resptopaid2?msg=${msg ? msg : "Oye..."}`);
     await fetchWithTimeout(`${value.url}getDemostats`);
+    await sleep(3000)
   });
   const db = ChannelService.getInstance();
   await db.clearStats()
@@ -554,6 +559,7 @@ app.get('/asktopay', async (req, res, next) => {
   console.log("Msg = ", msg);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}asktopay`)
+    await sleep(3000)
   })
 });
 
@@ -570,6 +576,7 @@ app.get('/calltopaid', async (req, res, next) => {
     callingTime = Date.now() + (10 * 60 * 1000)
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}calltopaid`)
+      await sleep(3000)
     })
   }
 });
@@ -587,6 +594,7 @@ app.get('/markasread', async (req, res, next) => {
     console.log("proceeding with all = ", all);
     Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread?${all ? "all=true" : ''}`);
+      await sleep(3000)
     })
   }
 });
@@ -600,6 +608,7 @@ app.get('/setactiveqr', async (req, res, next) => {
   console.log("upi = ", upi);
   Array.from(userMap.values()).map(async (value) => {
     await fetchWithTimeout(`${value.url}setactiveqr?upi=${upi}`);
+    await sleep(3000)
   })
 });
 
@@ -624,6 +633,7 @@ app.get('/joinchannel', async (req, res, next) => {
         } catch (error) {
           console.log("Some Error: ", error.code);
         }
+        await sleep(3000)
       })
     }
   } catch (error) {
