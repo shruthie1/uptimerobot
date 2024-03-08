@@ -1413,11 +1413,11 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
         }
       }
     } catch (error) {
-      console.log("Some Error: ", error.code)
+      console.log("Some Error here: ", error.code)
     }
 
   } catch (error) {
-    console.log("Some Error: ", error);
+    console.log("Some Error and here: ", error);
   }
 });
 
