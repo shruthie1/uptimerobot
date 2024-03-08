@@ -1404,7 +1404,7 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
         }
       }
     } catch (error) {
-      console.log("Some Error: ", error)
+      console.log("Some Error: ", error.code)
     }
 
   } catch (error) {
