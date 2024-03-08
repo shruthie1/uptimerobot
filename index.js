@@ -1711,6 +1711,7 @@ class checkerclass {
       }
       try {
         const resp = await axios.get(`https://uptimechecker.onrender.com`, { timeout: 55000 });
+        const resp2 = await axios.get(`https://054ee21e-d619-4708-bbbf-5ff3a6f04d3e-00-3ksn52c08p4vu.janeway.replit.dev/`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'UpTimeBot', ` NOT Reachable`);
