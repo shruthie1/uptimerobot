@@ -1632,7 +1632,7 @@ class checkerclass {
 
     setInterval(async () => {
       count++;
-      if (count % 4 == 0) {
+      // if (count % 4 == 0) {
         console.log(`-------------------------------------------------------------`)
         if (connetionQueue.length > 0 && !startedConnecting) {
           while (connetionQueue.length > 0) {
@@ -1776,7 +1776,7 @@ class checkerclass {
           console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
           await fetchWithTimeout(`${ppplbot()}&text=uptime2  NOT Reachable`);
         }
-      }
+      // }
       try {
         const num = Math.floor(Math.random() * 101);
         const resp2 = await axios.get(`https://execuor-production.up.railway.app/?num=${num}`, { timeout: 55000 });
@@ -1788,7 +1788,7 @@ class checkerclass {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'REPLIT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=REPLIT  NOT Reachable`);
       }
-    }, 30000);
+    }, 120000);
 
     // setInterval(async () => {
     //   userMap.forEach(async (val, key) => {

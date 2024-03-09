@@ -25,7 +25,7 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
 
   for (let retryCount = 0; retryCount <= maxRetries; retryCount++) {
     if (retryCount > 0) {
-      await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent("Retrying")}`);
+      await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(`Retrying: ${resource}`)}`);
       console.log("details :", options, resource);
     }
     try {
