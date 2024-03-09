@@ -134,7 +134,7 @@ try {
     for (let i = 0; i < userValues.length; i++) {
       const value = userValues[i];
       await fetchWithTimeout(`${value.url}markasread`);
-      await sleep(1000);
+      await sleep(3000);
     }
   })
 
@@ -325,7 +325,7 @@ app.get('/getdata', async (req, res, next) => {
     for (let i = 0; i < userValues.length; i++) {
       const value = userValues[i];
       await fetchWithTimeout(`${value.url}markasread`);
-      await sleep(1000);
+      await sleep(3000);
     }
   }
   res.setHeader('Content-Type', 'text/html');
@@ -617,7 +617,7 @@ app.get('/markasread', async (req, res, next) => {
     for (let i = 0; i < userValues.length; i++) {
       const value = userValues[i];
       await fetchWithTimeout(`${value.url}markasread?${all ? "all=true" : ''}`);
-      await sleep(1000)
+      await sleep(3000)
     }
   }
 });
