@@ -246,6 +246,14 @@ app.get('/clearstats2', async (req, res) => {
   res.send('Hello World!');
 });
 
+app.get('/resetPromotions', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  await db.clearPromotionStats();
+  await db.initPromoteStats();
+  res.send('Hello World!');
+});
+
 app.get('/exit', async (req, res) => {
   await ChannelService.getInstance().closeConnection();
   process.exit(1)
