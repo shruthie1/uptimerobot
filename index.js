@@ -120,19 +120,28 @@ const connetionQueue = [];
 //   })
 
 //   schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
-//     Array.from(userMap.values()).map(async (value) => {
+//       const userValues = Array.from(userMap.values());
+// for (let i = 0; i < userValues.length; i++) {
+//   const value = userValues[i];
+
 //       await fetchWithTimeout(`${value.url}assureppl`);
 //     })
 //   })
 
 //   schedule.scheduleJob('test2', '*/10 * * * *', 'Asia/Kolkata', async () => {
-//     Array.from(userMap.values()).map(async (value) => {
+//       const userValues = Array.from(userMap.values());
+// for (let i = 0; i < userValues.length; i++) {
+//   const value = userValues[i];
+
 //       await fetchWithTimeout(`${value.url}markasread`);
 //     })
 //   })
 
 //   schedule.scheduleJob('test3', ' 15 7,13,16,21,23 * * * ', 'Asia/Kolkata', async () => {
-//     Array.from(userMap.values()).map(async (value) => {
+//       const userValues = Array.from(userMap.values());
+// for (let i = 0; i < userValues.length; i++) {
+//   const value = userValues[i];
+
 //       await fetchWithTimeout(`${value.url}asktopay`);
 //     });
 //   })
@@ -175,12 +184,15 @@ const connetionQueue = [];
 // }
 
 async function assure() {
-  Array.from(userMap.values()).map(async (value) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
     await fetchWithTimeout(`${value.url}resptopaid?msg=Hey...Dont worry!! I will Call you pakka ok!!`);
     setTimeout(async () => {
       await fetchWithTimeout(`${value.url}markasread?all=true`);
     }, 20000)
-  })
+    await sleep(3000);
+  }
 }
 
 app.use(cors());
@@ -318,9 +330,12 @@ app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
   if (Date.now() > refresTime) {
     refresTime = Date.now() + (5 * 60 * 1000);
-    Array.from(userMap.values()).map(async (value) => {
+    const userValues = Array.from(userMap.values());
+    for (let i = 0; i < userValues.length; i++) {
+      const value = userValues[i];
       await fetchWithTimeout(`${value.url}markasread`);
-    })
+      await sleep(3000);
+    }
   }
   res.setHeader('Content-Type', 'text/html');
   let resp = '<html><head></head><body>';
@@ -483,9 +498,12 @@ app.get('/restartall', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
-  Array.from(userMap.values()).map(async (value) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
     await fetchWithTimeout(`${value.deployKey}`);
-  })
+    await sleep(3000);
+  }
 });
 app.get('/sendtoall', async (req, res, next) => {
   checkerclass.getinstance();
@@ -537,10 +555,13 @@ app.get('/keepready2', async (req, res, next) => {
 }, async (req, res) => {
   const msg = req.query.msg;
   console.log("Msg2 = ", msg);
-  Array.from(userMap.values()).map(async (value) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
     await fetchWithTimeout(`${value.url}resptopaid2?msg=${msg ? msg : "Oye..."}`);
     await fetchWithTimeout(`${value.url}getDemostats`);
-  });
+    await sleep(2000);
+  }
   const db = ChannelService.getInstance();
   await db.clearStats()
 });
@@ -550,9 +571,12 @@ app.get('/keepready', async (req, res, next) => {
   console.log('Received Keepready request');
   const dnsMsg = encodeURIComponent(`Dont Speak Okay!!\n**I am in Bathroom**\n\nMute yourself!!\n\nI will show you Okay..!!`)
   const msg = req.query.msg.toLowerCase() == 'dns' ? dnsMsg : req.query.msg;
-  Array.from(userMap.values()).map(async (value) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
     await fetchWithTimeout(`${value.url}resptopaid?msg=${msg ? msg : "Oye..."}`);
-  });
+    await sleep(3000)
+  }
   const db = ChannelService.getInstance();
   await db.clearStats();
   res.send(`Responding!!\=url:resptopaid?msg=${msg ? msg : "Oye..."}`);
@@ -566,9 +590,12 @@ app.get('/asktopay', async (req, res, next) => {
 }, async (req, res) => {
   const msg = req.query.msg;
   console.log("Msg = ", msg);
-  Array.from(userMap.values()).map(async (value) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
     await fetchWithTimeout(`${value.url}asktopay`)
-  })
+    await sleep(3000);
+  }
 });
 
 let callingTime = Date.now();
@@ -582,9 +609,12 @@ app.get('/calltopaid', async (req, res, next) => {
   console.log("Msg = ", msg);
   if (Date.now() > callingTime) {
     callingTime = Date.now() + (10 * 60 * 1000)
-    Array.from(userMap.values()).map(async (value) => {
-      await fetchWithTimeout(`${value.url}calltopaid`)
-    })
+    const userValues = Array.from(userMap.values());
+    for (let i = 0; i < userValues.length; i++) {
+      const value = userValues[i];
+      await fetchWithTimeout(`${value.url}calltopaid`);
+      await sleep(3000);
+    }
   }
 });
 
@@ -599,9 +629,12 @@ app.get('/markasread', async (req, res, next) => {
   if (Date.now() > refresTime) {
     refresTime = Date.now() + (5 * 60 * 1000);
     console.log("proceeding with all = ", all);
-    Array.from(userMap.values()).map(async (value) => {
+    const userValues = Array.from(userMap.values());
+    for (let i = 0; i < userValues.length; i++) {
+      const value = userValues[i];
       await fetchWithTimeout(`${value.url}markasread?${all ? "all=true" : ''}`);
-    })
+      await sleep(3000);
+    }
   }
 });
 
@@ -612,9 +645,12 @@ app.get('/setactiveqr', async (req, res, next) => {
 }, async (req, res) => {
   const upi = req.query.upi;
   console.log("upi = ", upi);
-  Array.from(userMap.values()).map(async (value) => {
+  const userValues = Array.from(userMap.values());
+  for (let i = 0; i < userValues.length; i++) {
+    const value = userValues[i];
     await fetchWithTimeout(`${value.url}setactiveqr?upi=${upi}`);
-  })
+    await sleep(3000);
+  }
 });
 
 app.get('/joinchannel', async (req, res, next) => {
@@ -1593,7 +1629,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor() {
+  constructor () {
     this.main();
   };
 

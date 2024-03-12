@@ -434,6 +434,7 @@ class ChannelService {
         const promotColl = this.client.db("tgclients").collection('promoteStats');
         const users = await this.getAllUserClients();
         for (const user of users) {
+            console.log("user:", user)
             await promotColl.updateOne({ client: user.clientId },
                 {
                     $set: {
