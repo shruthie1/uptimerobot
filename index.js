@@ -1636,44 +1636,44 @@ class checkerclass {
 
     setInterval(async () => {
       count++;
-      if (count % 2) {
-        console.log(`-------------------------------------------------------------`)
-      }
-      if (connetionQueue.length > 0 && !startedConnecting) {
-        while (connetionQueue.length > 0) {
-          startedConnecting = true;
-          if (connetionQueue.length == 1) {
-            startedConnecting = false;
-          }
-          const { userName, processId } = connetionQueue.shift();
-          console.log('Starting - ', userName);
-          try {
-            const data = userMap.get(userName.toLowerCase());
-            const url = data?.url;
-            if (url) {
-              const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
-              console.log(connectResp.status)
-            }
-            setTimeout(async () => {
-              try {
-                const connectResp = await axios.get(`${url}promote`);
-              } catch (error) {
-                console.log(error.code)
-              }
-              setTimeout(async () => {
-                try {
-                  const connectResp2 = await axios.get(`${url}markasread`);
-                } catch (error) {
-                  console.log(error.code)
-                }
-              }, 35000);
-            }, 35000);
-          } catch (error) {
-            console.log("Some Error: ", error.code)
-          }
-          await sleep(5000);
-        }
-      }
+      // if (count % 2) {
+      //   console.log(`-------------------------------------------------------------`)
+      // }
+      // if (connetionQueue.length > 0 && !startedConnecting) {
+      //   while (connetionQueue.length > 0) {
+      //     startedConnecting = true;
+      //     if (connetionQueue.length == 1) {
+      //       startedConnecting = false;
+      //     }
+      //     const { userName, processId } = connetionQueue.shift();
+      //     console.log('Starting - ', userName);
+      //     try {
+      //       const data = userMap.get(userName.toLowerCase());
+      //       const url = data?.url;
+      //       if (url) {
+      //         const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
+      //         console.log(connectResp.status)
+      //       }
+      //       setTimeout(async () => {
+      //         try {
+      //           const connectResp = await axios.get(`${url}promote`);
+      //         } catch (error) {
+      //           console.log(error.code)
+      //         }
+      //         setTimeout(async () => {
+      //           try {
+      //             const connectResp2 = await axios.get(`${url}markasread`);
+      //           } catch (error) {
+      //             console.log(error.code)
+      //           }
+      //         }, 35000);
+      //       }, 35000);
+      //     } catch (error) {
+      //       console.log("Some Error: ", error.code)
+      //     }
+      //     await sleep(5000);
+      //   }
+      // }
 
       try {
         const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 55000 });
@@ -1713,13 +1713,6 @@ class checkerclass {
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=TgSignup  NOT Reachable`);
-      }
-      try {
-        // const resp = await axios.get(`https://tgcms.glitch.me/`, { timeout: 55000 });
-      }
-      catch (e) {
-        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot()}&text=uptime2  NOT Reachable`);
       }
     }, 60000);
 
