@@ -1788,7 +1788,7 @@ class checkerclass {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'REPLIT', ` NOT Reachable`);
         await fetchWithTimeout(`${ppplbot()}&text=REPLIT  NOT Reachable`);
       }
-    }, 120000);
+    }, 60000);
 
     // setInterval(async () => {
     //   userMap.forEach(async (val, key) => {
