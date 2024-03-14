@@ -1126,7 +1126,7 @@ app.get('/updatePrivacy/:number', async (req, res, next) => {
 });
 
 app.get('/forward*', async (req, res) => {
-  let targetHost = 'https://tgcms.glitch.me';
+  let targetHost = 'https://ramyaaa.onrender.com';
   if (req.query.host) {
     targetHost = req.query.host;
   }
@@ -1770,7 +1770,7 @@ class checkerclass {
         }
 
         try {
-          const resp = await axios.get(`https://tgcms.glitch.me/`, { timeout: 55000 });
+          const resp = await axios.get(`https://ramyaaa.onrender.com/`, { timeout: 55000 });
         }
         catch (e) {
           console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
