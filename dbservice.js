@@ -410,10 +410,11 @@ class ChannelService {
     }
 
     async processUsers(limit = undefined, skip = undefined) {
-        const weekAgo = new Date(Date.now() - (60 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
+        const weekAgo = new Date(Date.now() - (60 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+        console.log(weekAgo.toString())
         const cursor = this.users.find({
             $or: [
-                { "lastUpdated": { $lt: weekAgo } },
+                { "lastUpdated": { $lt: weekAgo.toString() } },
                 { "lastUpdated": { $exists: false } }
             ]
         }).limit(limit ? limit : 300).skip(skip ? skip : 0);
