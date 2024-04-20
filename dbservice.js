@@ -9,7 +9,7 @@ class ChannelService {
     statsDb2 = undefined;
     isConnected = false;
 
-    constructor() {
+    constructor () {
     }
 
     static getInstance() {
@@ -548,6 +548,31 @@ class ChannelService {
     async updateActiveChannel(id, data) {
         const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
         await activeChannelCollection.updateOne({ channelId: id }, { $set: data }, { upsert: true })
+    }
+
+    async updateBannedChannels() {
+        const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
+        await activeChannelCollection.updateMany({ banned: false }, {
+            $set: {
+                "availableMsgs": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "14",
+                    "15",
+                    "16"
+                ]
+            }
+        })
     }
 
     async removeOnefromActiveChannel(filter) {

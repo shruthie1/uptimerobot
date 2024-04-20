@@ -170,6 +170,7 @@ try {
     await db.updateActiveChannels();
     await db.clearStats2();
     await db.reinitPromoteStats();
+    await db.updateBannedChannels();
     try {
       const resp = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
       const resp2 = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
