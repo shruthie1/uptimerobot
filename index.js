@@ -1726,6 +1726,8 @@ class checkerclass {
           }
         } else {
           console.log(key, "- Does not exist");
+          userMap.clear();
+          await setUserMap()
         }
         await sleep(1000)
       }
