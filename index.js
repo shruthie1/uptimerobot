@@ -147,17 +147,18 @@ try {
   })
 
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
+    const db = ChannelService.getInstance();
     for (const value of userMap.values()) {
       await sleep(1000);
       await fetchWithTimeout(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getuserstats2`);
       // const now = new Date();
-      // if (now.getUTCDate() % 3 === 1) {
-      //   setTimeout(async () => {
-      //     await fetchWithTimeout(`${value.url}getchannels`);
-      //   }, 30000);
-      // }
+      if (now.getUTCDate() % 3 === 1) {
+        setTimeout(async () => {
+          await db.resetAvailableMsgs();
+        }, 30000);
+      }
       setTimeout(async () => {
         await fetchWithTimeout(`${value.url}asktopay`);
       }, 300000);
@@ -165,7 +166,6 @@ try {
     }
 
     await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
-    const db = ChannelService.getInstance();
     await db.resetPaidUsers();
     await db.updateActiveChannels();
     await db.clearStats2();
