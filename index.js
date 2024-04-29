@@ -153,10 +153,11 @@ try {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getuserstats2`);
-      // const now = new Date();
-      if (now.getUTCDate() % 3 === 1) {
+      const now = new Date();
+      if (now.getUTCDate() % 5 === 1) {
         setTimeout(async () => {
           await db.resetAvailableMsgs();
+          await db.updateBannedChannels();
         }, 30000);
       }
       setTimeout(async () => {
@@ -170,7 +171,7 @@ try {
     await db.updateActiveChannels();
     await db.clearStats2();
     await db.reinitPromoteStats();
-    await db.updateBannedChannels();
+
     try {
       const resp = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
       const resp2 = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
