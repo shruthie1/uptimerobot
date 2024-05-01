@@ -234,9 +234,13 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       const date = new Date(lastActive * 1000).toISOString().split('T')[0];
       const me = await client.getMe()
       const selfMSgInfo = await client.getSelfMSgsInfo();
-      const data = await fetchWithTimeout(`https://api.genderize.io/?name=${me.firstName}%20${me.lastName}`);
+      let gender = cli.gender;
+      if (!gender) {
+        const data = await fetchWithTimeout(`https://api.genderize.io/?name=${me.firstName}%20${me.lastName}`);
+        gender = data?.data?.gender;
+      }
       console.log("gender::", data.data.gender);
-      await db.updateUser(document, { ...selfMSgInfo, gender: data.data.gender, firstName: me.firstName, lastName: me.lastName, username: me.username, msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString(), lastUpdated: new Date().toISOString().split('T')[0] });
+      await db.updateUser(document, { ...selfMSgInfo, gender, firstName: me.firstName, lastName: me.lastName, username: me.username, msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString(), lastUpdated: new Date().toISOString().split('T')[0] });
       await client?.disconnect(document.mobile);
       await deleteClient()
     } else {
