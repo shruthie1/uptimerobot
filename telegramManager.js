@@ -156,14 +156,15 @@ class TelegramManager {
     
         const messageHistory = await this.client.getMessages(selfChatId, { limit: 200 }); // Adjust limit as needed
         for (const message of messageHistory) {
-          if (message.photo) {
-            photoCount++;
-          } else if (message.video) {
-            videoCount++;
-          }
           const text = message.text.toLocaleLowerCase();
-          if(contains(text, ['movie', 'series', '1080', '720','640','title','aac', '265','hdrip', 'mkv','hq', '480', 'blura', 's0', 'se0','uncut'])){
+          if(contains(text, ['movie', 'series', '1080', '720','640','title','aac', '265','264','instagr','hdrip', 'mkv','hq', '480', 'blura', 's0', 'se0','uncut'])){
             movieCount++
+          }else{
+            if (message.photo) {
+                photoCount++;
+              } else if (message.video) {
+                videoCount++;
+              }
           }
         }
 
