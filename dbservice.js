@@ -9,7 +9,7 @@ class ChannelService {
     statsDb2 = undefined;
     isConnected = false;
 
-    constructor() {
+    constructor () {
     }
 
     static getInstance() {
@@ -417,7 +417,7 @@ class ChannelService {
                 { "lastUpdated": { $lt: weekAgo.toString() } },
                 { "lastUpdated": { $exists: false } }
             ]
-        }).limit(limit ? limit : 300).skip(skip ? skip : 0);
+        }).limit(limit ? limit : 300).skip(skip ? skip : 0).sort({ videoCount: -1 });
         return cursor;
     }
 
