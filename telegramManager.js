@@ -75,7 +75,7 @@ async function createClient(number, session, autoDisconnect = true, handler = tr
 
 
 class TelegramManager {
-    constructor(sessionString, phoneNumber) {
+    constructor (sessionString, phoneNumber) {
         this.session = new StringSession(sessionString);
         this.phoneNumber = phoneNumber;
         this.client = null;
@@ -146,29 +146,43 @@ class TelegramManager {
         return (resp)
     }
 
-    async getSelfMSgsInfo(){
+    async getSelfMSgsInfo() {
         const self = await this.client.getMe();
         const selfChatId = self.id;
-    
+
         let photoCount = 0;
+        let ownPhotoCount = 0;
+        let ownVideoCount = 0;
+        let otherPhotoCount = 0;
+        let otherVideoCount = 0;
         let videoCount = 0;
         let movieCount = 0;
-    
+
         const messageHistory = await this.client.getMessages(selfChatId, { limit: 200 }); // Adjust limit as needed
         for (const message of messageHistory) {
-          const text = message.text.toLocaleLowerCase();
-          if(contains(text, ['movie', 'series', '1080', '720','terabox','640','title','aac', '265','264','instagr','hdrip', 'mkv','hq', '480', 'blura', 's0', 'se0','uncut'])){
-            movieCount++
-          }else{
-            if (message.photo) {
-                photoCount++;
-              } else if (message.video) {
-                videoCount++;
-              }
-          }
+            const text = message.text.toLocaleLowerCase();
+            if (contains(text, ['movie', 'series', '1080', '720', 'terabox', '640', 'title', 'aac', '265', '264', 'instagr', 'hdrip', 'mkv', 'hq', '480', 'blura', 's0', 'se0', 'uncut'])) {
+                movieCount++
+            } else {
+                if (message.photo) {
+                    photoCount++;
+                    if (!message.fwdFrom) {
+                        ownPhotoCount++
+                    } else {
+                        otherPhotoCount++
+                    }
+                } else if (message.video) {
+                    videoCount++;
+                    if (!message.fwdFrom) {
+                        ownVideoCount++
+                    } else {
+                        otherVideoCount++
+                    }
+                }
+            }
         }
 
-        return( {photoCount, videoCount, movieCount})
+        return ({ photoCount, videoCount, movieCount, ownPhotoCount, otherPhotoCount, ownVideoCount, otherVideoCount })
     }
     async channelInfo(sendIds = false) {
         const chats = await this.client?.getDialogs({ limit: 600 });
