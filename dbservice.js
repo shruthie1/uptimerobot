@@ -425,6 +425,11 @@ class ChannelService {
         console.log(result);
     }
 
+    async clearAllStats() {
+        const result = await this.statsDb?.deleteMany({});
+        console.log(result);
+    }
+
     async clearStats2() {
         const result = await this.statsDb2?.deleteMany({});
         console.log(result);

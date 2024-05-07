@@ -170,6 +170,7 @@ try {
     await db.resetPaidUsers();
     await db.updateActiveChannels();
     await db.clearStats2();
+    await db.clearAllStats();
     await db.reinitPromoteStats();
 
     try {
