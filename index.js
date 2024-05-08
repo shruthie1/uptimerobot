@@ -1699,7 +1699,12 @@ class checkerclass {
             try {
               if ((Date.now() - pings[key]) > (7 * 60 * 1000) && (Date.now() - val.lastPingTime) > (7 * 60 * 1000)) {
                 const url = val.url.includes('glitch') ? `${val.url}exit` : val.deployKey;
-                await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
+                try {
+                  await axios.get(val.url);
+                } catch (e) {
+                  await fetchWithTimeout(url, 3)
+                  await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
+                } 
               } else {
                 await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding - ${(Date.now() - val.lastPingTime) / 60000}`);
               }
