@@ -265,6 +265,19 @@ app.get('/clearstats2', async (req, res) => {
   res.send('Hello World!');
 });
 
+app.get('/updateBannedChannels', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  await db.updateBannedChannels();
+  res.send('Hello World!');
+});
+app.get('/resetAvailableMsgs', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  await db.resetAvailableMsgs();
+  res.send('Hello World!');
+});
+
 app.get('/exit', async (req, res) => {
   await ChannelService.getInstance().closeConnection();
   process.exit(1)
@@ -330,12 +343,10 @@ app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
   if (Date.now() > refresTime) {
     refresTime = Date.now() + (5 * 60 * 1000);
-    const userValues = Array.from(userMap.values());
-    for (let i = 0; i < userValues.length; i++) {
-      const value = userValues[i];
+    Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
       await sleep(3000);
-    }
+    })
   }
   res.setHeader('Content-Type', 'text/html');
   let resp = '<html><head></head><body>';
