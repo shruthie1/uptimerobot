@@ -1523,7 +1523,7 @@ app.get('/isRecentUser', (req, res) => {
   res.send({ count: recentAccessData.length, videoDetails: accessData.videoDetails });
 });
 
-app.post('/isRecentUser', (req, res) => {
+app.post('/isRecentUser', (req, res, next) => {
   res.send('Ok')
   next();
 }, async (req, res) => {
