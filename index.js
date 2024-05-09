@@ -336,12 +336,10 @@ app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
   if (Date.now() > refresTime) {
     refresTime = Date.now() + (5 * 60 * 1000);
-    const userValues = Array.from(userMap.values());
-    for (let i = 0; i < userValues.length; i++) {
-      const value = userValues[i];
+    Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
       await sleep(3000);
-    }
+    })
   }
   res.setHeader('Content-Type', 'text/html');
   let resp = '<html><head></head><body>';
@@ -1637,8 +1635,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor() {
-    this.main();
+  constructor () {
   };
 
   static getinstance() {
@@ -1647,156 +1644,6 @@ class checkerclass {
       checkerclass.instance = new checkerclass();
     }
     return checkerclass.instance;
-  }
-  main() {
-    // setInterval(async () => {
-    //     console.log('--------------------------------------------');
-    //     userMap.forEach(async (val, key) => {
-    //         try {
-    //             const resp = await axios.get(`${val.url}checkHealth`, { timeout: 10000 });
-    //             if (resp.status === 200 || resp.status === 201) {
-    //                 if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
-    //                     console.log(resp.data.userName, ': All good');
-    //                 } else {
-    //                     console.log(resp.data.userName, ': DIAGNOSE - Checking Connection - ', resp.data.status);
-    //                     await axios.get(`${ppplbot()}&text=${(resp.data.userName).toUpperCase()}:healthCheckError${resp.data.status}`);
-    //                     try {
-    //                         const connectResp = await axios.get(`${val.url}tryToConnect`, { timeout: 10000 });
-    //                         console.log(connectResp.data.userName, ': CONNECTION CHECK RESP - ', connectResp.data.status);
-    //                         await axios.get(`${ppplbot()}&text=${(connectResp.data.userName).toUpperCase()}:retryResponse -${connectResp.data.status}`);
-    //                     } catch (e) {
-    //                         console.log(val.url, `CONNECTION RESTART FAILED!!`);
-    //                     }
-    //                 }
-    //             } else {
-    //                 console.log(val.url, `is unreachable!!`);
-    //             }
-    //         } catch (e) {
-    //             console.log(val.url, `is unreachable!!`);
-    //             //console.log(e)
-    //         }
-    //     })
-    // }, 120000);
-
-    setInterval(async () => {
-      count++;
-      // if (count % 2) {
-      //   console.log(`-------------------------------------------------------------`)
-      // }
-      // if (connetionQueue.length > 0 && !startedConnecting) {
-      //   while (connetionQueue.length > 0) {
-      //     startedConnecting = true;
-      //     if (connetionQueue.length == 1) {
-      //       startedConnecting = false;
-      //     }
-      //     const { userName, processId } = connetionQueue.shift();
-      //     console.log('Starting - ', userName);
-      //     try {
-      //       const data = userMap.get(userName.toLowerCase());
-      //       const url = data?.url;
-      //       if (url) {
-      //         const connectResp = await axios.get(`${url}tryToConnect/${processId}`, { timeout: 10000 });
-      //         console.log(connectResp.status)
-      //       }
-      //       setTimeout(async () => {
-      //         try {
-      //           const connectResp = await axios.get(`${url}promote`);
-      //         } catch (error) {
-      //           console.log(error.code)
-      //         }
-      //         setTimeout(async () => {
-      //           try {
-      //             const connectResp2 = await axios.get(`${url}markasread`);
-      //           } catch (error) {
-      //             console.log(error.code)
-      //           }
-      //         }, 35000);
-      //       }, 35000);
-      //     } catch (error) {
-      //       console.log("Some Error: ", error.code)
-      //     }
-      //     await sleep(5000);
-      //   }
-      // }
-
-      try {
-        const resp = await axios.get(`https://mychatgpt-pg6w.onrender.com/`, { timeout: 55000 });
-      }
-      catch (e) {
-        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot()}&text=ChatGPT  NOT Reachable`);
-        try {
-          const resp = await axios.get(`https://api.render.com/deploy/srv-cflkq853t39778sm0clg?key=e4QNTs9kDw4`, { timeout: 55000 });
-          if (resp?.status == 200 || resp.status == 201) {
-            await fetchWithTimeout(`${ppplbot()}&text=Restarted CHATGPT`);
-          }
-        } catch (error) {
-          console.log("Cannot restart ChatGpt server");
-          await fetchWithTimeout(`${ppplbot()}&text=Cannot restart ChatGpt server`);
-        }
-      }
-      try {
-        const resp = await axios.get(`https://uptimechecker.onrender.com`, { timeout: 55000 });
-      }
-      catch (e) {
-        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'UpTimeBot', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot()}&text=UpTimeBot  NOT Reachable`);
-        try {
-          const resp = await axios.get(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 55000 });
-          if (resp?.status == 200 || resp.status == 201) {
-            await fetchWithTimeout(`${ppplbot()}&text=Restarted UpTimeBot`);
-          }
-        } catch (error) {
-          console.log("Cannot restart ChatGpt server");
-          await fetchWithTimeout(`${ppplbot()}&text=Cannot restart UpTimeBot server`);
-        }
-      }
-      try {
-        const resp = await axios.get(`https://tgsignup.onrender.com/`, { timeout: 55000 });
-      }
-      catch (e) {
-        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'ChatGPT', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot()}&text=TgSignup  NOT Reachable`);
-      }
-    }, 60000);
-
-    // setInterval(async () => {
-    //   userMap.forEach(async (val, key) => {
-    //     if (val.timeStamp + 230000 < Date.now()) {
-    //       userMap.set(key, { ...val, timeStamp: Date.now() });
-    //       try {
-    //         await axios.get(`${ ppplbot() } & text=${ key } is DOWN!!`, { timeout: 10000 });
-    //         await axios.get(`${ val.url }`, { timeout: 10000 });
-    //         try {
-    //           const resp = await axios.get(`${ val.url }checkHealth`, { timeout: 10000 });
-    //           if (resp.status === 200 || resp.status === 201) {
-    //             if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
-    //               console.log(resp.data.userName, ': All good');
-    //             } else {
-    //               console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
-    //               await axios.get(`${ ppplbot() } & text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${ resp.data.status } `);
-    //               try {
-    //                 const connectResp = await axios.get(`${ val.url } tryToConnect`, { timeout: 10000 });
-    //                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
-    //                 await axios.get(`${ ppplbot() }& text=${ (connectResp.data.userName).toUpperCase() }: RetryResponse - ${ connectResp.data.status } `);
-    //               } catch (e) {
-    //                 s
-    //                 console.log(val.url, `CONNECTION RESTART FAILED!!`);
-    //               }
-    //             }
-    //           } else {
-    //             console.log(val.url, `is unreachable!!`);
-    //           }
-    //         } catch (e) {
-    //           console.log(val.url, `is unreachable!!`);
-    //           //console.log(e)
-    //         }
-    //       } catch (e) {
-    //         console.log(e)
-    //       }
-    //     }
-    //   })
-    // }, 50000);
   }
 
   async restart(userName, processId) {
