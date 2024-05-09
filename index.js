@@ -1526,13 +1526,15 @@ app.get('/isRecentUser', (req, res) => {
 });
 
 app.post('/isRecentUser', (req, res) => {
+  res.send('Ok')
+  next();
+}, async (req, res) => {
   const chatId = req.query.chatId;
   let videoDetails = req.body;
   const accessData = userAccessData.get(chatId) || { timestamps: [], videoDetails: {} };
   videoDetails = { ...accessData.videoDetails, ...videoDetails }
   console.log("Updating Isrecent user", chatId, videoDetails)
   userAccessData.set(chatId, { videoDetails, timestamps: accessData.timestamps });
-  res.send({ count: accessData.timestamps.length, videoDetails: videoDetails });
 });
 
 app.get('/resetRecentUser', (req, res) => {
