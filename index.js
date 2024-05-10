@@ -756,7 +756,10 @@ app.get('/getUserInfo', async (req, res) => {
   res.json(userConfig);
 });
 
-app.post('/updateUserData/:chatId ', async (req, res) => {
+app.post('/updateUserData/:chatId ', async (req, res, next) => {
+  res.json(upiIds);
+  next();
+}, async (req, res) => {
   const data = req.body
   const chatId = req.params.chatId
   const profile = req.query.profile;
@@ -1635,7 +1638,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor () {
+  constructor() {
   };
 
   static getinstance() {
