@@ -9,7 +9,7 @@ class ChannelService {
     statsDb2 = undefined;
     isConnected = false;
 
-    constructor () {
+    constructor() {
     }
 
     static getInstance() {
@@ -538,6 +538,15 @@ class ChannelService {
                 for (const channelId in document.data) {
                     const channelInfo = await channelInfoCollection.findOne({ channelId }, { projection: { "_id": 0 } });
                     if (channelInfo) {
+                        const activeChannelInfo = await activeChannelCollection.findOne({ channelId }, { projection: { "_id": 0 } });
+
+                        if (!("banned" in activeChannelInfo)) {
+                            channelInfo["banned"] = false;
+                            channelInfo["availableMsgs"] = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"];
+                            channelInfo["wordRestriction"] = 1;
+                            channelInfo["dMRestriction"] = 1
+                        }
+
                         await activeChannelCollection.updateOne({ channelId }, { $set: channelInfo }, { upsert: true });
                     }
                 }
