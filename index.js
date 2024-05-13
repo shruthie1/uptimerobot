@@ -10,7 +10,7 @@ const { getClient, hasClient, disconnectAll, createClient, deleteClient, setActi
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConfig');
-const { sleep } = require('./utils');
+const { sleep, isMatchingChatEntity } = require('./utils');
 const { fetchWithTimeout } = require('./utils');
 const { execSync } = require('child_process');
 const { CloudinaryService } = require('./cloudinary')
@@ -286,6 +286,9 @@ app.post('/channels', async (req, res, next) => {
   const db = ChannelService.getInstance();
   channels?.forEach(async (channel) => {
     await db.insertChannel(channel);
+    if (isMatchingChatEntity(channel)) {
+      await this.updateActiveChannel(channel.channelId, channel)
+    }
   })
 });
 
