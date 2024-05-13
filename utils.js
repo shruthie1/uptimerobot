@@ -1,8 +1,26 @@
 const axios = require('axios');
+const ppplbot = "https://api.telegram.org/bot6877935636:AAGsHAU-O2B2klPMwDrr0PfkBHXib74K1Nc/sendMessage";
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export function parseError(
+  err,
+  prefix='ShruthieRed',
+) {
+  const status =
+    err.response?.data?.status || err.response?.status || err.status;
+  const message =
+    err.response?.data?.message ||
+    err.response?.message ||
+    err.response?.statusText ||
+    err.message ||
+    err.response?.data;
+  const error = err.response?.data?.error || err.response?.error || err.name;
+  const msg = prefix
+    ? `${prefix}::${message}` : message;
+  return { status, message: msg, error };
+}
 async function fetchWithTimeout(resource, options = {}, maxRetries = 0) {
   const timeout = options?.timeout || 20000;
 
@@ -27,6 +45,7 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 0) {
         await new Promise(resolve => setTimeout(resolve, 5000)); // 1 second delay
       } else {
         console.error(`All ${maxRetries + 1} retries failed for ${resource}`);
+        await fetchWithTimeout(`${ppplbot}&text=${encodeURIComponent(`| Failed | url: ${resource}\n${retryCount + 1}/${maxRetries + 1}\n${parseError(error).message}`)}`)
         return undefined;
       }
     }
