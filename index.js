@@ -1570,7 +1570,7 @@ app.get('/requestcall', async (req, res, next) => {
         data: JSON.stringify(payload),
       };
       const result = await fetchWithTimeout("https://arpithared.onrender.com/events/schedule", options, 3);
-      console.log(result?.data)
+      console.log("eventsResponse:", result?.data)
       // setTimeout(async () => {
       //   try {
       //     const data = await fetchWithTimeout(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
@@ -1706,7 +1706,7 @@ class checkerclass {
                 } catch (e) {
                   await fetchWithTimeout(url, 3)
                   await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
-                } 
+                }
               } else {
                 await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding - ${(Date.now() - val.lastPingTime) / 60000}`);
               }
