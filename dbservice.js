@@ -425,6 +425,11 @@ class ChannelService {
         console.log(result);
     }
 
+    async clearAllStats() {
+        const result = await this.statsDb?.deleteMany({});
+        console.log(result);
+    }
+
     async clearStats2() {
         const result = await this.statsDb2?.deleteMany({});
         console.log(result);
@@ -574,6 +579,21 @@ class ChannelService {
                 ]
             }
         })
+    }
+    async resetAvailableMsgs() {
+        try {
+            const promoteMsgs = this.client.db("tgclients").collection('promoteMsgs');
+            const data = await promoteMsgs.findOne({}, { projection: { "_id": 0, "0": 0 } });
+            const keys = Object.keys(data);
+            const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
+            await activeChannelCollection.updateMany({}, {
+                $set: {
+                    "availableMsgs": keys
+                }
+            })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     async removeOnefromActiveChannel(filter) {

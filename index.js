@@ -170,6 +170,7 @@ try {
     await db.resetPaidUsers();
     await db.updateActiveChannels();
     await db.clearStats2();
+    await db.clearAllStats();
     await db.reinitPromoteStats();
 
     try {
@@ -264,6 +265,19 @@ app.get('/clearstats2', async (req, res) => {
   res.send('Hello World!');
 });
 
+app.get('/updateBannedChannels', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  await db.updateBannedChannels();
+  res.send('Hello World!');
+});
+app.get('/resetAvailableMsgs', async (req, res) => {
+  checkerclass.getinstance();
+  const db = ChannelService.getInstance();
+  await db.resetAvailableMsgs();
+  res.send('Hello World!');
+});
+
 app.get('/exit', async (req, res) => {
   await ChannelService.getInstance().closeConnection();
   process.exit(1)
@@ -329,12 +343,10 @@ app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
   if (Date.now() > refresTime) {
     refresTime = Date.now() + (5 * 60 * 1000);
-    const userValues = Array.from(userMap.values());
-    for (let i = 0; i < userValues.length; i++) {
-      const value = userValues[i];
+    Array.from(userMap.values()).map(async (value) => {
       await fetchWithTimeout(`${value.url}markasread`);
       await sleep(3000);
-    }
+    })
   }
   res.setHeader('Content-Type', 'text/html');
   let resp = '<html><head></head><body>';
@@ -1688,7 +1700,13 @@ class checkerclass {
             try {
               if ((Date.now() - pings[key]) > (7 * 60 * 1000) && (Date.now() - val.lastPingTime) > (7 * 60 * 1000)) {
                 const url = val.url.includes('glitch') ? `${val.url}exit` : val.deployKey;
-                await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
+                console.log("trying url :", url)
+                try {
+                  await axios.get(val.url);
+                } catch (e) {
+                  await fetchWithTimeout(url, 3)
+                  await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Not responding | url = ${url}`);
+                } 
               } else {
                 await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : not responding - ${(Date.now() - val.lastPingTime) / 60000}`);
               }
