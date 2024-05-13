@@ -18,6 +18,25 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+
+export function parseError(
+  err,
+  prefix = 'ShruthieRed',
+) {
+  const status =
+    err.response?.data?.status || err.response?.status || err.status;
+  const message =
+    err.response?.data?.message ||
+    err.response?.message ||
+    err.response?.statusText ||
+    err.message ||
+    err.response?.data;
+  const error = err.response?.data?.error || err.response?.error || err.name;
+  const msg = prefix
+    ? `${prefix}::${message}` : message;
+  return { status, message: msg, error };
+}
+
 async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
   const timeout = options?.timeout || 25000;
   const source = axios.CancelToken.source();
@@ -53,6 +72,7 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
         await new Promise(resolve => setTimeout(resolve, 2000)); // 2-second delay before retrying
       } else {
         console.error(`All ${maxRetries + 1} retries failed for ${resource}`);
+        await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(`| Failed | url: ${resource}\n${retryCount + 1}/${maxRetries + 1}\n${parseError(error).message}`)}`)
         return undefined;
       }
     }
