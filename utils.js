@@ -6,7 +6,7 @@ function sleep(ms) {
 
 export function parseError(
   err,
-  prefix='ShruthieRed',
+  prefix = 'UptimeChecker',
 ) {
   const status =
     err.response?.data?.status || err.response?.status || err.status;
