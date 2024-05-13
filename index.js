@@ -1546,11 +1546,12 @@ app.get('/requestcall', async (req, res, next) => {
   try {
     const userName = req.query.userName;
     const chatId = req.query.chatId;
+    const type = req.query.type;
     const user = userMap.get(userName.toLowerCase());
     // await fetchWithTimeout(`${ppplbot()}&text=Call Request Recived: ${userName} | ${chatId}`);
     console.log(`Call Request Recived: ${userName} | ${chatId}`)
     if (user) {
-      const payload = { chatId, profile: user.clientId }
+      const payload = { chatId, profile: user.clientId, type }
       const options = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
