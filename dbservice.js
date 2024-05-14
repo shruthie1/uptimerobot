@@ -554,6 +554,15 @@ class ChannelService {
                     }
                 }
             });
+
+            await activeChannelCollection.updateMany({ banned: { $exists: false } }, {
+                $set: {
+                    banned: false,
+                    availableMsgs: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"],
+                    wordRestriction: 0,
+                    dMRestriction: 0
+                }
+            })
         } catch (error) {
             console.log(error)
         }
