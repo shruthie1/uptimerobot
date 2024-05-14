@@ -559,6 +559,8 @@ class ChannelService {
         const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
         await activeChannelCollection.updateMany({ banned: true }, {
             $set: {
+                "wordRestriction": 0,
+                "dMRestriction": 0,
                 banned: false,
                 "availableMsgs": [
                     "1",
