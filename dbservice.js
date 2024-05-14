@@ -1,4 +1,5 @@
-const { MongoClient, ServerApiVersion } = require('mongodb')
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const { isMatchingChatEntity } = require('./utils');
 
 class ChannelService {
     static instance;
@@ -536,12 +537,20 @@ class ChannelService {
             const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
             const channelInfoCollection = this.client.db("tgclients").collection('channels');
             const cursor = promoteStatsColl.find({});
-
             await cursor.forEach(async (document) => {
-                for (const channelId in document.data) {
-                    const channelInfo = await channelInfoCollection.findOne({ channelId }, { projection: { "_id": 0 } });
+                for (const username in document.data) {
+                    const channelInfo = await channelInfoCollection.findOne({ username }, { projection: { "_id": 0 } });
                     if (channelInfo) {
-                        await activeChannelCollection.updateOne({ channelId }, { $set: channelInfo }, { upsert: true });
+                        const activeChannelInfo = await activeChannelCollection.findOne({ channelId: channelInfo.channelId }, { projection: { "_id": 0 } });
+                        if (!activeChannelInfo || (isMatchingChatEntity(channelInfo) && !("banned" in activeChannelInfo))) {
+                            console.log("banned not exists: ", channelInfo);
+                            channelInfo["banned"] = false;
+                            channelInfo["availableMsgs"] = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"];
+                            channelInfo["wordRestriction"] = 0;
+                            channelInfo["dMRestriction"] = 0
+                        }
+
+                        await activeChannelCollection.updateOne({ channelId: channelInfo.channelId }, { $set: channelInfo }, { upsert: true });
                     }
                 }
             });
