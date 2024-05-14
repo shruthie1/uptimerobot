@@ -108,17 +108,20 @@ try {
   schedule.scheduleJob('test', ' 0 * * * * ', 'Asia/Kolkata', async () => {
     console.log("Promoting.....");
     const hour = getCurrentHourIST();
-    for (const value of userMap.values()) {
+    const userValues = Array.from(userMap.values());
+    for (let i = 0; i < userValues.length; i++) {
+      const value = userValues[i];
       await fetchWithTimeout(`${value.url}assureppl`);
       await sleep(3000);
       await fetchWithTimeout(`${value.url}promote`);
+      await sleep(2000);
       if (hour && hour % 3 === 0) {
         await fetchWithTimeout(`${value.url}calltopaid`);
       }
       await sleep(3000);
-      const db = ChannelService.getInstance();
-      await db.clearStats();
     }
+    const db = ChannelService.getInstance();
+    await db.clearStats();
     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
   })
 
