@@ -760,7 +760,7 @@ app.get('/getUserInfo', async (req, res) => {
 });
 
 app.post('/updateUserData/:chatId ', async (req, res, next) => {
-  res.json(upiIds);
+  res.send("ok");
   next();
 }, async (req, res) => {
   const data = req.body
