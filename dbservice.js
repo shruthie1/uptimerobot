@@ -108,23 +108,24 @@ class ChannelService {
 
             for (const doc of documents) {
                 const { channelId, requestCounts } = doc;
+                if (requestCounts.length > 0) {
+                    const sum = requestCounts.reduce((acc, num) => acc + num, 0);
+                    const average = sum / requestCounts.length;
 
-                const sum = requestCounts.reduce((acc, num) => acc + num, 0);
-                const average = sum / requestCounts.length;
+                    const updateDoc = {
+                        rpm: average
+                    };
 
-                const updateDoc = {
-                    rpm: average
-                };
+                    await activeChannelsDb.updateOne(
+                        { channelId },
+                        { $set: updateDoc },
+                        { upsert: true } // Create the document if it doesn't exist
+                    );
 
-                await activeChannelsDb.updateOne(
-                    { channelId },
-                    { $set: updateDoc },
-                    { upsert: true } // Create the document if it doesn't exist
-                );
+                    await channelStatsDb.updateOne({ channelId }, { $set: { requestCounts: [], averageCalculated: true } })
 
-                await channelStatsDb.updateOne({ channelId }, { $set: { requestCounts: [], averageCalculated: true } })
-
-                console.log(`Processed chatId: ${channelId}, average: ${average}`);
+                    console.log(`Processed chatId: ${channelId}, average: ${average}`);
+                }
             }
         } catch (error) {
             console.error('Error while processing documents:', error);
