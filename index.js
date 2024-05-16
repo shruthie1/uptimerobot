@@ -147,6 +147,9 @@ try {
     for (let i = 0; i < userValues.length; i++) {
       const value = userValues[i];
       await fetchWithTimeout(`${value.url}asktopay`);
+      await sleep(2000);
+      await fetchWithTimeout(`${value.url}refreshAvgCalculated`);
+      await sleep(1000);
     }
     const db = ChannelService.getInstance();
     await db.clearChannelStats();
@@ -349,10 +352,6 @@ app.get('/getdata', async (req, res, next) => {
   checkerclass.getinstance()
   if (Date.now() > refresTime) {
     refresTime = Date.now() + (5 * 60 * 1000);
-    Array.from(userMap.values()).map(async (value) => {
-      await fetchWithTimeout(`${value.url}markasread`);
-      await sleep(3000);
-    })
   }
   res.setHeader('Content-Type', 'text/html');
   let resp = '<html><head></head><body>';
