@@ -108,6 +108,8 @@ try {
   schedule.scheduleJob('test', ' 0 * * * * ', 'Asia/Kolkata', async () => {
     console.log("Promoting.....");
     const hour = getCurrentHourIST();
+    const db = ChannelService.getInstance();
+    await db.clearChannelStats();
     const userValues = Array.from(userMap.values());
     for (let i = 0; i < userValues.length; i++) {
       const value = userValues[i];
@@ -121,9 +123,7 @@ try {
       await sleep(3000);
       await fetchWithTimeout(`${value.url}refreshAvgCalculated`);
     }
-    const db = ChannelService.getInstance();
     await db.clearStats();
-    await db.clearChannelStats();
     await db.calculateAvgStats();
     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
   })
