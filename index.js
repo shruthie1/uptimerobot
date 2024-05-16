@@ -122,6 +122,7 @@ try {
     }
     const db = ChannelService.getInstance();
     await db.clearStats();
+    await db.calculateAvgStats();
     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
   })
 

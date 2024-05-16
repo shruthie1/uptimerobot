@@ -10,7 +10,7 @@ class ChannelService {
     statsDb2 = undefined;
     isConnected = false;
 
-    constructor() {
+    constructor () {
     }
 
     static getInstance() {
@@ -96,6 +96,40 @@ class ChannelService {
             }
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    async calculateAvgStats() {
+        try {
+            const channelStatsDb = this.client.db("tgclients").collection('channelStats'); // Replace with your source collection name
+            const activeChannelsDb = this.client.db("tgclients").collection('activeChannels'); // Replace with your target collection name
+
+            const documents = await channelStatsDb.find({}).toArray();
+
+            for (const doc of documents) {
+                const { chatId, requestCounts } = doc;
+
+                const sum = requestCounts.reduce((acc, num) => acc + num, 0);
+                const average = sum / requestCounts.length;
+
+                const updateDoc = {
+                    rpm: average
+                };
+
+                await activeChannelsDb.updateOne(
+                    { channelId: chatId },
+                    { $set: updateDoc },
+                    { upsert: true } // Create the document if it doesn't exist
+                );
+
+                await channelStatsDb.updateOne({
+                    chatId
+                }, { $set: { averageCalculated: true } })
+
+                console.log(`Processed chatId: ${chatId}, average: ${average}`);
+            }
+        } catch (error) {
+            console.error('Error while processing documents:', error);
         }
     }
 
