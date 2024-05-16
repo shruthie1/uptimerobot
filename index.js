@@ -119,9 +119,11 @@ try {
         await fetchWithTimeout(`${value.url}calltopaid`);
       }
       await sleep(3000);
+      await fetchWithTimeout(`${value.url}refreshAvgCalculated`);
     }
     const db = ChannelService.getInstance();
     await db.clearStats();
+    await db.clearChannelStats();
     await db.calculateAvgStats();
     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
   })
@@ -147,12 +149,9 @@ try {
     for (let i = 0; i < userValues.length; i++) {
       const value = userValues[i];
       await fetchWithTimeout(`${value.url}asktopay`);
-      await sleep(2000);
-      await fetchWithTimeout(`${value.url}refreshAvgCalculated`);
-      await sleep(1000);
+      await sleep(3000);
     }
-    const db = ChannelService.getInstance();
-    await db.clearChannelStats();
+
   })
 
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
