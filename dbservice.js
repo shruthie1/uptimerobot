@@ -122,7 +122,7 @@ class ChannelService {
                         { upsert: true } // Create the document if it doesn't exist
                     );
 
-                    await channelStatsDb.updateOne({ channelId }, { $set: { requestCounts: [], averageCalculated: true } })
+                    await channelStatsDb.updateOne({ channelId }, { $set: { requestCounts: [] } })
 
                     console.log(`Processed chatId: ${channelId}, average: ${average}`);
                 }
