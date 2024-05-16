@@ -124,7 +124,7 @@ class ChannelService {
 
                 await channelStatsDb.updateOne({
                     chatId
-                }, { $set: { averageCalculated: true } })
+                }, { $set: { requestCounts: [], averageCalculated: true } })
 
                 console.log(`Processed chatId: ${channelId}, average: ${average}`);
             }
