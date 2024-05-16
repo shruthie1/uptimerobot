@@ -148,6 +148,8 @@ try {
       const value = userValues[i];
       await fetchWithTimeout(`${value.url}asktopay`);
     }
+    const db = ChannelService.getInstance();
+    await db.clearChannelStats();
   })
 
   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {

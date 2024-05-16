@@ -133,6 +133,12 @@ class ChannelService {
         }
     }
 
+
+    async clearChannelStats() {
+        const channelStatsDb = this.client.db("tgclients").collection('channelStats'); // Replace with your source collection name
+        await channelStatsDb.deleteMany({})
+    }
+
     async updateUser(user, data) {
         const filter = { mobile: user.mobile };
         try {
