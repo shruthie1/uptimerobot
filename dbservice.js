@@ -581,13 +581,22 @@ class ChannelService {
                 for (const username in document.data) {
                     const channelInfo = await channelInfoCollection.findOne({ username }, { projection: { "_id": 0 } });
                     if (channelInfo) {
+                        let chat = {}
                         const activeChannelInfo = await activeChannelCollection.findOne({ channelId: channelInfo.channelId }, { projection: { "_id": 0 } });
                         if (!activeChannelInfo || (isMatchingChatEntity(channelInfo) && !("banned" in activeChannelInfo))) {
                             console.log("banned not exists: ", channelInfo);
-                            channelInfo["banned"] = false;
-                            channelInfo["availableMsgs"] = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"];
-                            channelInfo["wordRestriction"] = 0;
-                            channelInfo["dMRestriction"] = 0
+                            chat['channelId'] = channelInfo.channelId
+                            chat['title'] = channelInfo.title
+                            chat['participantsCount'] = channelInfo.participantsCount
+                            chat['username'] = channelInfo.username
+                            chat['restricted'] = channelInfo.restricted
+                            chat['broadcast'] = channelInfo.broadcast
+                            chat['sendMessages'] = channelInfo.sendMessages
+                            chat['canSendMsgs'] = channelInfo.canSendMsgs
+                            chat["banned"] = false;
+                            chat["availableMsgs"] = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"];
+                            chat["wordRestriction"] = 0;
+                            chat["dMRestriction"] = 0
                         }
 
                         await activeChannelCollection.updateOne({ channelId: channelInfo.channelId }, { $set: channelInfo }, { upsert: true });
@@ -652,8 +661,15 @@ class ChannelService {
             const data = await promoteMsgs.findOne({}, { projection: { "_id": 0, "0": 0 } });
             const keys = Object.keys(data);
             const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
-            await activeChannelCollection.updateMany({}, {
+            await activeChannelCollection.updateMany({
+                $expr: {
+                    $lt: [{ $size: { $ifNull: ["$availableMsgs", []] } }, 5]
+                }
+            }, {
                 $set: {
+                    "wordRestriction": 0,
+                    "dMRestriction": 0,
+                    "banned": false,
                     "availableMsgs": keys
                 }
             })
