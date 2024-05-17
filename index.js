@@ -35,7 +35,7 @@ let clients;
 let upiIds;
 const pings = {}
 
-fetchWithTimeout('https://ipinfo.io/json')
+fetchWithTimeout('https://ipinfo.io/json',{}, false, 0)
   .then(result => {
     return result.data;
   })
@@ -759,8 +759,8 @@ app.get('/getUserInfo', async (req, res) => {
   res.json(userConfig);
 });
 
-app.post('/updateUserData/:chatId ', async (req, res, next) => {
-  res.json(upiIds);
+app.post('/updateuserdata/:chatId', async (req, res, next) => {
+  res.send("ok");
   next();
 }, async (req, res) => {
   const data = req.body
@@ -772,8 +772,7 @@ app.post('/updateUserData/:chatId ', async (req, res, next) => {
     filter['profile'] = profile
   }
   const db = ChannelService.getInstance();
-  const userConfig = await db.updateUserData(filter, data);
-  res.json(userConfig);
+  await db.updateUserData(filter, data);
 });
 
 app.post('/getUserConfig', async (req, res) => {

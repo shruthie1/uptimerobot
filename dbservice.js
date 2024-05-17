@@ -552,6 +552,20 @@ class ChannelService {
                     }
                 }
             });
+            const invalidChannelsCursor = await activeChannelCollection.find({ $or: [{ banned: { $exists: false } }, { participantsCount: null }, { participantsCount: { $exists: false } }] })
+            await invalidChannelsCursor.forEach(async (document) => {
+                const channelInfo = await channelInfoCollection.findOne({ channelId: document.channelId }, { projection: { "_id": 0 } }) || { participantsCount: 1200 };
+                await activeChannelCollection.updateOne({ channelId: document.channelId }, {
+                    $set: {
+                        ...channelInfo,
+                        banned: false,
+                        availableMsgs: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"],
+                        wordRestriction: 0,
+                        dMRestriction: 0
+                    }
+
+                })
+            })
         } catch (error) {
             console.log(error)
         }
