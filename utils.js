@@ -4,6 +4,15 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function getNumber(data) {
+  const numberMatch = data.match(/\d+/);
+  if (numberMatch && numberMatch[0]) {
+    return numberMatch[0];
+  } else {
+    return 0
+  }
+}
+
 function parseError(
   err,
   prefix = 'UptimeChecker',
