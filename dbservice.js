@@ -99,44 +99,45 @@ class ChannelService {
         }
     }
 
-    async calculateAvgStats() {
-        try {
-            const channelStatsDb = this.client.db("tgclients").collection('channelStats'); // Replace with your source collection name
-            const activeChannelsDb = this.client.db("tgclients").collection('activeChannels'); // Replace with your target collection name
+    // async calculateAvgStats() {
+    //     try {
+    //         const channelStatsDb = this.client.db("tgclients").collection('channelStats'); // Replace with your source collection name
+    //         const activeChannelsDb = this.client.db("tgclients").collection('activeChannels'); // Replace with your target collection name
 
-            const documents = await channelStatsDb.find({}).toArray();
+    //         const documents = await channelStatsDb.find({}).toArray();
 
-            for (const doc of documents) {
-                const { channelId, requestCounts } = doc;
-                if (requestCounts.length > 0) {
-                    const sum = requestCounts.reduce((acc, num) => acc + num, 0);
-                    const average = sum / requestCounts.length;
+    //         for (const doc of documents) {
+    //             const { channelId, requestCounts } = doc;
+    //             if (requestCounts.length > 0) {
+    //                 const sum = requestCounts.reduce((acc, num) => acc + num, 0);
+    //                 const average = sum / requestCounts.length;
 
-                    const updateDoc = {
-                        rpm: average
-                    };
+    //                 const updateDoc = {
+    //                     rpm: Math.floor(average)
+    //                 };
 
-                    await activeChannelsDb.updateOne(
-                        { channelId },
-                        { $set: updateDoc },
-                        { upsert: true } // Create the document if it doesn't exist
-                    );
+    //                 await activeChannelsDb.updateOne(
+    //                     { channelId },
+    //                     { $set: updateDoc },
+    //                     { upsert: true } // Create the document if it doesn't exist
+    //                 );
 
-                    await channelStatsDb.updateOne({ channelId }, { $set: { requestCounts: [] } })
+    //                 await channelStatsDb.updateOne({ channelId }, { $set: { requestCounts: [], updatedAt: 0 } }, { upsert: true });
 
-                    console.log(`Processed chatId: ${channelId}, average: ${average}`);
-                }
-            }
-        } catch (error) {
-            console.error('Error while processing documents:', error);
-        }
-    }
+    //                 console.log(`Processed chatId: ${channelId}, average: ${average}`);
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('Error while processing documents:', error);
+    //     }
+    // }
 
 
-    async clearChannelStats() {
-        const channelStatsDb = this.client.db("tgclients").collection('channelStats'); // Replace with your source collection name
-        await channelStatsDb.deleteMany({})
-    }
+    // async clearChannelStats() {
+    //     const channelStatsDb = this.client.db("tgclients").collection('channelStats'); // Replace with your source collection name
+    //     const result = await channelStatsDb.deleteMany({});
+    //     console.log("deleted Channel Stats: ", result)
+    // }
 
     async updateUser(user, data) {
         const filter = { mobile: user.mobile };

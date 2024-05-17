@@ -109,7 +109,8 @@ try {
     console.log("Promoting.....");
     const hour = getCurrentHourIST();
     const db = ChannelService.getInstance();
-    await db.clearChannelStats();
+    // await db.clearChannelStats();
+
     const userValues = Array.from(userMap.values());
     for (let i = 0; i < userValues.length; i++) {
       const value = userValues[i];
@@ -120,11 +121,10 @@ try {
       if (hour && hour % 3 === 0) {
         await fetchWithTimeout(`${value.url}calltopaid`);
       }
-      await sleep(3000);
-      await fetchWithTimeout(`${value.url}refreshAvgCalculated`);
     }
+
     await db.clearStats();
-    await db.calculateAvgStats();
+    // await db.calculateAvgStats();
     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
   })
 
