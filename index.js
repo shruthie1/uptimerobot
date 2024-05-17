@@ -1449,7 +1449,7 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
   try {
     const userName = req.query.userName;
     const processId = req.params.num;
-    console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'Req receved from: ', req.query.url, " : ", userName, ' - ', processId)
+    console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'Req receved from: ', req.ip, req.query.url, " : ", userName, ' - ', processId)
 
     try {
       const data = userMap.get(userName.toLowerCase());
