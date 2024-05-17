@@ -10,7 +10,7 @@ const { getClient, hasClient, disconnectAll, createClient, deleteClient, setActi
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swaggerConfig');
-const { sleep, isMatchingChatEntity } = require('./utils');
+const { sleep, isMatchingChatEntity, triggerPallyAPi } = require('./utils');
 const { fetchWithTimeout } = require('./utils');
 const { execSync } = require('child_process');
 const { CloudinaryService } = require('./cloudinary')
@@ -1465,6 +1465,16 @@ app.get('/disconnectUser', async (req, res, next) => {
   } catch (error) {
     console.log("Some Error: ", error.code);
   }
+});
+
+
+app.post('/ask', async (req, res) => {
+  const plainString = req.body?.prompt?.replace(/\r\n/g, ' ');
+  console.log("PLN:", plainString);
+  const context = `Tell me the latest amount paid in "message" without any explanations or english words in your response. reply with only number. If unable to find, reply me with 0`
+  const response = await triggerPallyAPi(plainString, context)//generateResponse(plainString);
+  console.log("ChatGPtResp:", response);
+  res.json({ status: 200, data: { text: response } });
 });
 
 app.get('/tgclientoff/:num', async (req, res, next) => {
