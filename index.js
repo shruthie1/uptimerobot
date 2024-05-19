@@ -236,7 +236,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       const selfMSgInfo = await client.getSelfMSgsInfo();
       let gender = cli.gender;
       if (!gender) {
-        const data = await fetchWithTimeout(`https://api.genderize.io/?name=${me.firstName}${me.lastName ? `%20${me.lastName}` : ''}`);
+        const data = await fetchWithTimeout(`https://api.genderize.io/?name=${me.firstName}${me.lastName ? `%20${me.lastName}` : ''}`, {}, false);
         gender = data?.data?.gender;
       }
       await db.updateUser(document, { ...selfMSgInfo, gender, firstName: me.firstName, lastName: me.lastName, userName: me.username, msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString(), lastUpdated: new Date().toISOString().split('T')[0] });
