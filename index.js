@@ -314,6 +314,7 @@ app.post('/contacts', async (req, res, next) => {
   contacts?.forEach(async (contact) => {
     await db.insertContact(contact);
   })
+  console.log('contacts saved', contacts.length);
 });
 
 app.get('/getip', (req, res) => {
