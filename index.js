@@ -304,6 +304,18 @@ app.post('/channels', async (req, res, next) => {
   })
 });
 
+app.post('/contacts', async (req, res, next) => {
+  res.send('Hello World!');
+  // console.log(req.body);
+  next();
+}, async (req, res) => {
+  const contacts = req.body?.contacts;
+  const db = ChannelService.getInstance();
+  contacts?.forEach(async (contact) => {
+    await db.insertContact(contact);
+  })
+});
+
 app.get('/getip', (req, res) => {
   res.json(ip);
 });

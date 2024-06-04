@@ -62,6 +62,11 @@ class ChannelService {
             await this.db.updateOne({ channelId: id.toString() }, { $set: { username: username, title, megagroup, participantsCount, broadcast, restricted, sendMessages: channelData.defaultBannedRights?.sendMessages, canSendMsgs: true } }, { upsert: true });
         }
     }
+
+    async insertContact(contact) {
+        await this.db.updateOne({ phone: contact.phone }, { $set: contact }, { upsert: true });
+
+    }
     async getChannels(limit = 50, skip = 0, k) {
         const query = { megagroup: true, username: { $ne: null } };
         const sort = { participantsCount: -1 };
