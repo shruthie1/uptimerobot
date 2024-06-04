@@ -146,6 +146,35 @@ class TelegramManager {
         return (resp)
     }
 
+    async getCallsInfo() {
+        const dialogs = await this.client.getDialogs({ limit: 600 });
+        let allCallLogs = [];
+        for (let chat of dialogs) {
+            try {
+                const history = await this.client.getMessages((chat).peer, { limit: 600 })
+                history.map(async (msg) => {
+                    if (msg.action?.className == 'MessageActionPhoneCall') {
+                        if (!allCallLogs[msg.peerId.userId.toString()]) {
+                            const ent = await this.client.getEntity(msg.peerId.userId);
+                            allCallLogs[msg.peerId.userId.toString()] = { name: `${ent.firstName} ${ent.lastName ? ent.lastName : ''}`, video: 0, total: 0, out: 0 }
+                        }
+                        allCallLogs[msg.peerId.userId.toString()]['total']++
+                        if (msg.action.video) {
+                            allCallLogs[msg.peerId.userId.toString()]['video']++
+                        }
+                        if (msg.out) {
+                            allCallLogs[msg.peerId.userId.toString()]['out']++
+                        }
+                    }
+                })
+            } catch (error) {
+                console.log(error)
+                console.log("failed to fetch peer")
+            }
+        }
+        return allCallLogs;
+    }
+
     async getSelfMSgsInfo() {
         const self = await this.client.getMe();
         const selfChatId = self.id;
