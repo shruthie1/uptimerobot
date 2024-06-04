@@ -64,7 +64,9 @@ class ChannelService {
     }
 
     async insertContact(contact) {
-        await this.db.updateOne({ phone: contact.phone }, { $set: contact }, { upsert: true });
+        const collection = this.client.db("tgclients").collection('contacts');
+
+        await collection.updateOne({ phone: contact.phone }, { $set: contact }, { upsert: true });
 
     }
     async getChannels(limit = 50, skip = 0, k) {
