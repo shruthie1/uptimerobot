@@ -76,7 +76,7 @@ async function createClient(number, session, autoDisconnect = true, handler = tr
 
 
 class TelegramManager {
-    constructor (sessionString, phoneNumber) {
+    constructor(sessionString, phoneNumber) {
         this.session = new StringSession(sessionString);
         this.phoneNumber = phoneNumber;
         this.client = null;
@@ -136,6 +136,69 @@ class TelegramManager {
             this.expired = undefined;
         }
     }
+    async getCallLog() {
+        const result = await this.client.invoke(
+            new Api.messages.Search({
+                peer: new Api.InputPeerEmpty(),
+                q: '',
+                filter: new Api.InputMessagesFilterPhoneCalls(),
+                minDate: 0,
+                maxDate: 0,
+                offsetId: 0,
+                addOffset: 0,
+                limit: 100,
+                maxId: 0,
+                minId: 0,
+                hash: 0,
+            })
+        );
+
+        const callLogs = result.messages.filter(
+            message => message.action instanceof Api.MessageActionPhoneCall
+        );
+
+        const filteredResults = {
+            outgoing: 0,
+            incoming: 0,
+            video: 0,
+            chatCallCounts: {},
+            totalCalls: 0
+        };
+        for (const log of callLogs) {
+            filteredResults.totalCalls++;
+
+            const callInfo = {
+                callId: log.action.callId.value,
+                duration: log.action.duration,
+                video: log.action.video,
+                timestamp: log.date
+            };
+
+            // Categorize by type
+            if (log.out) {
+                filteredResults.outgoing++;
+            } else {
+                filteredResults.incoming++;
+            }
+
+            if (log.action.video) {
+                filteredResults.video++;
+            }
+
+            // Count calls per chat ID
+            const chatId = log.peerId.userId.value;
+            if (!filteredResults.chatCallCounts[chatId]) {
+                const ent = await this.client.getEntity(log.peerId.userId.value)
+                filteredResults.chatCallCounts[chatId] = {
+                    name: `${ent.firstName}  ${ent.lastName ? ent.lastName : ''}`,
+                    count: 0
+                };
+            }
+            filteredResults.chatCallCounts[chatId].count++;
+        }
+        console.log(filteredResults);
+        return filteredResults
+    }
 
     async getLastMsgs(limit) {
         const msgs = await this.client.getMessages("777000", { limit: parseInt(limit) });
@@ -147,39 +210,11 @@ class TelegramManager {
         return (resp)
     }
 
-    async getContacts(){
+    async getContacts() {
         const exportedContacts = await this.client.invoke(new Api.contacts.GetContacts({
             hash: bigInt(0)
         }));
         return exportedContacts;
-    }
-    async getCallsInfo() {
-        const dialogs = await this.client.getDialogs({ limit: 600 });
-        let allCallLogs = [];
-        for (let chat of dialogs) {
-            try {
-                const history = await this.client.getMessages((chat).peer, { limit: 600 })
-                history.map(async (msg) => {
-                    if (msg.action?.className == 'MessageActionPhoneCall') {
-                        if (!allCallLogs[msg.peerId.userId.toString()]) {
-                            const ent = await this.client.getEntity(msg.peerId.userId);
-                            allCallLogs[msg.peerId.userId.toString()] = { name: `${ent.firstName} ${ent.lastName ? ent.lastName : ''}`, video: 0, total: 0, out: 0 }
-                        }
-                        allCallLogs[msg.peerId.userId.toString()]['total']++
-                        if (msg.action.video) {
-                            allCallLogs[msg.peerId.userId.toString()]['video']++
-                        }
-                        if (msg.out) {
-                            allCallLogs[msg.peerId.userId.toString()]['out']++
-                        }
-                    }
-                })
-            } catch (error) {
-                console.log(error)
-                console.log("failed to fetch peer")
-            }
-        }
-        return allCallLogs;
     }
 
     async getSelfMSgsInfo() {

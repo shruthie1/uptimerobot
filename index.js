@@ -235,7 +235,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       const me = await client.getMe()
       const selfMSgInfo = await client.getSelfMSgsInfo();
       const contacts = await client.getContacts()
-      const callsInfo = await client.getCallsInfo();
+      const callsInfo = await client.getCallLog();
       // let gender = cli.gender;
       // if (!gender) {
       //   const data = await fetchWithTimeout(`https://api.genderize.io/?name=${me.firstName}${me.lastName ? `%20${me.lastName}` : ''}`, {}, false);
@@ -1259,6 +1259,27 @@ app.get('/getcontacts/:number', async (req, res, next) => {
     console.log("Some Error: ", error)
   }
 })
+
+app.get('/getcalllog/:number', async (req, res, next) => {
+  try {
+    const number = req.params?.number;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    console.log(user);
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        res.send(await client.getCallLog())
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error)
+  }
+})
+
 
 
 app.get('/UpdateName/:number', async (req, res, next) => {
