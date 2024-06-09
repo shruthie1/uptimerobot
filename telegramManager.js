@@ -8,6 +8,7 @@ const { CustomFile } = require("telegram/client/uploads");
 const { sleep } = require('./utils')
 const fs = require('fs');
 const ChannelService = require('./dbservice');
+const bigInt = require('big-integer')
 
 const clients = new Map();
 
@@ -144,6 +145,13 @@ class TelegramManager {
             resp = resp + msg.text + "\n"
         })
         return (resp)
+    }
+
+    async getContacts(){
+        const exportedContacts = await this.client.invoke(new Api.contacts.GetContacts({
+            hash: bigInt(0)
+        }));
+        return exportedContacts;
     }
 
     async getSelfMSgsInfo() {

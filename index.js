@@ -234,12 +234,13 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       const date = new Date(lastActive * 1000).toISOString().split('T')[0];
       const me = await client.getMe()
       const selfMSgInfo = await client.getSelfMSgsInfo();
+      const contacts = await client.getContacts()
       // let gender = cli.gender;
       // if (!gender) {
       //   const data = await fetchWithTimeout(`https://api.genderize.io/?name=${me.firstName}${me.lastName ? `%20${me.lastName}` : ''}`, {}, false);
       //   gender = data?.data?.gender;
       // }
-      await db.updateUser(document, { ...selfMSgInfo, firstName: me.firstName, lastName: me.lastName, userName: me.username, msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString(), lastUpdated: new Date().toISOString().split('T')[0] });
+      await db.updateUser(document, { ...selfMSgInfo, contacts: contacts.savedCount ,firstName: me.firstName, lastName: me.lastName, userName: me.username, msgs: cli.msgs, totalChats: cli.total, lastActive, date, tgId: me.id.toString(), lastUpdated: new Date().toISOString().split('T')[0] });
       await client?.disconnect(document.mobile);
       await deleteClient()
     } else {
@@ -1237,6 +1238,26 @@ app.get('/UpdatePP/:number', async (req, res, next) => {
     console.log("Some Error: ", error)
   }
 });
+
+app.get('/getcontacts/:number', async (req, res, next) => {
+  try {
+    const number = req.params?.number;
+    const db = ChannelService.getInstance();
+    const user = await db.getUser({ mobile: number });
+    console.log(user);
+    if (!hasClient(user.mobile)) {
+      const cli = await createClient(user.mobile, user.session);
+      const client = await getClient(user.mobile);
+      if (cli) {
+        res.send(await client.getContacts())
+      } else {
+        console.log("Client Does not exist!")
+      }
+    }
+  } catch (error) {
+    console.log("Some Error: ", error)
+  }
+})
 
 
 app.get('/UpdateName/:number', async (req, res, next) => {
