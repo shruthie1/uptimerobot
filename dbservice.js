@@ -10,7 +10,7 @@ class ChannelService {
     statsDb2 = undefined;
     isConnected = false;
 
-    constructor () {
+    constructor() {
     }
 
     static getInstance() {
@@ -349,6 +349,16 @@ class ChannelService {
         const client = await clientDb.findOne(filter);
         return client
     }
+
+    async insertContact(contact) {
+        try {
+            const collection = this.client.db("tgclients").collection('contacts');
+            await collection.updateOne({ phone: contact.phone }, { $set: contact }, { upsert: true });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async getUserInfo(filter) {
         const clientDb = this.client.db("tgclients").collection('clients');
         const aggregationPipeline = [
