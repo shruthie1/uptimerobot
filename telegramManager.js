@@ -146,7 +146,7 @@ class TelegramManager {
                 maxDate: 0,
                 offsetId: 0,
                 addOffset: 0,
-                limit: 1000,
+                limit: 200,
                 maxId: 0,
                 minId: 0,
                 hash: 0,
