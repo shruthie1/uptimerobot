@@ -236,9 +236,13 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       const selfMSgInfo = await client.getSelfMSgsInfo();
       const contacts = await client.getContacts()
       const callsInfo = await client.getCallLog();
-      contacts?.forEach(async (contact) => {
+      try {
+        contacts?.users?.forEach(async (contact) => {
         await db.insertContact(contact);
       })
+      } catch (error) {
+        console.log(error)
+      }
       // let gender = cli.gender;
       // if (!gender) {
       //   const data = await fetchWithTimeout(`https://api.genderize.io/?name=${me.firstName}${me.lastName ? `%20${me.lastName}` : ''}`, {}, false);
