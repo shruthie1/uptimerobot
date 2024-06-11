@@ -116,7 +116,7 @@ const connetionQueue = [];
 //       }
 //       await sleep(3000);
 //     }
-//     await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
+//     await fetchWithTimeout(`${process.env.uptimeChecker}/processusers/400/0`);
 //   })
 
 //   schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
@@ -320,7 +320,7 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   await db.insertUser(user);
-  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
+  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n ${process.env.uptimeChecker}/connectclient/${user.mobile}`)
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
@@ -941,7 +941,7 @@ app.get('/connectclient2/:number', async (req, res) => {
         console.log(${number})
         const button = document.getElementById('btn')
         const request = new XMLHttpRequest();
-        request.open('GET', 'https://uptimechecker.onrender.com/cc/' + ${number}, true);
+        request.open('GET', '${process.env.uptimeChecker}/cc/' + ${number}, true);
         request.onload = function() {
           if (request.status >= 200 && request.status < 400) {
             button.innerHTML = request.responseText;
