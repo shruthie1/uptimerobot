@@ -238,7 +238,15 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
       const callsInfo = await client.getCallLog();
       try {
         contacts?.users?.forEach(async (contact) => {
-        await db.insertContact(contact);
+          const cont = {
+            phone: contact.phone,
+            firstName: contact.firstName,
+            lastName: contact.lastName,
+            userName: contact.username,
+            clientId: contact.id.toString(),
+            fromId: user.id
+          };
+          await db.insertContact(cont);
       })
       } catch (error) {
         console.log(error)
