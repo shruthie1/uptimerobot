@@ -109,8 +109,8 @@ async function fetchWithTimeout(url, config = {}, sendErr = true, maxRetries = 1
               await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
           } else {
               console.error(`All ${maxRetries + 1} retries failed for ${url}`);
-              if (error.code !== "ECONNABORTED" && !axios.isCancel(error)) {
-                // await fetchWithTimeout(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`All ${maxRetries + 1} retries failed for ${url}\n${parseError(error).message}\nCode:${error.code}`)}`)
+            if (error.code !== "ECONNABORTED" && error.code !== "ETIMEDOUT" && !axios.isCancel(error)) {
+              await fetchWithTimeout(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`All ${maxRetries + 1} retries failed for ${url}\n${parseError(error).message}\nCode:${error.code}`)}`)
               }
               return undefined;
           }
