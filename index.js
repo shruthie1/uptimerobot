@@ -36,20 +36,22 @@ const pings = {}
 
 fetchWithTimeout('https://ipinfo.io/json')
   .then(result => {
-    return result.data;
+    return result?.data;
   })
   .then((output) => {
     ip = output;
     console.log(ip)
   })
-  .then(
-    ChannelService.getInstance().connect().then(async () => {
-      setTimeout(async () => {
-        checkerclass.getinstance()
-        await setUserMap();
-      }, 100);
-    })
-  ).catch(err => console.error(err))
+  .then(async () => {
+    const db = ChannelService.getInstance()
+    await db.connect();
+    await db.setEnv();
+    setTimeout(async () => {
+      checkerclass.getinstance()
+      await setUserMap();
+    }, 100);
+  })
+  .catch(err => console.error(err))
 
 let count = 0;
 let botCount = 0
@@ -125,7 +127,7 @@ try {
 
     await db.clearStats();
     // await db.calculateAvgStats();
-    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
+    await fetchWithTimeout(`${process.env.uptimeChecker}/processusers/400/0`);
   })
 
   // schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
@@ -329,7 +331,7 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   await db.insertUser(user);
-  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
+  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n ${process.env.uptimeChecker}/connectclient/${user.mobile}`)
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
@@ -914,7 +916,7 @@ app.get('/connectclient2/:number', async (req, res) => {
         console.log(${number})
         const button = document.getElementById('btn')
         const request = new XMLHttpRequest();
-        request.open('GET', 'https://uptimechecker.onrender.com/cc/' + ${number}, true);
+        request.open('GET', '${process.env.uptimeChecker}/cc/' + ${number}, true);
         request.onload = function() {
           if (request.status >= 200 && request.status < 400) {
             button.innerHTML = request.responseText;
@@ -1627,7 +1629,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor() {
+  constructor () {
     this.main();
   };
 
@@ -1792,7 +1794,7 @@ class checkerclass {
         }
       }
       try {
-        const resp = await axios.get(`https://uptimechecker.onrender.com`, { timeout: 55000 });
+        const resp = await axios.get(`${process.env.uptimeChecker}`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'UpTimeBot', ` NOT Reachable`);

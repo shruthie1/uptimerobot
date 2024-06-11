@@ -445,10 +445,18 @@ class ChannelService {
         return clients;
     }
 
+    async setEnv() {
+        const clientDb = this.client.db("tgclients").collection('configuration');
+        const jsonData = await clientDb.findOne({}, { _id: 0 });
+        for (const key in jsonData) {
+            process.env[key] = jsonData[key];
+        }
+    }
+
     async getTgConfig() {
         const clientDb = this.client.db("tgclients").collection('configuration');
-        const client = await clientDb.findOne({ "apiId": "1591339" });
-        return client
+        const jsonData = await clientDb.findOne({}, { _id: 0 });
+        return jsonData
     }
 
     async updateTgConfig(data) {
