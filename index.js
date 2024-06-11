@@ -244,7 +244,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
             lastName: contact.lastName,
             userName: contact.username,
             clientId: contact.id.toString(),
-            fromId: user.id
+            fromId: me.id.toString()
           };
           await db.insertContact(cont);
       })
