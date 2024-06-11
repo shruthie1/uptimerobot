@@ -15,7 +15,7 @@ function getNumber(data) {
 
 function parseError(
   err,
-  prefix = 'UptimeChecker',
+  prefix = 'UptimeChecker@',
 ) {
   let status = 'UNKNOWN';
   let message = 'An unknown error occurred';
@@ -29,16 +29,21 @@ function parseError(
     } else if (typeof data === 'string') {
       return data;
     } else if (typeof data === 'object' && data !== null) {
+      let resultString = ''
       for (const key in data) {
-        if (
-          Array.isArray(data[key]) &&
-          data[key].every((item) => typeof item === 'string')
-        ) {
-          return data[key].join(', ');
+        const value = data[key]
+        if (Array.isArray(data[key]) && data[key].every(item => typeof item === 'string')) {
+          resultString = resultString + data[key].join(', ');
+        } else {
+          const result = extractMessage(value);
+          if (result) {
+            resultString = resultString + result;
+          }
         }
       }
+      return resultString
     }
-    return undefined;
+    return JSON.stringify(data);
   };
 
   if (err.response) {
@@ -101,7 +106,11 @@ async function fetchWithTimeout(url, config = {}, sendErr = true, maxRetries = 1
       if (sendErr) {
         console.log(`Error (${retryCount + 1}/${maxRetries + 1}): ${error} - ${url}`);
         if (error.code !== "ECONNABORTED" && error.code !== "ETIMEDOUT" && !axios.isCancel(error)) {
-          await axios.get(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`VideoCall: Failed | url: ${url}\n${retryCount + 1}/${maxRetries + 1}\nMethod:${config.method || "get"}\n${parseError(error).message}\nCode:${error.code}`)}`)
+          try {
+            await axios.get(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`VideoCall: Failed | url: ${url}\n${retryCount + 1}/${maxRetries + 1}\nMethod:${config.method || "get"}\n${parseError(error).message}\nCode:${error.code}`)}`)
+          } catch (er) {
+            console.log(parseError(er))
+          }
         }
       }
 
@@ -110,7 +119,11 @@ async function fetchWithTimeout(url, config = {}, sendErr = true, maxRetries = 1
       } else {
         console.error(`All ${maxRetries + 1} retries failed for ${url}`);
         if (error.code !== "ECONNABORTED" && error.code !== "ETIMEDOUT" && !axios.isCancel(error)) {
-          await axios.get(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`All ${maxRetries + 1} retries failed for ${url}\n${parseError(error).message}\nCode:${error.code}`)}`)
+          try {
+            await axios.get(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`All ${maxRetries + 1} retries failed for ${url}\n${parseError(error).message}\nCode:${error.code}`)}`)
+          } catch (er) {
+            console.log(parseError(er))
+          }
         }
         return undefined;
       }
