@@ -460,6 +460,14 @@ class ChannelService {
         }
     }
 
+    async setEnv() {
+        const clientDb = this.client.db("tgclients").collection('configuration');
+        const jsonData = await clientDb.findOne({}, { _id: 0 });
+        for (const key in jsonData) {
+            process.env[key] = jsonData[key];
+        }
+    }
+
     async closeConnection() {
         try {
             if (this.isConnected) {
