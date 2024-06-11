@@ -1509,6 +1509,16 @@ app.get('/receive', async (req, res, next) => {
 
 const userAccessData = new Map();
 
+app.get('/getenv', async (req, res) => {
+  try {
+    console.log(process.env)
+  } catch (error) {
+    console.log(error)
+  }
+  res.send("hii");
+});
+
+
 app.get('/isRecentUser', (req, res) => {
   const chatId = req.query.chatId;
   const accessData = userAccessData.get(chatId) || { timestamps: [], videoDetails: {} };
