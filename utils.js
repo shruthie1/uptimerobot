@@ -103,8 +103,9 @@ async function fetchWithTimeout(url, config = {}, sendErr = true, maxRetries = 1
       });
       return response;
     } catch (error) {
+      console.log(parseError(error))
       if (sendErr) {
-        console.log(`Error (${retryCount + 1}/${maxRetries + 1}): ${error} - ${url}`);
+        console.log(`Error (${retryCount + 1}/${maxRetries + 1}) - ${url}`);
         if (error.code !== "ECONNABORTED" && error.code !== "ETIMEDOUT" && !axios.isCancel(error)) {
           try {
             await axios.get(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`VideoCall: Failed | url: ${url}\n${retryCount + 1}/${maxRetries + 1}\nMethod:${config.method || "get"}\n${parseError(error).message}\nCode:${error.code}`)}`)
