@@ -1808,7 +1808,7 @@ class checkerclass {
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'UpTimeBot', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot()}&text=UpTimeBot  NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot()}&text=${process.env.uptimeChecker}  NOT Reachable `);
         try {
           const resp = await axios.get(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 55000 });
           if (resp?.status == 200 || resp.status == 201) {
