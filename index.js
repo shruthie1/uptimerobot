@@ -35,22 +35,24 @@ let clients;
 let upiIds;
 const pings = {}
 
-fetchWithTimeout('https://ipinfo.io/json',{}, false, 0)
+fetchWithTimeout('https://ipinfo.io/json')
   .then(result => {
-    return result.data;
+    return result?.data;
   })
   .then((output) => {
     ip = output;
     console.log(ip)
   })
-  .then(
-    ChannelService.getInstance().connect().then(async () => {
-      setTimeout(async () => {
-        checkerclass.getinstance()
-        await setUserMap();
-      }, 100);
-    })
-  ).catch(err => console.error(err))
+  .then(async () => {
+    const db = ChannelService.getInstance()
+    await db.connect();
+    await db.setEnv();
+    setTimeout(async () => {
+      checkerclass.getinstance()
+      await setUserMap();
+    }, 100);
+  })
+  .catch(err => console.error(err))
 
 let count = 0;
 let botCount = 0
