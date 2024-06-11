@@ -1006,7 +1006,7 @@ app.get('/sendToChannel', async (req, res, next) => {
     const message = req.query?.msg;
     const chatId = req.query?.chatId;
     const token = req.query?.token;
-    await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${encodeURIComponent(message)}`, {}, 3)
+    await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${encodeURIComponent(message)}`, {}, false, 0)
   } catch (e) {
     console.log(e);
   }
