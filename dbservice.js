@@ -353,7 +353,7 @@ class ChannelService {
     async insertContact(contact) {
         try {
             const collection = this.client.db("tgclients").collection('contacts');
-            await collection.updateOne({ phone: contact.phone }, { $set: contact }, { upsert: true });
+            // await collection.updateOne({ phone: contact.phone }, { $set: contact }, { upsert: true });
         } catch (error) {
             console.log(error);
         }
