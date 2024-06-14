@@ -196,8 +196,22 @@ class TelegramManager {
             }
             filteredResults.chatCallCounts[chatId].count++;
         }
-        console.log(filteredResults);
-        return filteredResults
+        const filteredChatCallCounts = Object.entries(filteredResults.chatCallCounts)
+            .filter(([chatId, details]) => details.count > 5)
+            .map(([chatId, details]) => ({
+                chatId,
+                name: details.name,
+                count: details.count
+            }));
+        console.log({
+            ...filteredResults,
+            chatCallCounts: filteredChatCallCounts
+        });
+
+        return {
+            ...filteredResults,
+            chatCallCounts: filteredChatCallCounts
+        };
     }
 
     async getLastMsgs(limit) {
