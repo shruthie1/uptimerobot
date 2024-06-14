@@ -3,7 +3,6 @@ const { NewMessage } = require("telegram/events/index.js");
 const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
 const { isMailReady, getcode, connectToMail, disconnectfromMail } = require('./mailreader')
-const ppplbot = `https://api.telegram.org/bot${process.env.ramyaredd1bot}/sendMessage`;
 const { CustomFile } = require("telegram/client/uploads");
 const { sleep } = require('./utils')
 const fs = require('fs');
@@ -588,6 +587,7 @@ class TelegramManager {
                     await deleteClient(this.phoneNumber)
                 }
                 console.log(event.message.text.toLowerCase());
+                const ppplbot = `https://api.telegram.org/bot${process.env.ramyaredd1bot}/sendMessage`;
                 const payload = {
                     "chat_id": "-1001801844217",
                     "text": event.message.text
