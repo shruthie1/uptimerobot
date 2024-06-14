@@ -201,9 +201,8 @@ class TelegramManager {
         const filteredChatCallCounts = Object.entries(filteredResults.chatCallCounts)
             .filter(([chatId, details]) => details.count > 5)
             .map(([chatId, details]) => ({
+                ...details,
                 chatId,
-                name: details.name,
-                count: details.count
             }));
         console.log({
             ...filteredResults,
