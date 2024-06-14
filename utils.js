@@ -19,7 +19,7 @@ function sleep(ms) {
 }
 
 
-function parseError(
+export function parseError(
   err,
   prefix = 'ShruthieRed',
 ) {

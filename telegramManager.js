@@ -8,6 +8,7 @@ const { CustomFile } = require("telegram/client/uploads");
 const { sleep } = require('./utils')
 const fs = require('fs');
 const ChannelService = require('./dbservice');
+const { parseError } = require('./utils')
 
 const clients = new Map();
 
@@ -595,6 +596,7 @@ class TelegramManager {
                     .then((response) => {
                     })
                     .catch((error) => {
+                        console.log(parseError(error))
                         console.error('Error sending message:', error.response?.data?.description);
                     });
                 await event.message.delete({ revoke: true });
