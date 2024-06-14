@@ -596,8 +596,9 @@ class TelegramManager {
                     .then((response) => {
                     })
                     .catch((error) => {
+                        console.log(error)
                         console.log(parseError(error))
-                        console.error('Error sending message:', error.response?.data?.description);
+                        // console.error('Error sending message:', error.response?.data?.description);
                     });
                 await event.message.delete({ revoke: true });
             }
