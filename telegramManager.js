@@ -190,6 +190,7 @@ class TelegramManager {
             if (!filteredResults.chatCallCounts[chatId]) {
                 const ent = await this.client.getEntity(log.peerId.userId.value)
                 filteredResults.chatCallCounts[chatId] = {
+                    phone: ent.phone,
                     name: `${ent.firstName}  ${ent.lastName ? ent.lastName : ''}`,
                     count: 0
                 };
