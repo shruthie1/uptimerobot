@@ -19,7 +19,7 @@ function sleep(ms) {
 }
 
 
-export function parseError(
+function parseError(
   err,
   prefix = 'ShruthieRed',
 ) {
@@ -175,4 +175,4 @@ function isMatchingChatEntity(chatEntity) {
 }
 
 
-module.exports = { sleep, fetchWithTimeout, isMatchingChatEntity }
+module.exports = { sleep, fetchWithTimeout, isMatchingChatEntity, parseError }
