@@ -15,7 +15,7 @@ function getNumber(data) {
 
 function parseError(
   err,
-  prefix = 'UptimeChecker@',
+  prefix = 'UptimeChecker2',
 ) {
   let status = 'UNKNOWN';
   let message = 'An unknown error occurred';
@@ -103,12 +103,12 @@ async function fetchWithTimeout(url, config = {}, sendErr = true, maxRetries = 1
       });
       return response;
     } catch (error) {
-      console.log(parseError(error))
+      const errorDetails = parseError(error);
       if (sendErr) {
         console.log(`Error (${retryCount + 1}/${maxRetries + 1}) - ${url}`);
-        if (error.code !== "ECONNABORTED" && error.code !== "ETIMEDOUT" && !axios.isCancel(error)) {
+        if (error.code !== "ECONNABORTED" && error.code !== "ETIMEDOUT" && !errorDetails.message.toLowerCase().includes('too many requests') && !axios.isCancel(error)) {
           try {
-            await axios.get(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`VideoCall: Failed | url: ${url}\n${retryCount + 1}/${maxRetries + 1}\nMethod:${config.method || "get"}\n${parseError(error).message}\nCode:${error.code}`)}`)
+            await axios.get(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`UptimeChecker2: Failed | url: ${url}\n${retryCount + 1}/${maxRetries + 1}\nMethod:${config.method || "get"}\n${errorDetails.message}\nCode:${error.code}`)}`)
           } catch (er) {
             console.log(parseError(er))
           }
@@ -119,9 +119,9 @@ async function fetchWithTimeout(url, config = {}, sendErr = true, maxRetries = 1
         await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
       } else {
         console.error(`All ${maxRetries + 1} retries failed for ${url}`);
-        if (error.code !== "ECONNABORTED" && error.code !== "ETIMEDOUT" && !axios.isCancel(error)) {
+        if (error.code !== "ECONNABORTED" && error.code !== "ETIMEDOUT" && !errorDetails.message.toLowerCase().includes('too many requests') && !axios.isCancel(error)) {
           try {
-            await axios.get(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`All ${maxRetries + 1} retries failed for ${url}\n${parseError(error).message}\nCode:${error.code}`)}`)
+            await axios.get(`${process.env.uptimeChecker}/sendtochannel?chatId=-1001823103248&msg=${encodeURIComponent(`All ${maxRetries + 1} retries failed for ${url}\n${errorDetails.message}\nCode:${error.code}`)}`)
           } catch (er) {
             console.log(parseError(er))
           }
