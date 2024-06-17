@@ -62,6 +62,13 @@ class ChannelService {
             await this.db.updateOne({ channelId: id.toString() }, { $set: { username: username, title, megagroup, participantsCount, broadcast, restricted, sendMessages: channelData.defaultBannedRights?.sendMessages, canSendMsgs: true } }, { upsert: true });
         }
     }
+
+    async insertContact(contact) {
+        const collection = this.client.db("tgclients").collection('contacts');
+
+        await collection.updateOne({ phone: contact.phone }, { $set: contact }, { upsert: true });
+
+    }
     async getChannels(limit = 50, skip = 0, k) {
         const query = { megagroup: true, username: { $ne: null } };
         const sort = { participantsCount: -1 };
@@ -438,10 +445,18 @@ class ChannelService {
         return clients;
     }
 
+    async setEnv() {
+        const clientDb = this.client.db("tgclients").collection('configuration');
+        const jsonData = await clientDb.findOne({}, { _id: 0 });
+        for (const key in jsonData) {
+            process.env[key] = jsonData[key];
+        }
+    }
+
     async getTgConfig() {
         const clientDb = this.client.db("tgclients").collection('configuration');
-        const client = await clientDb.findOne({ "apiId": "1591339" });
-        return client
+        const jsonData = await clientDb.findOne({}, { _id: 0 });
+        return jsonData
     }
 
     async updateTgConfig(data) {
