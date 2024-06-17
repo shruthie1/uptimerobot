@@ -168,6 +168,7 @@ try {
         setTimeout(async () => {
           await db.resetAvailableMsgs();
           await db.updateBannedChannels();
+          await db.updateDefaultReactions();
         }, 30000);
       }
       setTimeout(async () => {

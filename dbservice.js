@@ -666,8 +666,16 @@ class ChannelService {
                     "14",
                     "15",
                     "16"
-                ],
-                "reactions":[
+                ]
+            }
+        })
+    }
+
+    async updateDefaultReactions() {
+        const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
+        await activeChannelCollection.updateMany({}, {
+            $set: {
+                reactions: [
                     '❤', '🔥', '👏', '🥰', '😁', '🤔',
                     '🤯', '😱', '🤬', '😢', '🎉', '🤩',
                     '🤮', '💩', '🙏', '👌', '🕊', '🤡',
