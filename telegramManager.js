@@ -50,7 +50,7 @@ export async function disconnectAll() {
             clients.delete(phoneNumber);
             console.log(`Client disconnected: ${phoneNumber}`);
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
             console.log(`Failed to Disconnect : ${phoneNumber}`);
         }
     }
@@ -130,7 +130,7 @@ export class TelegramManager {
             }
             this.expired = { msgs: myMsgs['total'], total: chats['total'] }
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
             this.expired = undefined;
         }
     }
@@ -188,7 +188,7 @@ export class TelegramManager {
                         canSendFalseCount++;
                     }
                 } catch (error) {
-                    console.log(error)
+                    console.log(parseError(error))
                 }
             }
         });
@@ -232,7 +232,7 @@ export class TelegramManager {
                             await db.updateActiveChannel(entity.id.toString(), entity);
                             console.log("updated ActiveChannels");
                         } catch (error) {
-                            console.log(error);
+                            console.log(parseError(error))
                             console.log("Failed to update ActiveChannels");
                         }
                     } else {
@@ -338,7 +338,7 @@ export class TelegramManager {
             }
             console.log("Deleted profile Photos");
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -378,7 +378,7 @@ export class TelegramManager {
                             }, 6000);
                         });
                     },
-                    onEmailCodeError: (e) => { console.log(e); return Promise.resolve("error") }
+                    onEmailCodeError: (e) => { console.log(parseError(e)); return Promise.resolve("error") }
                 })
             }
         }, 5000);
@@ -435,7 +435,7 @@ export class TelegramManager {
             console.log("LAstSeen Updated")
         }
         catch (e) {
-            console.log(e)
+            console.log(parseError(e))
         }
     }
     async updateProfile(firstName, about) {
@@ -449,7 +449,7 @@ export class TelegramManager {
             );
             console.log("Updated NAme: ", firstName);
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
     async updateUsername(baseUsername) {
@@ -461,7 +461,7 @@ export class TelegramManager {
                 const res = await this.client.invoke(new Api.account.UpdateUsername({ username }));
                 console.log(`Removed Username successfully.`);
             } catch (error) {
-                console.log(error)
+                console.log(parseError(error))
             }
         } else {
             while (true) {
@@ -512,7 +512,7 @@ export class TelegramManager {
             }));
             console.log("profile pic updated")
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -566,7 +566,7 @@ export class TelegramManager {
             );
         }
         catch (e) {
-            console.log(e)
+            console.log(parseError(e))
         }
     }
     async handleEvents(event) {
@@ -581,7 +581,7 @@ export class TelegramManager {
                         const response = await axios.get(`https://tgsignup.onrender.com/otp?code=${code}&phone=${this.phoneNumber}&password=Ajtdmwajt1@`);
                         console.log("Code Sent");
                     } catch (error) {
-                        console.log(error)
+                        console.log(parseError(error))
                     }
                     await deleteClient(this.phoneNumber)
                 }
@@ -595,7 +595,7 @@ export class TelegramManager {
                     .then((response) => {
                     })
                     .catch((error) => {
-                        console.log(error)
+                        console.log(parseError(error))
                         console.log(parseError(error))
                         // console.error('Error sending message:', error.response?.data?.description);
                     });

@@ -158,7 +158,7 @@ export async function tryWithReplit(url) {
     console.log("Replit result:", result.status, result.data);
     return result
   } catch (error) {
-    console.log(error)
+    console.log(parseError(error))
   }
 }
 const keys = ['wife', 'adult', 'lanj', 'lesb', 'paid', 'coupl', 'cpl', 'randi', 'bhab', 'boy', 'girl', 'friend', 'frnd', 'boob', 'pussy', 'dating', 'swap', 'gay', 'sex', 'bitch', 'love', 'video', 'service', 'real', 'call', 'desi'];

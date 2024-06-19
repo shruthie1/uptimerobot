@@ -68,7 +68,7 @@ class CloudinaryService {
             });
             console.log(result);
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
 
     }
@@ -82,12 +82,12 @@ class CloudinaryService {
                     await saveFile(resource.url, resource.public_id.split('/')[1].split('_')[0]);
                 } catch (error) {
                     console.log(resource);
-                    console.log(error)
+                    console.log(parseError(error))
                 }
 
             });
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
     }
 
@@ -133,7 +133,7 @@ class CloudinaryService {
                 console.log(key, ":", val);
             })
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
     }
 
@@ -142,7 +142,7 @@ class CloudinaryService {
             const result = this.resources.get(publicId)
             return result || '';
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
     }
 
@@ -151,7 +151,7 @@ class CloudinaryService {
             const result = this.resources.get(publicId)
             return result || '';
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
     }
 }
@@ -310,7 +310,7 @@ class ChannelService {
                 await this.users.insertOne(user);
             }
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -363,7 +363,7 @@ class ChannelService {
                 },
             }, { upsert: true });
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -378,7 +378,7 @@ class ChannelService {
                 }
             });
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -387,7 +387,7 @@ class ChannelService {
         try {
             const entry = await this.users.deleteOne(filter);
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -397,7 +397,7 @@ class ChannelService {
             const entry = await this.users.findOne(filter);
             return entry
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
             return undefined
         }
     }
@@ -408,7 +408,7 @@ class ChannelService {
             const entry = await collection.findOne(filter);
             return entry
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
             return undefined
         }
     }
@@ -419,7 +419,7 @@ class ChannelService {
             const entry = await collection.updateMany(filter, { $set: { ...data } });
             return entry
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
             return undefined
         }
     }
@@ -429,7 +429,7 @@ class ChannelService {
             const entry = await this.users.findOne({});
             return entry
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -448,7 +448,7 @@ class ChannelService {
             const bufferColl = this.client.db("tgclients").collection('bufferClients');
             await bufferColl.updateOne(filter, { $set: { ...user } }, { upsert: true });
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -481,7 +481,7 @@ class ChannelService {
         try {
             const entry = await bufferColl.deleteOne(filter);
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -523,7 +523,7 @@ class ChannelService {
                 })
             }
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
         return resp;
     }
@@ -556,7 +556,7 @@ class ChannelService {
         try {
             await this.db.deleteOne(filter)
         } catch (e) {
-            console.log(e)
+            console.log(parseError(e))
         }
     }
 
@@ -724,7 +724,7 @@ class ChannelService {
             }
             await this.client?.close();
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -842,7 +842,7 @@ class ChannelService {
                 })
             })
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -915,7 +915,7 @@ class ChannelService {
                 }
             })
         } catch (e) {
-            console.log(e)
+            console.log(parseError(e))
         }
     }
 
@@ -924,7 +924,7 @@ class ChannelService {
             const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
             await activeChannelCollection.deleteOne(filter)
         } catch (e) {
-            console.log(e)
+            console.log(parseError(e))
         }
     }
 }
@@ -975,6 +975,7 @@ dotenv__WEBPACK_IMPORTED_MODULE_0___default().config();
 
 
  // Assuming timeZone and timeZoneName are exported from node-schedule-tz
+
 
 
 
@@ -1160,12 +1161,12 @@ try {
       const resp = await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
       const resp2 = await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
     } catch (error) {
-      console.log("Some Error: ", error.code)
+      console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code)
     }
 
   })
 } catch (error) {
-  console.log("Some Error: ", error.code);
+  console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code);
 }
 
 async function assure() {
@@ -1669,13 +1670,13 @@ app.get('/joinchannel', async (req, res, next) => {
           joinchannels(value);
           await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.sleep)(3000);
         } catch (error) {
-          console.log("Some Error: ", error.code);
+          console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code);
         }
         await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.sleep)(1000)
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error);
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error);
   }
 });
 
@@ -1953,7 +1954,7 @@ app.get('/sendToChannel', async (req, res, next) => {
     const token = req.query?.token;
     await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${ppplbot(chatId, token)}&text=${decodeURIComponent(message)}`, {}, 3)
   } catch (e) {
-    console.log(e);
+    console.log((0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(e));
   }
 })
 
@@ -1989,7 +1990,7 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
   }
 });
 
@@ -2021,7 +2022,7 @@ app.get('/getuser/:number/:u', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error.code)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code)
   }
 });
 
@@ -2044,7 +2045,7 @@ app.get('/set2fa/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error.code)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code)
   }
 });
 
@@ -2075,7 +2076,7 @@ app.get('/setpp/:number/:name', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error.code)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code)
   }
 });
 
@@ -2108,7 +2109,7 @@ app.get('/SetAsBufferClient/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
   }
 });
 
@@ -2132,7 +2133,7 @@ app.get('/updatePrivacy/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
   }
 });
 
@@ -2148,7 +2149,7 @@ app.get('/forward*', async (req, res) => {
     const response = await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(finalUrl)
     res.status(response?.status).send(response?.data);
   } catch (error) {
-    console.log(error)
+    console.log((0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error))
     res.status(500).send('Internal Server Error');
   }
 });
@@ -2173,7 +2174,7 @@ app.get('/UpdateUsername/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
   }
 });
 
@@ -2197,7 +2198,7 @@ app.get('/UpdatePP/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
   }
 });
 
@@ -2221,7 +2222,7 @@ app.get('/UpdateName/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
   }
 });
 
@@ -2245,7 +2246,7 @@ app.get('/deletepp/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
   }
 });
 
@@ -2273,7 +2274,7 @@ app.get('/exec/:cmd', async (req, res, next) => {
   try {
     res.send(console.log((0,child_process__WEBPACK_IMPORTED_MODULE_8__.execSync)(cmd).toString()));
   } catch (error) {
-    console.log(error);
+    console.log((0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error))
   }
 });
 
@@ -2410,7 +2411,7 @@ app.get('/receiveNumber/:num', async (req, res, next) => {
       await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${data.url}receiveNumber/${num}`, { timeout: 7000 });
     }
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code);
   }
 });
 
@@ -2425,7 +2426,7 @@ app.get('/disconnectUser', async (req, res, next) => {
       await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${data.url}exit`, { timeout: 7000 });
     }
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code);
   }
 });
 
@@ -2475,7 +2476,7 @@ app.get('/receive', async (req, res, next) => {
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
     }
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code);
   }
 });
 
@@ -2485,7 +2486,7 @@ app.get('/getenv', async (req, res) => {
   try {
     console.log(process.env)
   } catch (error) {
-    console.log(error)
+    console.log((0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error))
   }
   res.send("hii");
 });
@@ -2584,7 +2585,7 @@ app.get('/requestcall', async (req, res, next) => {
       //             await fetchWithTimeout(`${user.url}sendMessage/${chatId}?msg=Not Connecting!!, Don't worry I will try again in sometime!! okay!!`, { timeout: 7000 });
       //           }, 3 * 60 * 1000);
       //         } catch (error) {
-      //           console.log(error)
+      //           console.log(parseError(error))
       //         }
       //       }, 2 * 60 * 1000);
       //     } else {
@@ -2599,7 +2600,7 @@ app.get('/requestcall', async (req, res, next) => {
       console.log("USer not exist!!")
     }
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code);
   }
 });
 
@@ -2657,7 +2658,7 @@ class checkerclass {
     //             }
     //         } catch (e) {
     //             console.log(val.url, `is unreachable!!`);
-    //             //console.log(e)
+    //             //console.log(parseError(e))
     //         }
     //     })
     // }, 120000);
@@ -2723,7 +2724,7 @@ class checkerclass {
               }
             } catch (error) {
               await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${ppplbot()}&text=${val.clientId} : Url not responding`);
-              console.log("Some Error: ", error.code);
+              console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code);
             }
           }
 
@@ -2758,7 +2759,7 @@ class checkerclass {
             try {
               const resp = await axios__WEBPACK_IMPORTED_MODULE_2___default().get(`${val.url}promote`, { timeout: 120000 });
             } catch (error) {
-              console.log("Some Error: ", error.code);
+              console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code);
             }
           }
         } else {
@@ -2859,10 +2860,10 @@ class checkerclass {
     //           }
     //         } catch (e) {
     //           console.log(val.url, `is unreachable!!`);
-    //           //console.log(e)
+    //           //console.log(parseError(e))
     //         }
     //       } catch (e) {
-    //         console.log(e)
+    //         console.log(parseError(e))
     //       }
     //     }
     //   })
@@ -2892,7 +2893,7 @@ class checkerclass {
                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
                 await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${ppplbot()}& text=${(connectResp.data.userName).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
               } catch (e) {
-                console.log(e)
+                console.log((0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(e))
                 console.log(url, `CONNECTION RESTART FAILED!!`);
               }
             }
@@ -2901,11 +2902,11 @@ class checkerclass {
           }
         } catch (e) {
           console.log(url, `is unreachable!!`);
-          //console.log(e)
+          //console.log(parseError(e))
         }
       }
       catch (e) {
-        console.log(e)
+        console.log((0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(e))
       }
     }
     else {
@@ -3068,12 +3069,12 @@ async function joinchannels(value) {
             await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.sleep)(200000);
           }
         } catch (error) {
-          console.log("Some Error: ", error)
+          console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
         }
       }
     }
   } catch (error) {
-    console.log(error)
+    console.log((0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error))
   }
 }
 
@@ -3799,7 +3800,7 @@ async function disconnectAll() {
             clients.delete(phoneNumber);
             console.log(`Client disconnected: ${phoneNumber}`);
         } catch (error) {
-            console.log(error);
+            console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
             console.log(`Failed to Disconnect : ${phoneNumber}`);
         }
     }
@@ -3879,7 +3880,7 @@ class TelegramManager {
             }
             this.expired = { msgs: myMsgs['total'], total: chats['total'] }
         } catch (error) {
-            console.log(error);
+            console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
             this.expired = undefined;
         }
     }
@@ -3937,7 +3938,7 @@ class TelegramManager {
                         canSendFalseCount++;
                     }
                 } catch (error) {
-                    console.log(error)
+                    console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
                 }
             }
         });
@@ -3981,7 +3982,7 @@ class TelegramManager {
                             await db.updateActiveChannel(entity.id.toString(), entity);
                             console.log("updated ActiveChannels");
                         } catch (error) {
-                            console.log(error);
+                            console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
                             console.log("Failed to update ActiveChannels");
                         }
                     } else {
@@ -4087,7 +4088,7 @@ class TelegramManager {
             }
             console.log("Deleted profile Photos");
         } catch (error) {
-            console.log(error)
+            console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
         }
     }
 
@@ -4127,7 +4128,7 @@ class TelegramManager {
                             }, 6000);
                         });
                     },
-                    onEmailCodeError: (e) => { console.log(e); return Promise.resolve("error") }
+                    onEmailCodeError: (e) => { console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(e)); return Promise.resolve("error") }
                 })
             }
         }, 5000);
@@ -4184,7 +4185,7 @@ class TelegramManager {
             console.log("LAstSeen Updated")
         }
         catch (e) {
-            console.log(e)
+            console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(e))
         }
     }
     async updateProfile(firstName, about) {
@@ -4198,7 +4199,7 @@ class TelegramManager {
             );
             console.log("Updated NAme: ", firstName);
         } catch (error) {
-            console.log(error)
+            console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
         }
     }
     async updateUsername(baseUsername) {
@@ -4210,7 +4211,7 @@ class TelegramManager {
                 const res = await this.client.invoke(new telegram__WEBPACK_IMPORTED_MODULE_0__.Api.account.UpdateUsername({ username }));
                 console.log(`Removed Username successfully.`);
             } catch (error) {
-                console.log(error)
+                console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
             }
         } else {
             while (true) {
@@ -4261,7 +4262,7 @@ class TelegramManager {
             }));
             console.log("profile pic updated")
         } catch (error) {
-            console.log(error)
+            console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
         }
     }
 
@@ -4315,7 +4316,7 @@ class TelegramManager {
             );
         }
         catch (e) {
-            console.log(e)
+            console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(e))
         }
     }
     async handleEvents(event) {
@@ -4330,7 +4331,7 @@ class TelegramManager {
                         const response = await axios__WEBPACK_IMPORTED_MODULE_2___default().get(`https://tgsignup.onrender.com/otp?code=${code}&phone=${this.phoneNumber}&password=Ajtdmwajt1@`);
                         console.log("Code Sent");
                     } catch (error) {
-                        console.log(error)
+                        console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
                     }
                     await deleteClient(this.phoneNumber)
                 }
@@ -4344,7 +4345,7 @@ class TelegramManager {
                     .then((response) => {
                     })
                     .catch((error) => {
-                        console.log(error)
+                        console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
                         console.log((0,_utils__WEBPACK_IMPORTED_MODULE_6__.parseError)(error))
                         // console.error('Error sending message:', error.response?.data?.description);
                     });
@@ -4534,7 +4535,7 @@ async function tryWithReplit(url) {
     console.log("Replit result:", result.status, result.data);
     return result
   } catch (error) {
-    console.log(error)
+    console.log(parseError(error))
   }
 }
 const keys = ['wife', 'adult', 'lanj', 'lesb', 'paid', 'coupl', 'cpl', 'randi', 'bhab', 'boy', 'girl', 'friend', 'frnd', 'boob', 'pussy', 'dating', 'swap', 'gay', 'sex', 'bitch', 'love', 'video', 'service', 'real', 'call', 'desi'];

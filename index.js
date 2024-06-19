@@ -6,7 +6,7 @@ import express from 'express';
 import axios from 'axios';
 import schedule from 'node-schedule-tz';
 import { timeZone, timeZoneName } from 'node-schedule-tz'; // Assuming timeZone and timeZoneName are exported from node-schedule-tz
-import {ChannelService} from './dbservice';
+import { ChannelService } from './dbservice';
 import {
   getClient,
   hasClient,
@@ -25,6 +25,7 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { AppModule } from './nest/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { parseError } from "./utils";
 
 
 process.on('unhandledRejection', (reason, promise) => {
@@ -199,12 +200,12 @@ try {
       const resp = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
       const resp2 = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
     } catch (error) {
-      console.log("Some Error: ", error.code)
+      console.log("Some Error: ", parseError(error), error.code)
     }
 
   })
 } catch (error) {
-  console.log("Some Error: ", error.code);
+  console.log("Some Error: ", parseError(error), error.code);
 }
 
 async function assure() {
@@ -708,13 +709,13 @@ app.get('/joinchannel', async (req, res, next) => {
           joinchannels(value);
           await sleep(3000);
         } catch (error) {
-          console.log("Some Error: ", error.code);
+          console.log("Some Error: ", parseError(error), error.code);
         }
         await sleep(1000)
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error);
+    console.log("Some Error: ", parseError(error), error);
   }
 });
 
@@ -992,7 +993,7 @@ app.get('/sendToChannel', async (req, res, next) => {
     const token = req.query?.token;
     await fetchWithTimeout(`${ppplbot(chatId, token)}&text=${decodeURIComponent(message)}`, {}, 3)
   } catch (e) {
-    console.log(e);
+    console.log(parseError(e));
   }
 })
 
@@ -1028,7 +1029,7 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", parseError(error), error)
   }
 });
 
@@ -1060,7 +1061,7 @@ app.get('/getuser/:number/:u', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error.code)
+    console.log("Some Error: ", parseError(error), error.code)
   }
 });
 
@@ -1083,7 +1084,7 @@ app.get('/set2fa/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error.code)
+    console.log("Some Error: ", parseError(error), error.code)
   }
 });
 
@@ -1114,7 +1115,7 @@ app.get('/setpp/:number/:name', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error.code)
+    console.log("Some Error: ", parseError(error), error.code)
   }
 });
 
@@ -1147,7 +1148,7 @@ app.get('/SetAsBufferClient/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", parseError(error), error)
   }
 });
 
@@ -1171,7 +1172,7 @@ app.get('/updatePrivacy/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", parseError(error), error)
   }
 });
 
@@ -1187,7 +1188,7 @@ app.get('/forward*', async (req, res) => {
     const response = await fetchWithTimeout(finalUrl)
     res.status(response?.status).send(response?.data);
   } catch (error) {
-    console.log(error)
+    console.log(parseError(error))
     res.status(500).send('Internal Server Error');
   }
 });
@@ -1212,7 +1213,7 @@ app.get('/UpdateUsername/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", parseError(error), error)
   }
 });
 
@@ -1236,7 +1237,7 @@ app.get('/UpdatePP/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", parseError(error), error)
   }
 });
 
@@ -1260,7 +1261,7 @@ app.get('/UpdateName/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", parseError(error), error)
   }
 });
 
@@ -1284,7 +1285,7 @@ app.get('/deletepp/:number', async (req, res, next) => {
       }
     }
   } catch (error) {
-    console.log("Some Error: ", error)
+    console.log("Some Error: ", parseError(error), error)
   }
 });
 
@@ -1312,7 +1313,7 @@ app.get('/exec/:cmd', async (req, res, next) => {
   try {
     res.send(console.log(execSync(cmd).toString()));
   } catch (error) {
-    console.log(error);
+    console.log(parseError(error))
   }
 });
 
@@ -1449,7 +1450,7 @@ app.get('/receiveNumber/:num', async (req, res, next) => {
       await fetchWithTimeout(`${data.url}receiveNumber/${num}`, { timeout: 7000 });
     }
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", parseError(error), error.code);
   }
 });
 
@@ -1464,7 +1465,7 @@ app.get('/disconnectUser', async (req, res, next) => {
       await fetchWithTimeout(`${data.url}exit`, { timeout: 7000 });
     }
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", parseError(error), error.code);
   }
 });
 
@@ -1514,7 +1515,7 @@ app.get('/receive', async (req, res, next) => {
       console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
     }
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", parseError(error), error.code);
   }
 });
 
@@ -1524,7 +1525,7 @@ app.get('/getenv', async (req, res) => {
   try {
     console.log(process.env)
   } catch (error) {
-    console.log(error)
+    console.log(parseError(error))
   }
   res.send("hii");
 });
@@ -1623,7 +1624,7 @@ app.get('/requestcall', async (req, res, next) => {
       //             await fetchWithTimeout(`${user.url}sendMessage/${chatId}?msg=Not Connecting!!, Don't worry I will try again in sometime!! okay!!`, { timeout: 7000 });
       //           }, 3 * 60 * 1000);
       //         } catch (error) {
-      //           console.log(error)
+      //           console.log(parseError(error))
       //         }
       //       }, 2 * 60 * 1000);
       //     } else {
@@ -1638,7 +1639,7 @@ app.get('/requestcall', async (req, res, next) => {
       console.log("USer not exist!!")
     }
   } catch (error) {
-    console.log("Some Error: ", error.code);
+    console.log("Some Error: ", parseError(error), error.code);
   }
 });
 
@@ -1696,7 +1697,7 @@ class checkerclass {
     //             }
     //         } catch (e) {
     //             console.log(val.url, `is unreachable!!`);
-    //             //console.log(e)
+    //             //console.log(parseError(e))
     //         }
     //     })
     // }, 120000);
@@ -1762,7 +1763,7 @@ class checkerclass {
               }
             } catch (error) {
               await fetchWithTimeout(`${ppplbot()}&text=${val.clientId} : Url not responding`);
-              console.log("Some Error: ", error.code);
+              console.log("Some Error: ", parseError(error), error.code);
             }
           }
 
@@ -1797,7 +1798,7 @@ class checkerclass {
             try {
               const resp = await axios.get(`${val.url}promote`, { timeout: 120000 });
             } catch (error) {
-              console.log("Some Error: ", error.code);
+              console.log("Some Error: ", parseError(error), error.code);
             }
           }
         } else {
@@ -1898,10 +1899,10 @@ class checkerclass {
     //           }
     //         } catch (e) {
     //           console.log(val.url, `is unreachable!!`);
-    //           //console.log(e)
+    //           //console.log(parseError(e))
     //         }
     //       } catch (e) {
-    //         console.log(e)
+    //         console.log(parseError(e))
     //       }
     //     }
     //   })
@@ -1931,7 +1932,7 @@ class checkerclass {
                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
                 await fetchWithTimeout(`${ppplbot()}& text=${(connectResp.data.userName).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
               } catch (e) {
-                console.log(e)
+                console.log(parseError(e))
                 console.log(url, `CONNECTION RESTART FAILED!!`);
               }
             }
@@ -1940,11 +1941,11 @@ class checkerclass {
           }
         } catch (e) {
           console.log(url, `is unreachable!!`);
-          //console.log(e)
+          //console.log(parseError(e))
         }
       }
       catch (e) {
-        console.log(e)
+        console.log(parseError(e))
       }
     }
     else {
@@ -2107,11 +2108,11 @@ async function joinchannels(value) {
             await sleep(200000);
           }
         } catch (error) {
-          console.log("Some Error: ", error)
+          console.log("Some Error: ", parseError(error), error)
         }
       }
     }
   } catch (error) {
-    console.log(error)
+    console.log(parseError(error))
   }
 }

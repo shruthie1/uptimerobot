@@ -47,7 +47,7 @@ export class CloudinaryService {
             });
             console.log(result);
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
 
     }
@@ -61,12 +61,12 @@ export class CloudinaryService {
                     await saveFile(resource.url, resource.public_id.split('/')[1].split('_')[0]);
                 } catch (error) {
                     console.log(resource);
-                    console.log(error)
+                    console.log(parseError(error))
                 }
 
             });
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
     }
 
@@ -112,7 +112,7 @@ export class CloudinaryService {
                 console.log(key, ":", val);
             })
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
     }
 
@@ -121,7 +121,7 @@ export class CloudinaryService {
             const result = this.resources.get(publicId)
             return result || '';
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
     }
 
@@ -130,7 +130,7 @@ export class CloudinaryService {
             const result = this.resources.get(publicId)
             return result || '';
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
     }
 }

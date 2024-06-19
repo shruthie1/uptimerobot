@@ -104,7 +104,7 @@ export class ChannelService {
                 await this.users.insertOne(user);
             }
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -157,7 +157,7 @@ export class ChannelService {
                 },
             }, { upsert: true });
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -172,7 +172,7 @@ export class ChannelService {
                 }
             });
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -181,7 +181,7 @@ export class ChannelService {
         try {
             const entry = await this.users.deleteOne(filter);
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -191,7 +191,7 @@ export class ChannelService {
             const entry = await this.users.findOne(filter);
             return entry
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
             return undefined
         }
     }
@@ -202,7 +202,7 @@ export class ChannelService {
             const entry = await collection.findOne(filter);
             return entry
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
             return undefined
         }
     }
@@ -213,7 +213,7 @@ export class ChannelService {
             const entry = await collection.updateMany(filter, { $set: { ...data } });
             return entry
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
             return undefined
         }
     }
@@ -223,7 +223,7 @@ export class ChannelService {
             const entry = await this.users.findOne({});
             return entry
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -242,7 +242,7 @@ export class ChannelService {
             const bufferColl = this.client.db("tgclients").collection('bufferClients');
             await bufferColl.updateOne(filter, { $set: { ...user } }, { upsert: true });
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -275,7 +275,7 @@ export class ChannelService {
         try {
             const entry = await bufferColl.deleteOne(filter);
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -317,7 +317,7 @@ export class ChannelService {
                 })
             }
         } catch (error) {
-            console.log(error);
+            console.log(parseError(error))
         }
         return resp;
     }
@@ -350,7 +350,7 @@ export class ChannelService {
         try {
             await this.db.deleteOne(filter)
         } catch (e) {
-            console.log(e)
+            console.log(parseError(e))
         }
     }
 
@@ -518,7 +518,7 @@ export class ChannelService {
             }
             await this.client?.close();
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -636,7 +636,7 @@ export class ChannelService {
                 })
             })
         } catch (error) {
-            console.log(error)
+            console.log(parseError(error))
         }
     }
 
@@ -709,7 +709,7 @@ export class ChannelService {
                 }
             })
         } catch (e) {
-            console.log(e)
+            console.log(parseError(e))
         }
     }
 
@@ -718,7 +718,7 @@ export class ChannelService {
             const activeChannelCollection = this.client.db("tgclients").collection('activeChannels');
             await activeChannelCollection.deleteOne(filter)
         } catch (e) {
-            console.log(e)
+            console.log(parseError(e))
         }
     }
 }
