@@ -1,81 +1,106 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 
-@Schema({ collection: 'users', versionKey: false, autoIndex: true })  // Specify the collection name here
-export class User extends Document {
+@Schema({ collection: 'users', versionKey: false, autoIndex: true })
+export class User extends mongoose.Document {
+  @ApiProperty()
   @Prop()
   mobile: string;
 
+  @ApiProperty()
   @Prop()
   session: string;
 
+  @ApiProperty()
   @Prop()
   firstName: string;
 
-  @Prop({ required: false })
+  @ApiProperty({ required: false })
+  @Prop()
   lastName: string | null;
 
-  @Prop({ required: false })
+  @ApiProperty({ required: false })
+  @Prop()
   userName: string | null;
 
+  @ApiProperty()
   @Prop()
   channels: number;
 
+  @ApiProperty()
   @Prop()
   personalChats: number;
 
+  @ApiProperty()
   @Prop()
   demoGiven: boolean;
 
+  @ApiProperty()
   @Prop()
   msgs: number;
 
+  @ApiProperty()
   @Prop()
   totalChats: number;
 
+  @ApiProperty()
   @Prop()
   lastActive: number;
 
+  @ApiProperty()
   @Prop()
   date: string;
 
+  @ApiProperty()
   @Prop()
   tgId: string;
 
+  @ApiProperty()
   @Prop()
   lastUpdated: string;
 
+  @ApiProperty()
   @Prop()
   movieCount: number;
 
+  @ApiProperty()
   @Prop()
   photoCount: number;
 
+  @ApiProperty()
   @Prop()
   videoCount: number;
 
-  @Prop({ required: false })
+  @ApiProperty({ required: false })
+  @Prop()
   gender: string | null;
 
-  @Prop({ required: false })
+  @ApiProperty({ required: false })
+  @Prop()
   username: string | null;
 
+  @ApiProperty()
   @Prop()
   otherPhotoCount: number;
 
+  @ApiProperty()
   @Prop()
   otherVideoCount: number;
 
+  @ApiProperty()
   @Prop()
   ownPhotoCount: number;
 
+  @ApiProperty()
   @Prop()
   ownVideoCount: number;
 
+  @ApiProperty()
   @Prop()
   contacts: number;
 
+  @ApiProperty()
   @Prop({
     type: mongoose.Schema.Types.Mixed,
     default: {
