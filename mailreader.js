@@ -1,8 +1,8 @@
-const Imap = require('imap');
+import Imap from 'imap';
 console.log("Started Mail Reader")
 let isReady = false;
 
-function isMailReady() {
+export function isMailReady() {
     return isReady;
 }
 
@@ -36,7 +36,7 @@ imap.once('end', () => {
     console.log('Connection ended');
 });
 let result = ''
-async function getcode() {
+export async function getcode() {
     await openInbox(() => {
         const searchCriteria = [['FROM', 'noreply@telegram.org']];
         const fetchOptions = {
@@ -92,7 +92,7 @@ async function getcode() {
     return result
 }
 
-function fetchNumbersFromString(inputString) {
+export function fetchNumbersFromString(inputString) {
     const regex = /\d+/g;
     const matches = inputString.match(regex);
     if (matches) {
@@ -102,12 +102,11 @@ function fetchNumbersFromString(inputString) {
         return '';
     }
 }
-function connectToMail() {
+export function connectToMail() {
     result = '';
     imap.connect();
 }
-function disconnectfromMail() {
+export function disconnectfromMail() {
     result = '';
     imap.end();
 }
-module.exports = { getcode, isMailReady, connectToMail, disconnectfromMail }

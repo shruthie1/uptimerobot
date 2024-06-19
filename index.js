@@ -1,20 +1,31 @@
 'use strict';
-const dotenv = require('dotenv')
+import dotenv from 'dotenv';
 dotenv.config();
-const express = require('express');
-const axios = require('axios');
-const schedule = require('node-schedule-tz');
-const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
-const ChannelService = require('./dbservice');
-const { getClient, hasClient, disconnectAll, createClient, deleteClient, setActiveClientSetup, getActiveClientSetup } = require('./telegramManager');
-const bodyParser = require('body-parser');
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./swaggerConfig');
-const { sleep } = require('./utils');
-const { fetchWithTimeout } = require('./utils');
-const { execSync } = require('child_process');
-const { CloudinaryService } = require('./cloudinary')
-const fs = require('fs')
+
+import express from 'express';
+import axios from 'axios';
+import schedule from 'node-schedule-tz';
+import { timeZone, timeZoneName } from 'node-schedule-tz'; // Assuming timeZone and timeZoneName are exported from node-schedule-tz
+import {ChannelService} from './dbservice';
+import {
+  getClient,
+  hasClient,
+  disconnectAll,
+  createClient,
+  deleteClient,
+  setActiveClientSetup,
+  getActiveClientSetup
+} from './telegramManager';
+import bodyParser from 'body-parser';
+import { sleep, fetchWithTimeout } from './utils';
+import { execSync } from 'child_process';
+import { CloudinaryService } from './cloudinary';
+import fs from 'fs';
+import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import { AppModule } from './nest/app.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
@@ -210,7 +221,6 @@ async function assure() {
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/', async (req, res, next) => {
   checkerclass.getinstance()
   res.send('Hello World!');
@@ -1632,6 +1642,16 @@ app.get('/requestcall', async (req, res, next) => {
   }
 });
 
+const nestApp = await NestFactory.create(AppModule, new ExpressAdapter(app));
+const config = new DocumentBuilder()
+  .setTitle('NestJS and Express API')
+  .setDescription('API documentation')
+  .setVersion('1.0')
+  .build();
+const document = SwaggerModule.createDocument(nestApp, config);
+SwaggerModule.setup('api', nestApp, document);
+
+await nestApp.init();
 app.listen(port, async () => {
   console.log(`Example app listening at http://localhost:${port}`)
 });
@@ -1640,7 +1660,7 @@ let startedConnecting = false;
 class checkerclass {
   static instance = undefined;
 
-  constructor () {
+  constructor() {
     this.main();
   };
 

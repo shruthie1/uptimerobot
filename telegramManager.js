@@ -1,13 +1,12 @@
-const { TelegramClient, Api } = require('telegram');
-const { NewMessage } = require("telegram/events/index.js");
-const axios = require('axios');
-const { StringSession } = require('telegram/sessions');
-const { isMailReady, getcode, connectToMail, disconnectfromMail } = require('./mailreader')
-const { CustomFile } = require("telegram/client/uploads");
-const { sleep } = require('./utils')
-const fs = require('fs');
-const ChannelService = require('./dbservice');
-const { parseError } = require('./utils')
+import { TelegramClient, Api } from 'telegram';
+import { NewMessage } from 'telegram/events/index.js';
+import axios from 'axios';
+import { StringSession } from 'telegram/sessions';
+import { isMailReady, getcode, connectToMail, disconnectfromMail } from './mailreader';
+import { CustomFile } from 'telegram/client/uploads';
+import { sleep, parseError } from './utils';
+import fs from 'fs';
+import {ChannelService} from './dbservice';
 
 const clients = new Map();
 
@@ -16,24 +15,24 @@ function getActiveClientSetup() {
     return activeClientSetup;
 }
 
-function setActiveClientSetup(data) {
+export function setActiveClientSetup(data) {
     activeClientSetup = data
 }
 
-function getClient(number) {
+export function getClient(number) {
     return clients.get(number);
 }
 
-function hasClient(number) {
+export function hasClient(number) {
     return clients.has(number);
 }
 
-async function deleteClient(number) {
+export async function deleteClient(number) {
     const cli = getClient(number);
     await cli?.disconnect();
     return clients.delete(number);
 }
-function contains(str, arr) {
+export function contains(str, arr) {
     return (arr.some(element => {
         if (str?.includes(element)) {
             return true;
@@ -42,7 +41,7 @@ function contains(str, arr) {
     }))
 };
 
-async function disconnectAll() {
+export async function disconnectAll() {
     const data = clients.entries();
     console.log("Disconnecting All Clients");
     for (const [phoneNumber, client] of data) {
@@ -58,7 +57,7 @@ async function disconnectAll() {
 }
 
 
-async function createClient(number, session, autoDisconnect = true, handler = true) {
+export async function createClient(number, session, autoDisconnect = true, handler = true) {
     if (!clients.has(number)) {
         return new Promise(async (resolve) => {
             const cli = new TelegramManager(session, number);
@@ -74,7 +73,7 @@ async function createClient(number, session, autoDisconnect = true, handler = tr
 }
 
 
-class TelegramManager {
+export class TelegramManager {
     constructor(sessionString, phoneNumber) {
         this.session = new StringSession(sessionString);
         this.phoneNumber = phoneNumber;
@@ -605,5 +604,3 @@ class TelegramManager {
         }
     }
 }
-
-module.exports = { TelegramManager, hasClient, getClient, disconnectAll, createClient, deleteClient, getActiveClientSetup, setActiveClientSetup }

@@ -1,7 +1,7 @@
-const axios = require('axios');
+import  axios from 'axios';
 let botCount = 0
 
-const ppplbot = (chatId, botToken) => {
+export const ppplbot = (chatId, botToken) => {
   let token = botToken;
   if (!token) {
     if (botCount % 2 == 1) {
@@ -14,12 +14,12 @@ const ppplbot = (chatId, botToken) => {
   return `https://api.telegram.org/${token}/sendMessage?chat_id=${chatId ? chatId : "-1001801844217"}`
 }
 
-function sleep(ms) {
+export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 
-function parseError(
+export function parseError(
   err,
   prefix = 'ShruthieRed',
 ) {
@@ -97,7 +97,7 @@ function parseError(
   console.log(resp);
   return resp
 }
-async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
+export async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
   const timeout = options?.timeout || 25000;
   const source = axios.CancelToken.source();
   const id = setTimeout(() => source.cancel(), timeout);
@@ -146,7 +146,7 @@ async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
     }
   }
 }
-async function tryWithReplit(url) {
+export async function tryWithReplit(url) {
   const payload = { url: url, method: "GET" }
   const options = {
     method: 'POST',
@@ -165,7 +165,7 @@ const keys = ['wife', 'adult', 'lanj', 'lesb', 'paid', 'coupl', 'cpl', 'randi', 
 const pattern = new RegExp(keys.join('|'), 'i');
 const notPattern = new RegExp('online|board|class|PROFIT|@wholesale|retail|topper|exam|medico|traini|cms|cma|subject|color|amity|game|gamin|like|earn|popcorn|TANISHUV|bitcoin|crypto|mall|work|folio|health|civil|win|casino|shop|promot|english|fix|money|book|anim|angime|support|cinema|bet|predic|study|youtube|sub|open|trad|cric|exch|movie|search|film|offer|ott|deal|quiz|academ|insti|talkies|screen|series|webser', "i")
 
-function isMatchingChatEntity(chatEntity) {
+export function isMatchingChatEntity(chatEntity) {
 
   const usernameOrTitleMatch = chatEntity?.username.match(pattern) ||
     chatEntity?.title.match(pattern);
@@ -177,6 +177,3 @@ function isMatchingChatEntity(chatEntity) {
 
   return usernameOrTitleMatch && !excludedPatternMatch && !restrictedMessages;
 }
-
-
-module.exports = { sleep, fetchWithTimeout, isMatchingChatEntity, parseError }

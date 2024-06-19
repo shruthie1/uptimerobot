@@ -1,10 +1,9 @@
-console.log("in Cloudinary");
-const cloudinary = require('cloudinary');
-const path = require('path');
-const fs = require('fs');
-const { fetchWithTimeout } = require('./utils');
+import cloudinary from 'cloudinary';
+import path from 'path';
+import fs from 'fs';
+import { fetchWithTimeout } from './utils';
 
-class CloudinaryService {
+export class CloudinaryService {
     static instance;
     resources = new Map();
 
@@ -162,7 +161,6 @@ async function saveFile(url, name) {
         });
 }
 
-module.exports = { CloudinaryService }
 
 
 

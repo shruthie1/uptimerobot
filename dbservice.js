@@ -1,7 +1,8 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const { isMatchingChatEntity } = require('./utils');
+import { MongoClient, ServerApiVersion, ConnectOptions, ObjectId } from 'mongodb';
+import { isMatchingChatEntity } from './utils';
+import mongoose from 'mongoose';
 
-class ChannelService {
+export class ChannelService {
     static instance;
     client = undefined
     db = undefined;
@@ -27,8 +28,9 @@ class ChannelService {
         if (!this.isConnected) {
             console.log('trying to connect to DB......')
             try {
-                this.client = await MongoClient.connect(process.env.mongouri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1, maxPoolSize: 15 });
+                await mongoose.connect(process.env.mongouri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1, maxPoolSize: 10 } );
                 console.log('Connected to MongoDB');
+                this.client = mongoose.connection.getClient()
                 this.isConnected = true;
                 this.client.on('close', () => {
                     console.log('MongoDB connection closed.');
@@ -721,4 +723,3 @@ class ChannelService {
     }
 }
 
-module.exports = ChannelService;
