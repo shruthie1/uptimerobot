@@ -25,7 +25,7 @@ export class UsersService {
   }
 
   async update(tgId: string, user: Partial<User>): Promise<User> {
-    const existingUser = await this.userModel.findOneAndUpdate({ tgId }, user, { new: true }).exec();
+    const existingUser = await this.userModel.findOneAndUpdate({ tgId }, { $set: user }, { new: true }).exec();
     if (!existingUser) {
       throw new NotFoundException(`User with tgId ${tgId} not found`);
     }

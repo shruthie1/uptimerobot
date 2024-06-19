@@ -1650,6 +1650,7 @@ const config = new DocumentBuilder()
   .setVersion('1.0')
   .build();
 const document = SwaggerModule.createDocument(nestApp, config);
+  fs.writeFileSync('./swagger-spec.json', JSON.stringify(document, null, 2));
 SwaggerModule.setup('api', nestApp, document);
 
 await nestApp.init();

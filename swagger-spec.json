@@ -1,0 +1,960 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/userData": {
+      "post": {
+        "operationId": "UserDataController_create",
+        "summary": "Create user data",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDataDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The user data has been successfully created."
+          },
+          "403": {
+            "description": "Forbidden."
+          }
+        },
+        "tags": [
+          "userData"
+        ]
+      },
+      "get": {
+        "operationId": "UserDataController_findAll",
+        "summary": "Get all user data",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Return all user data."
+          },
+          "403": {
+            "description": "Forbidden."
+          }
+        },
+        "tags": [
+          "userData"
+        ]
+      }
+    },
+    "/userData/search": {
+      "get": {
+        "operationId": "UserDataController_search",
+        "summary": "Search user data",
+        "parameters": [
+          {
+            "name": "profile",
+            "required": false,
+            "in": "query",
+            "description": "Profile name",
+            "schema": {}
+          },
+          {
+            "name": "secondShow",
+            "required": false,
+            "in": "query",
+            "description": "Second show status",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "demoGiven",
+            "required": false,
+            "in": "query",
+            "description": "Demo given status",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "paidReply",
+            "required": false,
+            "in": "query",
+            "description": "Paid reply status",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "accessHash",
+            "required": false,
+            "in": "query",
+            "description": "Access hash",
+            "schema": {}
+          },
+          {
+            "name": "username",
+            "required": false,
+            "in": "query",
+            "description": "Username",
+            "schema": {}
+          },
+          {
+            "name": "payAmount",
+            "required": false,
+            "in": "query",
+            "description": "Pay amount",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "canReply",
+            "required": false,
+            "in": "query",
+            "description": "Can reply",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "prfCount",
+            "required": false,
+            "in": "query",
+            "description": "Profile count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "paidCount",
+            "required": false,
+            "in": "query",
+            "description": "Paid count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limitTime",
+            "required": false,
+            "in": "query",
+            "description": "Limit time",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lastMsgTimeStamp",
+            "required": false,
+            "in": "query",
+            "description": "Last message timestamp",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "picCount",
+            "required": false,
+            "in": "query",
+            "description": "Picture count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "totalCount",
+            "required": false,
+            "in": "query",
+            "description": "Total count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "chatId",
+            "required": false,
+            "in": "query",
+            "description": "Chat ID",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the searched user data."
+          }
+        },
+        "tags": [
+          "userData"
+        ]
+      }
+    },
+    "/userData/{id}": {
+      "get": {
+        "operationId": "UserDataController_findOne",
+        "summary": "Get user data by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the user data."
+          },
+          "404": {
+            "description": "User data not found."
+          }
+        },
+        "tags": [
+          "userData"
+        ]
+      },
+      "put": {
+        "operationId": "UserDataController_update",
+        "summary": "Update user data by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDataDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The user data has been successfully updated."
+          },
+          "404": {
+            "description": "User data not found."
+          }
+        },
+        "tags": [
+          "userData"
+        ]
+      },
+      "delete": {
+        "operationId": "UserDataController_remove",
+        "summary": "Delete user data by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user data has been successfully deleted."
+          },
+          "404": {
+            "description": "User data not found."
+          }
+        },
+        "tags": [
+          "userData"
+        ]
+      }
+    },
+    "/users": {
+      "post": {
+        "operationId": "UsersController_create",
+        "summary": "Create a new user",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "operationId": "UsersController_findAll",
+        "summary": "Get all users",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/search": {
+      "get": {
+        "operationId": "UsersController_search",
+        "summary": "Search users based on various parameters",
+        "parameters": [
+          {
+            "name": "calls.totalCalls",
+            "required": false,
+            "in": "query",
+            "description": "Filter by total call count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "calls.chatCallCounts",
+            "required": false,
+            "in": "query",
+            "description": "Filter by chat call counts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "calls.video",
+            "required": false,
+            "in": "query",
+            "description": "Filter by video call count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "calls.incoming",
+            "required": false,
+            "in": "query",
+            "description": "Filter by incoming call count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "calls.outgoing",
+            "required": false,
+            "in": "query",
+            "description": "Filter by outgoing call count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "contacts",
+            "required": false,
+            "in": "query",
+            "description": "Filter by contacts count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "ownVideoCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by own video count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "ownPhotoCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by own photo count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "otherVideoCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by other video count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "otherPhotoCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by other photo count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "username",
+            "required": false,
+            "in": "query",
+            "description": "Filter by username",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "description": "Filter by gender",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "videoCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by video count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "photoCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by photo count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "movieCount",
+            "required": false,
+            "in": "query",
+            "description": "Filter by movie count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lastUpdated",
+            "required": false,
+            "in": "query",
+            "description": "Filter by last updated timestamp",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Filter by date",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastActive",
+            "required": false,
+            "in": "query",
+            "description": "Filter by last active timestamp",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "totalChats",
+            "required": false,
+            "in": "query",
+            "description": "Filter by total chats count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "msgs",
+            "required": false,
+            "in": "query",
+            "description": "Filter by messages count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "demoGiven",
+            "required": false,
+            "in": "query",
+            "description": "Filter by demo given status",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "personalChats",
+            "required": false,
+            "in": "query",
+            "description": "Filter by personal chats count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "channels",
+            "required": false,
+            "in": "query",
+            "description": "Filter by channels count",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "userName",
+            "required": false,
+            "in": "query",
+            "description": "Filter by username",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastName",
+            "required": false,
+            "in": "query",
+            "description": "Filter by last name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "firstName",
+            "required": false,
+            "in": "query",
+            "description": "Filter by first name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "session",
+            "required": false,
+            "in": "query",
+            "description": "Filter by session",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mobile",
+            "required": false,
+            "in": "query",
+            "description": "Filter by mobile number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tgId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by Telegram ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{tgId}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "summary": "Get a user by tgId",
+        "parameters": [
+          {
+            "name": "tgId",
+            "required": true,
+            "in": "path",
+            "description": "The Telegram ID of the user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "summary": "Update a user by tgId",
+        "parameters": [
+          {
+            "name": "tgId",
+            "required": true,
+            "in": "path",
+            "description": "The Telegram ID of the user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      },
+      "delete": {
+        "operationId": "UsersController_remove",
+        "summary": "Delete a user by tgId",
+        "parameters": [
+          {
+            "name": "tgId",
+            "required": true,
+            "in": "path",
+            "description": "The Telegram ID of the user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "NestJS and Express API",
+    "description": "API documentation",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CreateUserDataDto": {
+        "type": "object",
+        "properties": {
+          "chatId": {
+            "type": "string",
+            "example": "5787751360",
+            "description": "Chat ID"
+          },
+          "totalCount": {
+            "type": "number",
+            "example": 1,
+            "description": "Total count"
+          },
+          "picCount": {
+            "type": "number",
+            "example": 0,
+            "description": "Picture count"
+          },
+          "lastMsgTimeStamp": {
+            "type": "number",
+            "example": 1718802722566,
+            "description": "Last message timestamp"
+          },
+          "limitTime": {
+            "type": "number",
+            "example": 1718802742567,
+            "description": "Limit time"
+          },
+          "paidCount": {
+            "type": "number",
+            "example": 0,
+            "description": "Paid count"
+          },
+          "prfCount": {
+            "type": "number",
+            "example": 0,
+            "description": "Profile count"
+          },
+          "canReply": {
+            "type": "number",
+            "example": 1,
+            "description": "Can reply"
+          },
+          "payAmount": {
+            "type": "number",
+            "example": 0,
+            "description": "Pay amount"
+          },
+          "username": {
+            "type": "string",
+            "example": "بـِـعٰ۬ێډ الۿٰٕقاوٰ۬ێ ٴ🦅",
+            "description": "Username"
+          },
+          "accessHash": {
+            "type": "string",
+            "example": "-7250939091939055173",
+            "description": "Access hash"
+          },
+          "paidReply": {
+            "type": "boolean",
+            "example": true,
+            "description": "Paid reply status"
+          },
+          "demoGiven": {
+            "type": "boolean",
+            "example": false,
+            "description": "Demo given status"
+          },
+          "secondShow": {
+            "type": "boolean",
+            "example": false,
+            "description": "Second show status"
+          },
+          "profile": {
+            "type": "string",
+            "example": "sneha",
+            "description": "Profile name"
+          }
+        },
+        "required": [
+          "chatId",
+          "totalCount",
+          "picCount",
+          "lastMsgTimeStamp",
+          "limitTime",
+          "paidCount",
+          "prfCount",
+          "canReply",
+          "payAmount",
+          "username",
+          "accessHash",
+          "paidReply",
+          "demoGiven",
+          "secondShow",
+          "profile"
+        ]
+      },
+      "UpdateUserDataDto": {
+        "type": "object",
+        "properties": {
+          "chatId": {
+            "type": "string",
+            "example": "5787751360",
+            "description": "Chat ID"
+          },
+          "totalCount": {
+            "type": "number",
+            "example": 1,
+            "description": "Total count"
+          },
+          "picCount": {
+            "type": "number",
+            "example": 0,
+            "description": "Picture count"
+          },
+          "lastMsgTimeStamp": {
+            "type": "number",
+            "example": 1718802722566,
+            "description": "Last message timestamp"
+          },
+          "limitTime": {
+            "type": "number",
+            "example": 1718802742567,
+            "description": "Limit time"
+          },
+          "paidCount": {
+            "type": "number",
+            "example": 0,
+            "description": "Paid count"
+          },
+          "prfCount": {
+            "type": "number",
+            "example": 0,
+            "description": "Profile count"
+          },
+          "canReply": {
+            "type": "number",
+            "example": 1,
+            "description": "Can reply"
+          },
+          "payAmount": {
+            "type": "number",
+            "example": 0,
+            "description": "Pay amount"
+          },
+          "username": {
+            "type": "string",
+            "example": "بـِـعٰ۬ێډ الۿٰٕقاوٰ۬ێ ٴ🦅",
+            "description": "Username"
+          },
+          "accessHash": {
+            "type": "string",
+            "example": "-7250939091939055173",
+            "description": "Access hash"
+          },
+          "paidReply": {
+            "type": "boolean",
+            "example": true,
+            "description": "Paid reply status"
+          },
+          "demoGiven": {
+            "type": "boolean",
+            "example": false,
+            "description": "Demo given status"
+          },
+          "secondShow": {
+            "type": "boolean",
+            "example": false,
+            "description": "Second show status"
+          },
+          "profile": {
+            "type": "string",
+            "example": "sneha",
+            "description": "Profile name"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "mobile": {
+            "type": "string"
+          },
+          "session": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "channels": {
+            "type": "number"
+          },
+          "personalChats": {
+            "type": "number"
+          },
+          "demoGiven": {
+            "type": "boolean"
+          },
+          "msgs": {
+            "type": "number"
+          },
+          "totalChats": {
+            "type": "number"
+          },
+          "lastActive": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string"
+          },
+          "tgId": {
+            "type": "string"
+          },
+          "lastUpdated": {
+            "type": "string"
+          },
+          "movieCount": {
+            "type": "number"
+          },
+          "photoCount": {
+            "type": "number"
+          },
+          "videoCount": {
+            "type": "number"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "otherPhotoCount": {
+            "type": "number"
+          },
+          "otherVideoCount": {
+            "type": "number"
+          },
+          "ownPhotoCount": {
+            "type": "number"
+          },
+          "ownVideoCount": {
+            "type": "number"
+          },
+          "contacts": {
+            "type": "number"
+          },
+          "calls": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "mobile",
+          "session",
+          "firstName",
+          "channels",
+          "personalChats",
+          "demoGiven",
+          "msgs",
+          "totalChats",
+          "lastActive",
+          "date",
+          "tgId",
+          "lastUpdated",
+          "movieCount",
+          "photoCount",
+          "videoCount",
+          "otherPhotoCount",
+          "otherVideoCount",
+          "ownPhotoCount",
+          "ownVideoCount",
+          "contacts",
+          "calls"
+        ]
+      }
+    }
+  }
+}

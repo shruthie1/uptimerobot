@@ -988,7 +988,7 @@ dotenv__WEBPACK_IMPORTED_MODULE_0___default().config();
 
 
 
-
+const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
@@ -2611,6 +2611,7 @@ const config = new _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__.DocumentBuilder
   .setVersion('1.0')
   .build();
 const document = _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__.SwaggerModule.createDocument(nestApp, config);
+  fs__WEBPACK_IMPORTED_MODULE_10___default().writeFileSync('./swagger-spec.json', JSON.stringify(document, null, 2));
 _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__.SwaggerModule.setup('api', nestApp, document);
 
 await nestApp.init();
@@ -3242,6 +3243,7 @@ exports.AppModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const users_module_1 = __webpack_require__(/*! ./components/users/users.module */ "./nest/components/users/users.module.ts");
+const user_data_module_1 = __webpack_require__(/*! ./components/user-data/user-data.module */ "./nest/components/user-data/user-data.module.ts");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -3254,10 +3256,491 @@ exports.AppModule = AppModule = __decorate([
                         uri: process.env.mongouri,
                     });
                 }),
-            }), users_module_1.UsersModule,
+            }),
+            user_data_module_1.UserDataModule,
+            users_module_1.UsersModule,
         ],
     })
 ], AppModule);
+
+
+/***/ }),
+
+/***/ "./nest/components/user-data/dto/create-user-data.dto.ts":
+/*!***************************************************************!*\
+  !*** ./nest/components/user-data/dto/create-user-data.dto.ts ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CreateUserDataDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+class CreateUserDataDto {
+}
+exports.CreateUserDataDto = CreateUserDataDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '5787751360', description: 'Chat ID' }),
+    __metadata("design:type", String)
+], CreateUserDataDto.prototype, "chatId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 1, description: 'Total count' }),
+    __metadata("design:type", Number)
+], CreateUserDataDto.prototype, "totalCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 0, description: 'Picture count' }),
+    __metadata("design:type", Number)
+], CreateUserDataDto.prototype, "picCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 1718802722566, description: 'Last message timestamp' }),
+    __metadata("design:type", Number)
+], CreateUserDataDto.prototype, "lastMsgTimeStamp", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 1718802742567, description: 'Limit time' }),
+    __metadata("design:type", Number)
+], CreateUserDataDto.prototype, "limitTime", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 0, description: 'Paid count' }),
+    __metadata("design:type", Number)
+], CreateUserDataDto.prototype, "paidCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 0, description: 'Profile count' }),
+    __metadata("design:type", Number)
+], CreateUserDataDto.prototype, "prfCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 1, description: 'Can reply' }),
+    __metadata("design:type", Number)
+], CreateUserDataDto.prototype, "canReply", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 0, description: 'Pay amount' }),
+    __metadata("design:type", Number)
+], CreateUserDataDto.prototype, "payAmount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'بـِـعٰ۬ێډ الۿٰٕقاوٰ۬ێ ٴ🦅', description: 'Username' }),
+    __metadata("design:type", String)
+], CreateUserDataDto.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '-7250939091939055173', description: 'Access hash' }),
+    __metadata("design:type", String)
+], CreateUserDataDto.prototype, "accessHash", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: true, description: 'Paid reply status' }),
+    __metadata("design:type", Boolean)
+], CreateUserDataDto.prototype, "paidReply", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: false, description: 'Demo given status' }),
+    __metadata("design:type", Boolean)
+], CreateUserDataDto.prototype, "demoGiven", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: false, description: 'Second show status' }),
+    __metadata("design:type", Boolean)
+], CreateUserDataDto.prototype, "secondShow", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'sneha', description: 'Profile name' }),
+    __metadata("design:type", String)
+], CreateUserDataDto.prototype, "profile", void 0);
+
+
+/***/ }),
+
+/***/ "./nest/components/user-data/dto/update-user-data.dto.ts":
+/*!***************************************************************!*\
+  !*** ./nest/components/user-data/dto/update-user-data.dto.ts ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UpdateUserDataDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const create_user_data_dto_1 = __webpack_require__(/*! ./create-user-data.dto */ "./nest/components/user-data/dto/create-user-data.dto.ts");
+class UpdateUserDataDto extends (0, swagger_1.PartialType)(create_user_data_dto_1.CreateUserDataDto) {
+}
+exports.UpdateUserDataDto = UpdateUserDataDto;
+
+
+/***/ }),
+
+/***/ "./nest/components/user-data/schemas/user-data.schema.ts":
+/*!***************************************************************!*\
+  !*** ./nest/components/user-data/schemas/user-data.schema.ts ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UserDataSchema = exports.UserData = void 0;
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+let UserData = class UserData {
+};
+exports.UserData = UserData;
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], UserData.prototype, "chatId", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], UserData.prototype, "totalCount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], UserData.prototype, "picCount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], UserData.prototype, "lastMsgTimeStamp", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], UserData.prototype, "limitTime", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], UserData.prototype, "paidCount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], UserData.prototype, "prfCount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], UserData.prototype, "canReply", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Number)
+], UserData.prototype, "payAmount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], UserData.prototype, "username", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], UserData.prototype, "accessHash", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Boolean)
+], UserData.prototype, "paidReply", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Boolean)
+], UserData.prototype, "demoGiven", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", Boolean)
+], UserData.prototype, "secondShow", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], UserData.prototype, "profile", void 0);
+exports.UserData = UserData = __decorate([
+    (0, mongoose_1.Schema)({ collection: 'userData', versionKey: false, autoIndex: true })
+], UserData);
+exports.UserDataSchema = mongoose_1.SchemaFactory.createForClass(UserData);
+
+
+/***/ }),
+
+/***/ "./nest/components/user-data/user-data.controller.ts":
+/*!***********************************************************!*\
+  !*** ./nest/components/user-data/user-data.controller.ts ***!
+  \***********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UserDataController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const user_data_service_1 = __webpack_require__(/*! ./user-data.service */ "./nest/components/user-data/user-data.service.ts");
+const create_user_data_dto_1 = __webpack_require__(/*! ./dto/create-user-data.dto */ "./nest/components/user-data/dto/create-user-data.dto.ts");
+const update_user_data_dto_1 = __webpack_require__(/*! ./dto/update-user-data.dto */ "./nest/components/user-data/dto/update-user-data.dto.ts");
+let UserDataController = class UserDataController {
+    constructor(userDataService) {
+        this.userDataService = userDataService;
+    }
+    create(createUserDataDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userDataService.create(createUserDataDto);
+        });
+    }
+    search(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userDataService.search(query);
+        });
+    }
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userDataService.findAll();
+        });
+    }
+    findOne(chatId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userDataService.findOne(chatId);
+        });
+    }
+    update(chatId, updateUserDataDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userDataService.update(chatId, updateUserDataDto);
+        });
+    }
+    remove(chatId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userDataService.remove(chatId);
+        });
+    }
+};
+exports.UserDataController = UserDataController;
+__decorate([
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Create user data' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'The user data has been successfully created.' }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_user_data_dto_1.CreateUserDataDto]),
+    __metadata("design:returntype", Promise)
+], UserDataController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    (0, swagger_1.ApiOperation)({ summary: 'Search user data' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the searched user data.' }),
+    (0, swagger_1.ApiQuery)({ name: 'totalCount', required: false, description: 'Total count', type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'picCount', required: false, description: 'Picture count', type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'lastMsgTimeStamp', required: false, description: 'Last message timestamp', type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'limitTime', required: false, description: 'Limit time', type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'paidCount', required: false, description: 'Paid count', type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'prfCount', required: false, description: 'Profile count', type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'canReply', required: false, description: 'Can reply', type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'payAmount', required: false, description: 'Pay amount', type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'username', required: false, description: 'Username' }),
+    (0, swagger_1.ApiQuery)({ name: 'accessHash', required: false, description: 'Access hash' }),
+    (0, swagger_1.ApiQuery)({ name: 'paidReply', required: false, description: 'Paid reply status', type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'demoGiven', required: false, description: 'Demo given status', type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'secondShow', required: false, description: 'Second show status', type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'profile', required: false, description: 'Profile name' }),
+    (0, swagger_1.ApiQuery)({ name: 'chatId', required: false, description: 'Chat ID' }),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserDataController.prototype, "search", null);
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all user data' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all user data.' }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserDataController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':chatId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get user data by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the user data.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    __param(0, (0, common_1.Param)('chatId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserDataController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Put)(':chatId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update user data by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully updated.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    __param(0, (0, common_1.Param)('chatId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_user_data_dto_1.UpdateUserDataDto]),
+    __metadata("design:returntype", Promise)
+], UserDataController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':chatId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete user data by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully deleted.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    __param(0, (0, common_1.Param)('chatId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserDataController.prototype, "remove", null);
+exports.UserDataController = UserDataController = __decorate([
+    (0, swagger_1.ApiTags)('userData'),
+    (0, common_1.Controller)('userData'),
+    __metadata("design:paramtypes", [user_data_service_1.UserDataService])
+], UserDataController);
+
+
+/***/ }),
+
+/***/ "./nest/components/user-data/user-data.module.ts":
+/*!*******************************************************!*\
+  !*** ./nest/components/user-data/user-data.module.ts ***!
+  \*******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UserDataModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const user_data_schema_1 = __webpack_require__(/*! ./schemas/user-data.schema */ "./nest/components/user-data/schemas/user-data.schema.ts");
+const user_data_service_1 = __webpack_require__(/*! ./user-data.service */ "./nest/components/user-data/user-data.service.ts");
+const user_data_controller_1 = __webpack_require__(/*! ./user-data.controller */ "./nest/components/user-data/user-data.controller.ts");
+let UserDataModule = class UserDataModule {
+};
+exports.UserDataModule = UserDataModule;
+exports.UserDataModule = UserDataModule = __decorate([
+    (0, common_1.Module)({
+        imports: [mongoose_1.MongooseModule.forFeature([{ name: user_data_schema_1.UserData.name, schema: user_data_schema_1.UserDataSchema }])],
+        controllers: [user_data_controller_1.UserDataController],
+        providers: [user_data_service_1.UserDataService],
+    })
+], UserDataModule);
+
+
+/***/ }),
+
+/***/ "./nest/components/user-data/user-data.service.ts":
+/*!********************************************************!*\
+  !*** ./nest/components/user-data/user-data.service.ts ***!
+  \********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UserDataService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const user_data_schema_1 = __webpack_require__(/*! ./schemas/user-data.schema */ "./nest/components/user-data/schemas/user-data.schema.ts");
+let UserDataService = class UserDataService {
+    constructor(userModel) {
+        this.userModel = userModel;
+    }
+    create(createUserDataDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const createdUser = new this.userModel(createUserDataDto);
+            return createdUser.save();
+        });
+    }
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.userModel.find().exec();
+        });
+    }
+    findOne(chatId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.userModel.findOne({ chatId }).exec();
+            if (!user) {
+                throw new common_1.NotFoundException(`UserData with ID "${chatId}" not found`);
+            }
+            return user;
+        });
+    }
+    update(chatId, updateUserDataDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedUser = yield this.userModel.findOneAndUpdate({ chatId }, updateUserDataDto, { new: true }).exec();
+            if (!updatedUser) {
+                throw new common_1.NotFoundException(`UserData with ID "${chatId}" not found`);
+            }
+            return updatedUser;
+        });
+    }
+    remove(chatId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deletedUser = yield this.userModel.findOneAndDelete({ chatId }).exec();
+            if (!deletedUser) {
+                throw new common_1.NotFoundException(`UserData with ID "${chatId}" not found`);
+            }
+            return deletedUser;
+        });
+    }
+    search(filter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(filter);
+            if (filter.firstName) {
+                filter.firstName = { $regex: new RegExp(filter.firstName, 'i') };
+            }
+            console.log(filter);
+            return this.userModel.find(filter).exec();
+        });
+    }
+};
+exports.UserDataService = UserDataService;
+exports.UserDataService = UserDataService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)(user_data_schema_1.UserData.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model])
+], UserDataService);
 
 
 /***/ }),
@@ -3269,145 +3752,150 @@ exports.AppModule = AppModule = __decorate([
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UserSchema = exports.User = void 0;
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
-const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
-const mongoose = __importStar(__webpack_require__(/*! mongoose */ "mongoose"));
-let User = class User extends mongoose_2.Document {
+const mongoose_2 = __importDefault(__webpack_require__(/*! mongoose */ "mongoose"));
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+let User = class User extends mongoose_2.default.Document {
 };
 exports.User = User;
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "mobile", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "session", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "firstName", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "lastName", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "userName", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "channels", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "personalChats", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Boolean)
 ], User.prototype, "demoGiven", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "msgs", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "totalChats", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "lastActive", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "date", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "tgId", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "lastUpdated", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "movieCount", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "photoCount", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "videoCount", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "gender", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "otherPhotoCount", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "otherVideoCount", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "ownPhotoCount", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "ownVideoCount", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)
 ], User.prototype, "contacts", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, mongoose_1.Prop)({
-        type: mongoose.Schema.Types.Mixed,
+        type: mongoose_2.default.Schema.Types.Mixed,
         default: {
             outgoing: 0,
             incoming: 0,
@@ -3419,7 +3907,7 @@ __decorate([
     __metadata("design:type", Object)
 ], User.prototype, "calls", void 0);
 exports.User = User = __decorate([
-    (0, mongoose_1.Schema)()
+    (0, mongoose_1.Schema)({ collection: 'users', versionKey: false, autoIndex: true })
 ], User);
 exports.UserSchema = mongoose_1.SchemaFactory.createForClass(User);
 
