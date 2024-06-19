@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
 
-@Schema()
+@Schema({ collection: 'users', versionKey: false, autoIndex: true })  // Specify the collection name here
 export class User extends Document {
   @Prop()
   mobile: string;
