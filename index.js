@@ -27,7 +27,7 @@ import { AppModule } from './nest/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { parseError } from "./utils";
 
-
+const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
