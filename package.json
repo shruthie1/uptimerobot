@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=16.0.0 <21.0.0"
+  },
   "scripts": {
     "webpack-dev": "webpack --watch --mode development",
     "webpack": "webpack --mode  production",
