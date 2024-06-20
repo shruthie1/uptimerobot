@@ -3352,24 +3352,6 @@ __decorate([
 
 /***/ }),
 
-/***/ "./nest/components/user-data/dto/update-user-data.dto.ts":
-/*!***************************************************************!*\
-  !*** ./nest/components/user-data/dto/update-user-data.dto.ts ***!
-  \***************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.UpdateUserDataDto = void 0;
-const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-const create_user_data_dto_1 = __webpack_require__(/*! ./create-user-data.dto */ "./nest/components/user-data/dto/create-user-data.dto.ts");
-class UpdateUserDataDto extends (0, swagger_1.PartialType)(create_user_data_dto_1.CreateUserDataDto) {
-}
-exports.UpdateUserDataDto = UpdateUserDataDto;
-
-
-/***/ }),
-
 /***/ "./nest/components/user-data/schemas/user-data.schema.ts":
 /*!***************************************************************!*\
   !*** ./nest/components/user-data/schemas/user-data.schema.ts ***!
@@ -3494,7 +3476,6 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
 const user_data_service_1 = __webpack_require__(/*! ./user-data.service */ "./nest/components/user-data/user-data.service.ts");
 const create_user_data_dto_1 = __webpack_require__(/*! ./dto/create-user-data.dto */ "./nest/components/user-data/dto/create-user-data.dto.ts");
-const update_user_data_dto_1 = __webpack_require__(/*! ./dto/update-user-data.dto */ "./nest/components/user-data/dto/update-user-data.dto.ts");
 let UserDataController = class UserDataController {
     constructor(userDataService) {
         this.userDataService = userDataService;
@@ -3585,14 +3566,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserDataController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Put)(':chatId'),
+    (0, common_1.Patch)(':chatId'),
     (0, swagger_1.ApiOperation)({ summary: 'Update user data by ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully updated.' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
     __param(0, (0, common_1.Param)('chatId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_user_data_dto_1.UpdateUserDataDto]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UserDataController.prototype, "update", null);
 __decorate([
@@ -3606,7 +3587,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserDataController.prototype, "remove", null);
 exports.UserDataController = UserDataController = __decorate([
-    (0, swagger_1.ApiTags)('userData'),
+    (0, swagger_1.ApiTags)('UserData of TG clients'),
     (0, common_1.Controller)('userData'),
     __metadata("design:paramtypes", [user_data_service_1.UserDataService])
 ], UserDataController);
@@ -3708,7 +3689,7 @@ let UserDataService = class UserDataService {
     }
     update(chatId, updateUserDataDto) {
         return __awaiter(this, void 0, void 0, function* () {
-            const updatedUser = yield this.userModel.findOneAndUpdate({ chatId }, updateUserDataDto, { new: true }).exec();
+            const updatedUser = yield this.userModel.findOneAndUpdate({ chatId }, { $set: updateUserDataDto }, { new: true }).exec();
             if (!updatedUser) {
                 throw new common_1.NotFoundException(`UserData with ID "${chatId}" not found`);
             }
@@ -4065,7 +4046,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "remove", null);
 exports.UsersController = UsersController = __decorate([
-    (0, swagger_1.ApiTags)('Users') // Tag to categorize all endpoints in this controller
+    (0, swagger_1.ApiTags)('Telegram Users') // Tag to categorize all endpoints in this controller
     ,
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])
@@ -4168,7 +4149,7 @@ let UsersService = class UsersService {
     }
     update(tgId, user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existingUser = yield this.userModel.findOneAndUpdate({ tgId }, user, { new: true }).exec();
+            const existingUser = yield this.userModel.findOneAndUpdate({ tgId }, { $set: user }, { new: true }).exec();
             if (!existingUser) {
                 throw new common_1.NotFoundException(`User with tgId ${tgId} not found`);
             }

@@ -1,25 +1,24 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserData, UserDataDocument } from './schemas/user-data.schema';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { UpdateUserDataDto } from './dto/update-user-data.dto';
 
 @Injectable()
 export class UserDataService {
-    constructor(@InjectModel(UserData.name) private userModel: Model<UserDataDocument>) { }
+    constructor(@InjectModel(UserData.name) private userDataModel: Model<UserDataDocument>) { }
 
     async create(createUserDataDto: CreateUserDataDto): Promise<UserData> {
-        const createdUser = new this.userModel(createUserDataDto);
+        const createdUser = new this.userDataModel(createUserDataDto);
         return createdUser.save();
     }
 
     async findAll(): Promise<UserData[]> {
-        return this.userModel.find().exec();
+        return this.userDataModel.find().exec();
     }
 
     async findOne(chatId: string): Promise<UserData> {
-        const user = await this.userModel.findOne({chatId}).exec();
+        const user = await this.userDataModel.findOne({chatId}).exec();
         if (!user) {
             throw new NotFoundException(`UserData with ID "${chatId}" not found`);
         }
@@ -27,7 +26,8 @@ export class UserDataService {
     }
 
     async update(chatId: string, updateUserDataDto: Partial<UserData>): Promise<UserData> {
-        const updatedUser = await this.userModel.findOneAndUpdate({chatId}, { $set: updateUserDataDto }, { new: true }).exec();
+        delete updateUserDataDto['_id']
+        const updatedUser = await this.userDataModel.findOneAndUpdate({chatId}, { $set: updateUserDataDto }, { new: true }).exec();
         if (!updatedUser) {
             throw new NotFoundException(`UserData with ID "${chatId}" not found`);
         }
@@ -35,7 +35,7 @@ export class UserDataService {
     }
 
     async remove(chatId: string): Promise<UserData> {
-        const deletedUser = await this.userModel.findOneAndDelete({chatId}).exec();
+        const deletedUser = await this.userDataModel.findOneAndDelete({chatId}).exec();
         if (!deletedUser) {
             throw new NotFoundException(`UserData with ID "${chatId}" not found`);
         }
@@ -48,6 +48,17 @@ export class UserDataService {
             filter.firstName = { $regex: new RegExp(filter.firstName, 'i') }
         }
         console.log(filter)
-        return this.userModel.find(filter).exec();
+        return this.userDataModel.find(filter).exec();
     }
+
+  async executeQuery(query: any): Promise<any> {
+    try {
+      if (!query) {
+        throw new BadRequestException('Query is invalid.');
+      }
+      return await this.userDataModel.find(query).exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }

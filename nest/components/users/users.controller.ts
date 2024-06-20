@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Param, Patch, Delete, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './schemas/user.schema';
-import { ApiTags, ApiOperation, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
-@ApiTags('Users') // Tag to categorize all endpoints in this controller
+@ApiTags('Telegram Users') // Tag to categorize all endpoints in this controller
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -75,6 +75,19 @@ export class UsersController {
   @Delete(':tgId')
   async remove(@Param('tgId') tgId: string) {
     return this.usersService.delete(tgId);
+  }
+
+  @Post('query')
+  @ApiOperation({ summary: 'Execute a custom MongoDB query' })
+  @ApiResponse({ status: 200, description: 'Query executed successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid query.' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  async executeQuery(@Body() query: any): Promise<any> {
+    try {
+      return await this.usersService.executeQuery(query);
+    } catch (error) {
+      throw error;  // You might want to handle errors more gracefully
+    }
   }
 
 }

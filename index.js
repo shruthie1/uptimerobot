@@ -175,7 +175,13 @@ try {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getuserstats2`);
-      const now = new Date();
+      
+      setTimeout(async () => {
+        await fetchWithTimeout(`${value.url}asktopay`);
+      }, 300000);
+      await sleep(1000)
+    }
+    const now = new Date();
       if (now.getUTCDate() % 5 === 1) {
         setTimeout(async () => {
           await db.resetAvailableMsgs();
@@ -183,11 +189,6 @@ try {
           await db.updateDefaultReactions();
         }, 30000);
       }
-      setTimeout(async () => {
-        await fetchWithTimeout(`${value.url}asktopay`);
-      }, 300000);
-      await sleep(1000)
-    }
 
     await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
     await db.resetPaidUsers();

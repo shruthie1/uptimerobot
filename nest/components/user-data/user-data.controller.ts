@@ -1,11 +1,10 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, NotFoundException, Query, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, Patch } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { UserDataService } from './user-data.service';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { UpdateUserDataDto } from './dto/update-user-data.dto';
 import { UserData } from './schemas/user-data.schema';
 
-@ApiTags('userData')
+@ApiTags('UserData of TG clients')
 @Controller('userData')
 export class UserDataController {
   constructor(private readonly userDataService: UserDataService) {}
@@ -70,5 +69,18 @@ export class UserDataController {
   @ApiResponse({ status: 404, description: 'User data not found.' })
   async remove(@Param('chatId') chatId: string): Promise<UserData> {
     return this.userDataService.remove(chatId);
+  }
+
+  @Post('query')
+  @ApiOperation({ summary: 'Execute a custom MongoDB query' })
+  @ApiResponse({ status: 200, description: 'Query executed successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid query.' })
+  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  async executeQuery(@Body() query: any): Promise<any> {
+    try {
+      return await this.userDataService.executeQuery(query);
+    } catch (error) {
+      throw error;  // You might want to handle errors more gracefully
+    }
   }
 }
