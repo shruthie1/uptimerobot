@@ -793,7 +793,6 @@ app.post('/getUserConfig', async (req, res) => {
   res.json(upiIds);
 });
 
-
 app.get('/builds', async (req, res) => {
   checkerclass.getinstance();
   const db = ChannelService.getInstance();
@@ -1040,38 +1039,6 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
   }
 });
 
-app.get('/getuser/:number/:u', async (req, res, next) => {
-  try {
-    const number = req.params?.number;
-    const username = req.params?.u;
-    const db = ChannelService.getInstance();
-    const user = await db.getUser({ mobile: number });
-    if (!hasClient(user.mobile)) {
-      console.log("In getuser")
-      const cli = await createClient(user.mobile, user.session);
-      const client = await getClient(user.mobile);
-      console.log("Connected");
-      if (cli) {
-        console.log("checking for :", username)
-        const res = await client.getchatId(username)
-        return (res)
-      } else {
-        console.log("Client Does not exist!")
-      }
-    } else {
-      const client = await getClient(user.mobile);
-      if (cli) {
-        const res = await client.getchatId(username)
-        return (res)
-      } else {
-        console.log("Client Does not exist!")
-      }
-    }
-  } catch (error) {
-    console.log("Some Error: ", parseError(error), error.code)
-  }
-});
-
 app.get('/set2fa/:number', async (req, res, next) => {
   res.send("Setting 2FA");
   next();
@@ -1159,7 +1126,6 @@ app.get('/SetAsBufferClient/:number', async (req, res, next) => {
   }
 });
 
-
 app.get('/updatePrivacy/:number', async (req, res, next) => {
   res.send("Updating Privacy");
   next();
@@ -1223,31 +1189,6 @@ app.get('/UpdateUsername/:number', async (req, res, next) => {
     console.log("Some Error: ", parseError(error), error)
   }
 });
-
-
-app.get('/UpdatePP/:number', async (req, res, next) => {
-  res.send("Updating profile Pic");
-  next();
-}, async (req, res) => {
-  try {
-    const number = req.params?.number;
-    const db = ChannelService.getInstance();
-    const user = await db.getUser({ mobile: number });
-    console.log(user);
-    if (!hasClient(user.mobile)) {
-      const cli = await createClient(user.mobile, user.session);
-      const client = await getClient(user.mobile);
-      if (cli) {
-        await client.updateProfilePic("./qrcode.jpg");
-      } else {
-        console.log("Client Does not exist!")
-      }
-    }
-  } catch (error) {
-    console.log("Some Error: ", parseError(error), error)
-  }
-});
-
 
 app.get('/UpdateName/:number', async (req, res, next) => {
   res.send("Updating Name");

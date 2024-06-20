@@ -908,34 +908,6 @@
         ]
       }
     },
-    "/telegram/dialogs/{mobile}": {
-      "get": {
-        "operationId": "TelegramController_getDialogs",
-        "summary": "Get all dialogs from Telegram",
-        "parameters": [
-          {
-            "name": "mobile",
-            "required": true,
-            "in": "path",
-            "description": "Mobile number",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Dialogs fetched successfully"
-          },
-          "400": {
-            "description": "Bad request"
-          }
-        },
-        "tags": [
-          "Telegram"
-        ]
-      }
-    },
     "/telegram/chatid/{mobile}": {
       "get": {
         "operationId": "TelegramController_getChatId",
@@ -1045,43 +1017,6 @@
         ]
       }
     },
-    "/telegram/lastmsgs/{mobile}": {
-      "get": {
-        "operationId": "TelegramController_getLastMsgs",
-        "summary": "Get the last messages from a specific chat",
-        "parameters": [
-          {
-            "name": "mobile",
-            "required": true,
-            "in": "path",
-            "description": "Mobile number",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "required": true,
-            "in": "query",
-            "description": "Limit the number of messages",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Messages fetched successfully"
-          },
-          "400": {
-            "description": "Bad request"
-          }
-        },
-        "tags": [
-          "Telegram"
-        ]
-      }
-    },
     "/telegram/selfmsgsinfo/{mobile}": {
       "get": {
         "operationId": "TelegramController_getSelfMsgsInfo",
@@ -1175,10 +1110,10 @@
         ]
       }
     },
-    "/telegram/allchats/{mobile}": {
+    "/telegram/set2Fa/{mobile}": {
       "get": {
-        "operationId": "TelegramController_getAllChats",
-        "summary": "Get all chats",
+        "operationId": "TelegramController_set2Fa",
+        "summary": "Set 2Fa",
         "parameters": [
           {
             "name": "mobile",
@@ -1192,10 +1127,171 @@
         ],
         "responses": {
           "200": {
-            "description": "All chats fetched successfully"
+            "description": "2Fa set successfully"
           },
           "400": {
             "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/setprofilepic/{mobile}/{name}": {
+      "get": {
+        "operationId": "TelegramController_setProfilePic",
+        "summary": "Set Profile Picture",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "User mobile number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "description": "Profile name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/SetAsBufferClient/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_setAsBufferClient",
+        "summary": "Set as Buffer Client",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "User mobile number",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/updatePrivacy/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_updatePrivacy",
+        "summary": "Update Privacy Settings",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "User mobile number",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/UpdateUsername/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_updateUsername",
+        "summary": "Update Username",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "User mobile number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "username",
+            "required": true,
+            "in": "query",
+            "description": "New username",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/UpdateName/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_updateName",
+        "summary": "Update Name",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "User mobile number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "firstName",
+            "required": true,
+            "in": "query",
+            "description": "First Name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "about",
+            "required": true,
+            "in": "query",
+            "description": "About",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
           }
         },
         "tags": [
