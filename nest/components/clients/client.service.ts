@@ -6,6 +6,7 @@ import { CreateClientDto } from './dto/create-client.dto';
 
 @Injectable()
 export class ClientService {
+    private clientsMap: Map<string, Client> = new Map();
     constructor(@InjectModel(Client.name) private clientModel: Model<ClientDocument>) { }
 
     async create(createClientDto: CreateClientDto): Promise<Client> {
@@ -14,20 +15,35 @@ export class ClientService {
     }
 
     async findAll(): Promise<Client[]> {
-        return this.clientModel.find().exec();
+        if (this.clientsMap.size < 3) {
+            const results: Client[] = await this.clientModel.find().exec();
+            for (const client of results) {
+                this.clientsMap.set(client.clientId, client)
+            }
+            return results
+        } else {
+            return Array.from(this.clientsMap.values())
+        }
     }
 
     async findOne(clientId: string): Promise<Client> {
-        const user = await this.clientModel.findOne({clientId}).exec();
-        if (!user) {
-            throw new NotFoundException(`Client with ID "${clientId}" not found`);
+        const client = this.clientsMap.get(clientId)
+        if (client) {
+            return client;
+        } else {
+            const user = await this.clientModel.findOne({ clientId }).exec();
+            this.clientsMap.set(clientId, user);
+            if (!user) {
+                throw new NotFoundException(`Client with ID "${clientId}" not found`);
+            }
+            return user;
         }
-        return user;
     }
 
     async update(clientId: string, updateClientDto: Partial<Client>): Promise<Client> {
         delete updateClientDto['_id']
-        const updatedUser = await this.clientModel.findOneAndUpdate({clientId}, { $set: updateClientDto }, { new: true }).exec();
+        const updatedUser = await this.clientModel.findOneAndUpdate({ clientId }, { $set: updateClientDto }, { new: true }).exec();
+        this.clientsMap.set(clientId, updatedUser);
         if (!updatedUser) {
             throw new NotFoundException(`Client with ID "${clientId}" not found`);
         }
@@ -35,7 +51,7 @@ export class ClientService {
     }
 
     async remove(clientId: string): Promise<Client> {
-        const deletedUser = await this.clientModel.findOneAndDelete({clientId}).exec();
+        const deletedUser = await this.clientModel.findOneAndDelete({ clientId }).exec();
         if (!deletedUser) {
             throw new NotFoundException(`Client with ID "${clientId}" not found`);
         }
@@ -51,14 +67,14 @@ export class ClientService {
         return this.clientModel.find(filter).exec();
     }
 
-  async executeQuery(query: any): Promise<any> {
-    try {
-      if (!query) {
-        throw new BadRequestException('Query is invalid.');
-      }
-      return await this.clientModel.find(query).exec();
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
+    async executeQuery(query: any): Promise<any> {
+        try {
+            if (!query) {
+                throw new BadRequestException('Query is invalid.');
+            }
+            return await this.clientModel.find(query).exec();
+        } catch (error) {
+            throw new InternalServerErrorException(error.message);
+        }
     }
-  }
 }

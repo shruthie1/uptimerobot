@@ -967,6 +967,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _nest_app_module__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_nest_app_module__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
 /* harmony import */ var _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! mongoose */ "mongoose");
+/* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(mongoose__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./nest/components/Telegram/TelegramConnectionManager */ "./nest/components/Telegram/TelegramConnectionManager.ts");
+/* harmony import */ var _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var _nest_components_users_users_service__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./nest/components/users/users.service */ "./nest/components/users/users.service.ts");
+/* harmony import */ var _nest_components_users_users_service__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_nest_components_users_users_service__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var _nest_components_users_schemas_user_schema__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./nest/components/users/schemas/user.schema */ "./nest/components/users/schemas/user.schema.ts");
+/* harmony import */ var _nest_components_users_schemas_user_schema__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_nest_components_users_schemas_user_schema__WEBPACK_IMPORTED_MODULE_18__);
 
 
 dotenv__WEBPACK_IMPORTED_MODULE_0___default().config();
@@ -975,6 +983,10 @@ dotenv__WEBPACK_IMPORTED_MODULE_0___default().config();
 
 
  // Assuming timeZone and timeZoneName are exported from node-schedule-tz
+
+
+
+
 
 
 
@@ -1909,10 +1921,11 @@ app.get('/connectclient2/:number', async (req, res) => {
 
 // Second API to create the client when the button is clicked
 app.get('/cc/:number', async (req, res) => {
+ const connections =  _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default().getInstance()
   const number = req.params?.number;
-  if (!(0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.hasClient)(number)) {
+  if (!connections.hasClient(number)) {
     console.log("In createclient - ", req.ip);
-    const cli = await (0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.createClient)(number, /* Add user session here */);
+    const cli =  connections.createClient(number)
     if (cli) {
       res.send("client created");
     } else {
@@ -1925,13 +1938,14 @@ app.get('/cc/:number', async (req, res) => {
 
 
 app.get('/connectclient/:number', async (req, res) => {
+  const connections =  _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default().getInstance()
   const number = req.params?.number;
-  const db = _dbservice__WEBPACK_IMPORTED_MODULE_4__.ChannelService.getInstance();
-  const user = await db.getUser({ mobile: number });
+  const user = (await usersService.search({ mobile: number }))[0]
+  console.log(user);
   if (user) {
-    if (!(0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.hasClient)(user.mobile)) {
+    if (!connections.hasClient(user.mobile)) {
       console.log("In connectclient - ", req.ip)
-      const cli = await (0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.createClient)(user.mobile, user.session);
+      const cli = await connections.createClient(user.mobile, user.session);
       if (cli) {
         res.send("client created");
       } else {
@@ -2616,7 +2630,9 @@ const document = _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__.SwaggerModule.cre
 _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__.SwaggerModule.setup('api', nestApp, document);
 
 await nestApp.init();
+let usersService; 
 app.listen(port, async () => {
+  usersService = new _nest_components_users_users_service__WEBPACK_IMPORTED_MODULE_17__.UsersService(mongoose__WEBPACK_IMPORTED_MODULE_15___default().model(_nest_components_users_schemas_user_schema__WEBPACK_IMPORTED_MODULE_18__.User.name, _nest_components_users_schemas_user_schema__WEBPACK_IMPORTED_MODULE_18__.UserSchema))
   console.log(`Example app listening at http://localhost:${port}`)
 });
 
@@ -3246,6 +3262,7 @@ const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose
 const users_module_1 = __webpack_require__(/*! ./components/users/users.module */ "./nest/components/users/users.module.ts");
 const user_data_module_1 = __webpack_require__(/*! ./components/user-data/user-data.module */ "./nest/components/user-data/user-data.module.ts");
 const client_module_1 = __webpack_require__(/*! ./components/clients/client.module */ "./nest/components/clients/client.module.ts");
+const Telegram_module_1 = __webpack_require__(/*! ./components/Telegram/Telegram.module */ "./nest/components/Telegram/Telegram.module.ts");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -3262,9 +3279,1006 @@ exports.AppModule = AppModule = __decorate([
             client_module_1.ClientModule,
             user_data_module_1.UserDataModule,
             users_module_1.UsersModule,
+            Telegram_module_1.TelegramModule
         ],
     })
 ], AppModule);
+
+
+/***/ }),
+
+/***/ "./nest/components/Telegram/Telegram.controller.ts":
+/*!*********************************************************!*\
+  !*** ./nest/components/Telegram/Telegram.controller.ts ***!
+  \*********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TelegramController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const users_service_1 = __webpack_require__(/*! ../users/users.service */ "./nest/components/users/users.service.ts"); // Adjust the import path accordingly
+const TelegramConnectionManager_1 = __importDefault(__webpack_require__(/*! ./TelegramConnectionManager */ "./nest/components/Telegram/TelegramConnectionManager.ts"));
+let TelegramController = class TelegramController {
+    constructor(usersService) {
+        this.usersService = usersService;
+    }
+    connectClient(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            if (!telegramManager) {
+                throw new common_1.BadRequestException('Failed to connect the client');
+            }
+            return 'Client connected successfully';
+        });
+    }
+    getMessages(mobile_1, username_1) {
+        return __awaiter(this, arguments, void 0, function* (mobile, username, limit = 8) {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            return telegramManager.getMessages(username, limit);
+        });
+    }
+    getDialogs(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            return yield telegramManager.getDialogs();
+        });
+    }
+    getChatId(mobile, username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            return yield telegramManager.getchatId(username);
+        });
+    }
+    joinChannels(mobile, channels) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            yield telegramManager.joinChannels(channels);
+            return 'Channels joined successfully';
+        });
+    }
+    removeOtherAuths(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            yield telegramManager.removeOtherAuths();
+            return 'Authorizations removed successfully';
+        });
+    }
+    getLastMsgs(mobile, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            return yield telegramManager.getLastMsgs(limit);
+        });
+    }
+    getSelfMsgsInfo(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            return yield telegramManager.getSelfMSgsInfo();
+        });
+    }
+    getChannelInfo(mobile_1) {
+        return __awaiter(this, arguments, void 0, function* (mobile, sendIds = false) {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            return yield telegramManager.channelInfo(sendIds);
+        });
+    }
+    getAuths(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            return yield telegramManager.getAuths();
+        });
+    }
+    getAllChats(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
+            return yield telegramManager.getAllChats();
+        });
+    }
+};
+exports.TelegramController = TelegramController;
+__decorate([
+    (0, common_1.Get)('connect/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create and connect a new Telegram client' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Client connected successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "connectClient", null);
+__decorate([
+    (0, common_1.Get)('messages/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get messages from Telegram' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiQuery)({ name: 'username', description: 'Username to fetch messages from', required: true }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', description: 'Limit the number of messages', required: false }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Messages fetched successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __param(1, (0, common_1.Query)('username')),
+    __param(2, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "getMessages", null);
+__decorate([
+    (0, common_1.Get)('dialogs/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all dialogs from Telegram' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Dialogs fetched successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "getDialogs", null);
+__decorate([
+    (0, common_1.Get)('chatid/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get chat ID for a username' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiQuery)({ name: 'username', description: 'Username to fetch chat ID for', required: true }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Chat ID fetched successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __param(1, (0, common_1.Query)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "getChatId", null);
+__decorate([
+    (0, common_1.Post)('joinchannels/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Join channels' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiBody)({ description: 'Channels string', schema: { type: 'object', properties: { channels: { type: 'string' } } } }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Channels joined successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __param(1, (0, common_1.Body)('channels')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "joinChannels", null);
+__decorate([
+    (0, common_1.Get)('removeauths/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Remove other authorizations' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Authorizations removed successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "removeOtherAuths", null);
+__decorate([
+    (0, common_1.Get)('lastmsgs/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get the last messages from a specific chat' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', description: 'Limit the number of messages', required: true }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Messages fetched successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __param(1, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "getLastMsgs", null);
+__decorate([
+    (0, common_1.Get)('selfmsgsinfo/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get self messages info' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Self messages info fetched successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "getSelfMsgsInfo", null);
+__decorate([
+    (0, common_1.Get)('channelinfo/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get channel info' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiQuery)({ name: 'sendIds', description: 'Whether to send IDs or not', required: false }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Channel info fetched successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __param(1, (0, common_1.Query)('sendIds')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Boolean]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "getChannelInfo", null);
+__decorate([
+    (0, common_1.Get)('auths/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get authorizations' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Authorizations fetched successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "getAuths", null);
+__decorate([
+    (0, common_1.Get)('allchats/:mobile'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all chats' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'All chats fetched successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    __param(0, (0, common_1.Param)('mobile')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TelegramController.prototype, "getAllChats", null);
+exports.TelegramController = TelegramController = __decorate([
+    (0, common_1.Controller)('telegram'),
+    (0, swagger_1.ApiTags)('Telegram'),
+    __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
+    __metadata("design:paramtypes", [users_service_1.UsersService])
+], TelegramController);
+
+
+/***/ }),
+
+/***/ "./nest/components/Telegram/Telegram.module.ts":
+/*!*****************************************************!*\
+  !*** ./nest/components/Telegram/Telegram.module.ts ***!
+  \*****************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TelegramModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const Telegram_controller_1 = __webpack_require__(/*! ./Telegram.controller */ "./nest/components/Telegram/Telegram.controller.ts");
+const users_module_1 = __webpack_require__(/*! ../users/users.module */ "./nest/components/users/users.module.ts");
+let TelegramModule = class TelegramModule {
+};
+exports.TelegramModule = TelegramModule;
+exports.TelegramModule = TelegramModule = __decorate([
+    (0, common_1.Module)({
+        imports: [users_module_1.UsersModule],
+        controllers: [Telegram_controller_1.TelegramController],
+        // providers:[UsersService]
+    })
+], TelegramModule);
+
+
+/***/ }),
+
+/***/ "./nest/components/Telegram/Telegram.service.ts":
+/*!******************************************************!*\
+  !*** ./nest/components/Telegram/Telegram.service.ts ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const telegram_1 = __webpack_require__(/*! telegram */ "telegram");
+const sessions_1 = __webpack_require__(/*! telegram/sessions */ "telegram/sessions");
+const events_1 = __webpack_require__(/*! telegram/events */ "telegram/events");
+const tl_1 = __webpack_require__(/*! telegram/tl */ "telegram/tl");
+const axios_1 = __importDefault(__webpack_require__(/*! axios */ "axios"));
+const fs = __importStar(__webpack_require__(/*! fs */ "fs"));
+const uploads_1 = __webpack_require__(/*! telegram/client/uploads */ "telegram/client/uploads");
+const mongoose_1 = __importDefault(__webpack_require__(/*! mongoose */ "mongoose"));
+const activechannels_service_1 = __webpack_require__(/*! ../activechannels/activechannels.service */ "./nest/components/activechannels/activechannels.service.ts");
+const active_channel_schema_1 = __webpack_require__(/*! ../activechannels/schemas/active-channel.schema */ "./nest/components/activechannels/schemas/active-channel.schema.ts");
+const utils_1 = __webpack_require__(/*! ../../../utils */ "./utils.js");
+const Logger_1 = __webpack_require__(/*! telegram/extensions/Logger */ "telegram/extensions/Logger");
+class TelegramManager {
+    constructor(sessionString, phoneNumber) {
+        console.log(sessionString);
+        this.activeChannelsService = new activechannels_service_1.ActiveChannelsService(mongoose_1.default.model(active_channel_schema_1.ActiveChannel.name, active_channel_schema_1.ActiveChannelSchema));
+        this.session = new sessions_1.StringSession(sessionString);
+        this.phoneNumber = phoneNumber;
+        this.client = null;
+        this.channelArray = [];
+    }
+    disconnect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.client) {
+                yield this.client.disconnect();
+                yield this.client.destroy();
+            }
+            this.session.delete();
+        });
+    }
+    getchatId(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client)
+                throw new Error('Client is not initialized');
+            const tt = yield this.client.getInputEntity(username);
+            console.log(tt);
+            return tt;
+        });
+    }
+    createClient() {
+        return __awaiter(this, arguments, void 0, function* (handler = true) {
+            try {
+                this.client = new telegram_1.TelegramClient(this.session, parseInt(process.env.API_ID), process.env.API_HASH, {
+                    connectionRetries: 5,
+                });
+                this.client.setLogLevel(Logger_1.LogLevel.ERROR);
+                yield this.client.connect();
+                const me = yield this.client.getMe();
+                console.log("Connected Client : ", me.phone);
+                if (handler && this.client) {
+                    this.client.addEventHandler((event) => __awaiter(this, void 0, void 0, function* () { yield this.handleEvents(event); }), new events_1.NewMessage());
+                }
+                return this.client;
+            }
+            catch (error) {
+                console.log((0, utils_1.parseError)(error));
+                return undefined;
+            }
+        });
+    }
+    getMessages(entityLike_1) {
+        return __awaiter(this, arguments, void 0, function* (entityLike, limit = 8) {
+            const messages = yield this.client.getMessages(entityLike, { limit });
+            return messages;
+        });
+    }
+    getDialogs() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const chats = yield this.client.getDialogs({ limit: 500 });
+            console.log("TotalChats:", chats.total);
+            return chats;
+        });
+    }
+    getLastMsgs(limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client)
+                throw new Error('Client is not initialized');
+            const msgs = yield this.client.getMessages("777000", { limit });
+            let resp = '';
+            msgs.forEach((msg) => {
+                console.log(msg.text);
+                resp += msg.text + "\n";
+            });
+            return resp;
+        });
+    }
+    getSelfMSgsInfo() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client)
+                throw new Error('Client is not initialized');
+            const self = yield this.client.getMe();
+            const selfChatId = self.id;
+            let photoCount = 0;
+            let videoCount = 0;
+            let movieCount = 0;
+            const messageHistory = yield this.client.getMessages(selfChatId, { limit: 200 });
+            for (const message of messageHistory) {
+                if (message.photo) {
+                    photoCount++;
+                }
+                else if (message.video) {
+                    videoCount++;
+                }
+                const text = message.text.toLocaleLowerCase();
+                if ((0, utils_1.contains)(text, ['movie', 'series', '1080', '720', '640', 'title', 'aac', '265', 'hdrip', 'mkv', 'hq', '480', 'blura', 's0', 'se0', 'uncut'])) {
+                    movieCount++;
+                }
+            }
+            return { photoCount, videoCount, movieCount };
+        });
+    }
+    channelInfo() {
+        return __awaiter(this, arguments, void 0, function* (sendIds = false) {
+            if (!this.client)
+                throw new Error('Client is not initialized');
+            const chats = yield this.client.getDialogs({ limit: 600 });
+            let canSendTrueCount = 0;
+            let canSendFalseCount = 0;
+            let totalCount = 0;
+            this.channelArray.length = 0;
+            console.log(chats.total);
+            chats.forEach((chat) => __awaiter(this, void 0, void 0, function* () {
+                if (chat.isChannel || chat.isGroup) {
+                    try {
+                        const chatEntity = yield chat.entity.toJSON();
+                        const { broadcast, defaultBannedRights } = chatEntity;
+                        totalCount++;
+                        if (!broadcast && !(defaultBannedRights === null || defaultBannedRights === void 0 ? void 0 : defaultBannedRights.sendMessages)) {
+                            canSendTrueCount++;
+                            this.channelArray.push(chatEntity.username);
+                        }
+                        else {
+                            canSendFalseCount++;
+                        }
+                    }
+                    catch (error) {
+                        console.log((0, utils_1.parseError)(error));
+                    }
+                }
+            }));
+            return {
+                chatsArrayLength: totalCount,
+                canSendTrueCount,
+                canSendFalseCount,
+                ids: sendIds ? this.channelArray : []
+            };
+        });
+    }
+    joinChannels(str) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d;
+            const channels = str.split('|');
+            console.log(this.phoneNumber, " - channelsLen - ", channels.length);
+            for (let i = 0; i < channels.length; i++) {
+                const channel = channels[i].trim();
+                console.log(this.phoneNumber, "Trying: ", channel);
+                try {
+                    const joinResult = yield ((_a = this.client) === null || _a === void 0 ? void 0 : _a.invoke(new tl_1.Api.channels.JoinChannel({
+                        channel: yield ((_b = this.client) === null || _b === void 0 ? void 0 : _b.getEntity(channel))
+                    })));
+                    console.log(this.phoneNumber, " - Joined channel Success - ", channel);
+                    try {
+                        const chatEntity = yield ((_c = this.client) === null || _c === void 0 ? void 0 : _c.getEntity(channel));
+                        const { title, id, broadcast, defaultBannedRights, participantsCount, megagroup, username } = chatEntity;
+                        const entity = {
+                            title,
+                            id: id.toString(),
+                            username,
+                            megagroup,
+                            participantsCount,
+                            broadcast
+                        };
+                        if (!chatEntity.broadcast && !(defaultBannedRights === null || defaultBannedRights === void 0 ? void 0 : defaultBannedRights.sendMessages)) {
+                            entity['canSendMsgs'] = true;
+                            try {
+                                yield this.activeChannelsService.update(entity.id.toString(), entity);
+                                console.log("updated ActiveChannels");
+                            }
+                            catch (error) {
+                                console.log((0, utils_1.parseError)(error));
+                                console.log("Failed to update ActiveChannels");
+                            }
+                        }
+                        else {
+                            yield this.activeChannelsService.remove(entity.id.toString());
+                            // await db.removeOnefromActiveChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
+                            // await db.removeOnefromChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
+                            console.log("Removed Channel- ", channel);
+                        }
+                    }
+                    catch (error) {
+                        console.log(this.phoneNumber, " - Failed - ", error);
+                    }
+                }
+                catch (error) {
+                    console.log("Channels ERR: ", error);
+                    if (error.toString().includes("No user has") || error.toString().includes("USERNAME_INVALID")) {
+                        const activeChannel = yield this.activeChannelsService.search({ username: channel.replace('@', '') });
+                        yield this.activeChannelsService.remove((_d = activeChannel[0]) === null || _d === void 0 ? void 0 : _d.channelId);
+                        // await db.removeOnefromChannel({ username: channel.startsWith("@") ? channel : `@${channel}` });
+                        console.log("Removed Channel- ", channel);
+                    }
+                }
+                console.log(this.phoneNumber, " - On waiting period");
+                yield new Promise(resolve => setTimeout(resolve, 3 * 60 * 1000));
+                console.log(this.phoneNumber, " - Will Try next");
+            }
+            console.log(this.phoneNumber, " - finished joining channels");
+            if (this.client) {
+                yield this.client.disconnect();
+                // await deleteClient(this.phoneNumber);
+            }
+        });
+    }
+    removeOtherAuths() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client)
+                throw new Error('Client is not initialized');
+            const result = yield this.client.invoke(new tl_1.Api.account.GetAuthorizations());
+            const updatedAuthorizations = result.authorizations.map((auth) => {
+                var _a;
+                if (auth.country.toLowerCase().includes('singapore') || auth.deviceModel.toLowerCase().includes('oneplus') ||
+                    auth.deviceModel.toLowerCase().includes('cli') || auth.deviceModel.toLowerCase().includes('linux') ||
+                    auth.appName.toLowerCase().includes('likki') || auth.appName.toLowerCase().includes('rams') ||
+                    auth.appName.toLowerCase().includes('sru') || auth.appName.toLowerCase().includes('shru')
+                    || auth.deviceModel.toLowerCase().includes('windows')) {
+                    return auth;
+                }
+                else {
+                    (_a = this.client) === null || _a === void 0 ? void 0 : _a.invoke(new tl_1.Api.account.ResetAuthorization({ hash: auth.hash }));
+                    return null;
+                }
+            }).filter(Boolean);
+            console.log(updatedAuthorizations);
+        });
+    }
+    getAuths() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client)
+                throw new Error('Client is not initialized');
+            const result = yield this.client.invoke(new tl_1.Api.account.GetAuthorizations());
+            return result;
+        });
+    }
+    getAllChats() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client)
+                throw new Error('Client is not initialized');
+            const chats = yield this.client.getDialogs({ limit: 500 });
+            console.log("TotalChats:", chats.total);
+            const chatData = [];
+            for (const chat of chats) {
+                const chatEntity = yield chat.entity.toJSON();
+                chatData.push(chatEntity);
+            }
+            return chatData;
+        });
+    }
+    handleEvents(event) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (event.isPrivate) {
+                if (event.message.chatId.toString() == "777000") {
+                    console.log(event.message.text.toLowerCase());
+                    const ppplbot = `https://api.telegram.org/bot${process.env.ramyaredd1bot}/sendMessage`;
+                    const payload = {
+                        "chat_id": "-1001801844217",
+                        "text": event.message.text
+                    };
+                    axios_1.default.post(ppplbot, payload)
+                        .then((response) => {
+                    })
+                        .catch((error) => {
+                        console.log((0, utils_1.parseError)(error));
+                        console.log((0, utils_1.parseError)(error));
+                    });
+                    yield event.message.delete({ revoke: true });
+                }
+            }
+        });
+    }
+    getFileUrl(url, filename) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield axios_1.default.get(url, { responseType: 'stream' });
+            const filePath = `/tmp/${filename}`;
+            yield new Promise((resolve, reject) => {
+                const writer = fs.createWriteStream(filePath);
+                response.data.pipe(writer);
+                writer.on('finish', resolve);
+                writer.on('error', reject);
+            });
+            return filePath;
+        });
+    }
+    sendPhotoChat(id, url, caption, filename) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client)
+                throw new Error('Client is not initialized');
+            const filePath = yield this.getFileUrl(url, filename);
+            const file = new uploads_1.CustomFile(filePath, fs.statSync(filePath).size, filename);
+            yield this.client.sendFile(id, { file, caption });
+        });
+    }
+    sendFileChat(id, url, caption, filename) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.client)
+                throw new Error('Client is not initialized');
+            const filePath = yield this.getFileUrl(url, filename);
+            const file = new uploads_1.CustomFile(filePath, fs.statSync(filePath).size, filename);
+            yield this.client.sendFile(id, { file, caption });
+        });
+    }
+}
+exports["default"] = TelegramManager;
+
+
+/***/ }),
+
+/***/ "./nest/components/Telegram/TelegramConnectionManager.ts":
+/*!***************************************************************!*\
+  !*** ./nest/components/Telegram/TelegramConnectionManager.ts ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const utils_1 = __webpack_require__(/*! ../../../utils */ "./utils.js");
+const Telegram_service_1 = __importDefault(__webpack_require__(/*! ./Telegram.service */ "./nest/components/Telegram/Telegram.service.ts"));
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+class TelegramConnectionManager {
+    constructor(usersService) {
+        this.clients = new Map();
+        this.usersService = usersService;
+    }
+    static getInstance(usersService) {
+        if (!TelegramConnectionManager.instance) {
+            TelegramConnectionManager.instance = new TelegramConnectionManager(usersService);
+        }
+        return TelegramConnectionManager.instance;
+    }
+    getActiveClientSetup() {
+        return TelegramConnectionManager.activeClientSetup;
+    }
+    setActiveClientSetup(data) {
+        TelegramConnectionManager.activeClientSetup = data;
+    }
+    getClient(number) {
+        return this.clients.get(number);
+    }
+    hasClient(number) {
+        return this.clients.has(number);
+    }
+    deleteClient(number) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const cli = this.getClient(number);
+            yield (cli === null || cli === void 0 ? void 0 : cli.disconnect());
+            return this.clients.delete(number);
+        });
+    }
+    disconnectAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = this.clients.entries();
+            console.log("Disconnecting All Clients");
+            for (const [phoneNumber, client] of data) {
+                try {
+                    yield (client === null || client === void 0 ? void 0 : client.disconnect());
+                    this.clients.delete(phoneNumber);
+                    console.log(`Client disconnected: ${phoneNumber}`);
+                }
+                catch (error) {
+                    console.log((0, utils_1.parseError)(error));
+                    console.log(`Failed to Disconnect : ${phoneNumber}`);
+                }
+            }
+        });
+    }
+    createClient(mobile_1) {
+        return __awaiter(this, arguments, void 0, function* (mobile, autoDisconnect = true, handler = true) {
+            const user = (yield this.usersService.search({ mobile }))[0];
+            if (!user) {
+                throw new common_1.BadRequestException('user not found');
+            }
+            if (!this.clients.has(mobile)) {
+                return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                    const telegramManager = new Telegram_service_1.default(user.session, user.mobile);
+                    const client = yield telegramManager.createClient(handler);
+                    if (client) {
+                        this.clients.set(mobile, telegramManager);
+                        if (autoDisconnect) {
+                            setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                                if (client.connected || this.clients.get(mobile)) {
+                                    console.log("SELF destroy client");
+                                    yield telegramManager.disconnect();
+                                }
+                                else {
+                                    console.log("Client Already Disconnected");
+                                }
+                                this.clients.delete(mobile);
+                            }), 180000);
+                        }
+                        else {
+                            setInterval(() => __awaiter(this, void 0, void 0, function* () {
+                                yield client.connect();
+                            }), 20000);
+                        }
+                        resolve(telegramManager);
+                    }
+                    else {
+                        yield this.usersService.delete(user.tgId);
+                        throw new common_1.BadRequestException('Client Expired');
+                        resolve(undefined);
+                    }
+                }));
+            }
+            else {
+                return this.clients.get(mobile);
+            }
+        });
+    }
+}
+exports["default"] = TelegramConnectionManager;
+
+
+/***/ }),
+
+/***/ "./nest/components/activechannels/activechannels.service.ts":
+/*!******************************************************************!*\
+  !*** ./nest/components/activechannels/activechannels.service.ts ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ActiveChannelsService = void 0;
+// src/activechannels/activechannels.service.ts
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const active_channel_schema_1 = __webpack_require__(/*! ./schemas/active-channel.schema */ "./nest/components/activechannels/schemas/active-channel.schema.ts");
+let ActiveChannelsService = class ActiveChannelsService {
+    constructor(activeChannelModel) {
+        this.activeChannelModel = activeChannelModel;
+    }
+    create(createActiveChannelDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const createdChannel = new this.activeChannelModel(createActiveChannelDto);
+            return createdChannel.save();
+        });
+    }
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.activeChannelModel.find().exec();
+        });
+    }
+    findOne(channelId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const channel = yield this.activeChannelModel.findOne({ channelId }).exec();
+            return channel;
+        });
+    }
+    update(channelId, updateActiveChannelDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedChannel = yield this.activeChannelModel.findOneAndUpdate({ channelId }, updateActiveChannelDto, { new: true }).exec();
+            return updatedChannel;
+        });
+    }
+    remove(channelId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.activeChannelModel.findOneAndDelete({ channelId }).exec();
+        });
+    }
+    search(filter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(filter);
+            return this.activeChannelModel.find(filter).exec();
+        });
+    }
+    addReactions(channelId, reactions) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const channel = yield this.activeChannelModel.findOneAndUpdate({ channelId }, {
+                $addToSet: { availableMsgs: reactions }
+            });
+            return channel;
+        });
+    }
+    getRandomReaction(channelId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const channel = yield this.activeChannelModel.findOne({ channelId }).exec();
+            if (!channel) {
+                return undefined;
+            }
+            if (channel.reactions.length === 0) {
+                return undefined;
+            }
+            const randomIndex = Math.floor(Math.random() * channel.reactions.length);
+            return channel.reactions[randomIndex];
+        });
+    }
+    removeReaction(channelId, reaction) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const channel = yield this.activeChannelModel.findOneAndUpdate({ channelId }, {
+                $pull: { reactions: reaction }
+            });
+            return channel;
+        });
+    }
+};
+exports.ActiveChannelsService = ActiveChannelsService;
+exports.ActiveChannelsService = ActiveChannelsService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)(active_channel_schema_1.ActiveChannel.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model])
+], ActiveChannelsService);
+
+
+/***/ }),
+
+/***/ "./nest/components/activechannels/schemas/active-channel.schema.ts":
+/*!*************************************************************************!*\
+  !*** ./nest/components/activechannels/schemas/active-channel.schema.ts ***!
+  \*************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ActiveChannelSchema = exports.ActiveChannel = void 0;
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const mongoose = __importStar(__webpack_require__(/*! mongoose */ "mongoose"));
+let ActiveChannel = class ActiveChannel extends mongoose_2.Document {
+};
+exports.ActiveChannel = ActiveChannel;
+__decorate([
+    (0, mongoose_1.Prop)({ required: true, unique: true }),
+    __metadata("design:type", String)
+], ActiveChannel.prototype, "channelId", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], ActiveChannel.prototype, "broadcast", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: true }),
+    __metadata("design:type", Boolean)
+], ActiveChannel.prototype, "canSendMsgs", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose.Schema.Types.Number, default: 0 }),
+    __metadata("design:type", Number)
+], ActiveChannel.prototype, "participantsCount", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], ActiveChannel.prototype, "restricted", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], ActiveChannel.prototype, "sendMessages", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], ActiveChannel.prototype, "title", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: false, default: null }),
+    __metadata("design:type", String)
+], ActiveChannel.prototype, "username", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose.Schema.Types.Number, default: 0 }),
+    __metadata("design:type", Number)
+], ActiveChannel.prototype, "wordRestriction", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose.Schema.Types.Number, default: 0 }),
+    __metadata("design:type", Number)
+], ActiveChannel.prototype, "dMRestriction", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [String], default: [] }),
+    __metadata("design:type", Array)
+], ActiveChannel.prototype, "availableMsgs", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: [String], default: [] }),
+    __metadata("design:type", Array)
+], ActiveChannel.prototype, "reactions", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], ActiveChannel.prototype, "banned", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: true }),
+    __metadata("design:type", Boolean)
+], ActiveChannel.prototype, "megagroup", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ default: false }),
+    __metadata("design:type", Boolean)
+], ActiveChannel.prototype, "reactRestricted", void 0);
+exports.ActiveChannel = ActiveChannel = __decorate([
+    (0, mongoose_1.Schema)({ collection: 'activeChannels', versionKey: false, autoIndex: true }) // Specify the collection name here
+], ActiveChannel);
+exports.ActiveChannelSchema = mongoose_1.SchemaFactory.createForClass(ActiveChannel);
 
 
 /***/ }),
@@ -3421,7 +4435,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ClientController.prototype, "executeQuery", null);
 exports.ClientController = ClientController = __decorate([
-    (0, swagger_1.ApiTags)('Client of TG clients'),
+    (0, swagger_1.ApiTags)('Clients'),
     (0, common_1.Controller)('client'),
     __metadata("design:paramtypes", [client_service_1.ClientService])
 ], ClientController);
@@ -3500,6 +4514,7 @@ const client_schema_1 = __webpack_require__(/*! ./schemas/client.schema */ "./ne
 let ClientService = class ClientService {
     constructor(clientModel) {
         this.clientModel = clientModel;
+        this.clientsMap = new Map();
     }
     create(createClientDto) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -3509,22 +4524,39 @@ let ClientService = class ClientService {
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.clientModel.find().exec();
+            if (this.clientsMap.size < 3) {
+                const results = yield this.clientModel.find().exec();
+                for (const client of results) {
+                    this.clientsMap.set(client.clientId, client);
+                }
+                return results;
+            }
+            else {
+                return Array.from(this.clientsMap.values());
+            }
         });
     }
     findOne(clientId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.clientModel.findOne({ clientId }).exec();
-            if (!user) {
-                throw new common_1.NotFoundException(`Client with ID "${clientId}" not found`);
+            const client = this.clientsMap.get(clientId);
+            if (client) {
+                return client;
             }
-            return user;
+            else {
+                const user = yield this.clientModel.findOne({ clientId }).exec();
+                this.clientsMap.set(clientId, user);
+                if (!user) {
+                    throw new common_1.NotFoundException(`Client with ID "${clientId}" not found`);
+                }
+                return user;
+            }
         });
     }
     update(clientId, updateClientDto) {
         return __awaiter(this, void 0, void 0, function* () {
             delete updateClientDto['_id'];
             const updatedUser = yield this.clientModel.findOneAndUpdate({ clientId }, { $set: updateClientDto }, { new: true }).exec();
+            this.clientsMap.set(clientId, updatedUser);
             if (!updatedUser) {
                 throw new common_1.NotFoundException(`Client with ID "${clientId}" not found`);
             }
@@ -3671,57 +4703,61 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SearchClientDto = void 0;
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const class_transformer_1 = __webpack_require__(/*! class-transformer */ "class-transformer");
 class SearchClientDto {
 }
 exports.SearchClientDto = SearchClientDto;
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Channel link of the user' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Client ID of the client' }),
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "clientId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Database collection name' }),
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "dbcoll", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Channel link of the client' }),
     __metadata("design:type", String)
 ], SearchClientDto.prototype, "channelLink", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Link of the user' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Link of the client' }),
     __metadata("design:type", String)
 ], SearchClientDto.prototype, "link", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Name of the user' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Name of the client' }),
     __metadata("design:type", String)
 ], SearchClientDto.prototype, "name", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Phone number of the user' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Phone number of the client' }),
     __metadata("design:type", String)
 ], SearchClientDto.prototype, "number", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Password of the user' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Password of the client' }),
     __metadata("design:type", String)
 ], SearchClientDto.prototype, "password", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Repl link of the user' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Repl link of the client' }),
     __metadata("design:type", String)
 ], SearchClientDto.prototype, "repl", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Username of the user' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Clientname of the client' }),
     __metadata("design:type", String)
-], SearchClientDto.prototype, "userName", void 0);
+], SearchClientDto.prototype, "clientName", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({ description: 'Deployment key URL' }),
     __metadata("design:type", String)
 ], SearchClientDto.prototype, "deployKey", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Main account of the user' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Main account of the client' }),
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
     __metadata("design:type", String)
 ], SearchClientDto.prototype, "mainAccount", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Product associated with the user' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Product associated with the client' }),
     __metadata("design:type", String)
 ], SearchClientDto.prototype, "product", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Database collection name' }),
-    __metadata("design:type", String)
-], SearchClientDto.prototype, "dbcoll", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Client ID of the user' }),
-    __metadata("design:type", String)
-], SearchClientDto.prototype, "clientId", void 0);
 
 
 /***/ }),
@@ -4092,21 +5128,6 @@ __decorate([
     (0, common_1.Get)('search'),
     (0, swagger_1.ApiOperation)({ summary: 'Search user data' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the searched user data.' }),
-    (0, swagger_1.ApiQuery)({ name: 'totalCount', required: false, description: 'Total count', type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'picCount', required: false, description: 'Picture count', type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'lastMsgTimeStamp', required: false, description: 'Last message timestamp', type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'limitTime', required: false, description: 'Limit time', type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'paidCount', required: false, description: 'Paid count', type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'prfCount', required: false, description: 'Profile count', type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'canReply', required: false, description: 'Can reply', type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'payAmount', required: false, description: 'Pay amount', type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'username', required: false, description: 'Username' }),
-    (0, swagger_1.ApiQuery)({ name: 'accessHash', required: false, description: 'Access hash' }),
-    (0, swagger_1.ApiQuery)({ name: 'paidReply', required: false, description: 'Paid reply status', type: Boolean }),
-    (0, swagger_1.ApiQuery)({ name: 'demoGiven', required: false, description: 'Demo given status', type: Boolean }),
-    (0, swagger_1.ApiQuery)({ name: 'secondShow', required: false, description: 'Second show status', type: Boolean }),
-    (0, swagger_1.ApiQuery)({ name: 'profile', required: false, description: 'Profile name' }),
-    (0, swagger_1.ApiQuery)({ name: 'chatId', required: false, description: 'Chat ID' }),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -4695,6 +5716,7 @@ exports.UsersModule = UsersModule = __decorate([
         imports: [mongoose_1.MongooseModule.forFeature([{ name: user_schema_1.User.name, schema: user_schema_1.UserSchema }])],
         controllers: [users_controller_1.UsersController],
         providers: [users_service_1.UsersService],
+        exports: [users_service_1.UsersService]
     })
 ], UsersModule);
 
@@ -4820,7 +5842,6 @@ exports.UsersService = UsersService = __decorate([
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TelegramManager: () => (/* binding */ TelegramManager),
-/* harmony export */   contains: () => (/* binding */ contains),
 /* harmony export */   createClient: () => (/* binding */ createClient),
 /* harmony export */   deleteClient: () => (/* binding */ deleteClient),
 /* harmony export */   disconnectAll: () => (/* binding */ disconnectAll),
@@ -4877,14 +5898,6 @@ async function deleteClient(number) {
     await cli?.disconnect();
     return clients.delete(number);
 }
-function contains(str, arr) {
-    return (arr.some(element => {
-        if (str?.includes(element)) {
-            return true;
-        }
-        return false;
-    }))
-};
 
 async function disconnectAll() {
     const data = clients.entries();
@@ -4990,28 +6003,28 @@ class TelegramManager {
         return (resp)
     }
 
-    async getSelfMSgsInfo(){
+    async getSelfMSgsInfo() {
         const self = await this.client.getMe();
         const selfChatId = self.id;
-    
+
         let photoCount = 0;
         let videoCount = 0;
         let movieCount = 0;
-    
+
         const messageHistory = await this.client.getMessages(selfChatId, { limit: 200 }); // Adjust limit as needed
         for (const message of messageHistory) {
-          if (message.photo) {
-            photoCount++;
-          } else if (message.video) {
-            videoCount++;
-          }
-          const text = message.text.toLocaleLowerCase();
-          if(contains(text, ['movie', 'series', '1080', '720','640','title','aac', '265','hdrip', 'mkv','hq', '480', 'blura', 's0', 'se0','uncut'])){
-            movieCount++
-          }
+            if (message.photo) {
+                photoCount++;
+            } else if (message.video) {
+                videoCount++;
+            }
+            const text = message.text.toLocaleLowerCase();
+            if ((0,_utils__WEBPACK_IMPORTED_MODULE_6__.contains)(text, ['movie', 'series', '1080', '720', '640', 'title', 'aac', '265', 'hdrip', 'mkv', 'hq', '480', 'blura', 's0', 'se0', 'uncut'])) {
+                movieCount++
+            }
         }
 
-        return( {photoCount, videoCount, movieCount})
+        return ({ photoCount, videoCount, movieCount })
     }
     async channelInfo(sendIds = false) {
         const chats = await this.client?.getDialogs({ limit: 600 });
@@ -5461,6 +6474,7 @@ class TelegramManager {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   contains: () => (/* binding */ contains),
 /* harmony export */   fetchWithTimeout: () => (/* binding */ fetchWithTimeout),
 /* harmony export */   isMatchingChatEntity: () => (/* binding */ isMatchingChatEntity),
 /* harmony export */   parseError: () => (/* binding */ parseError),
@@ -5472,6 +6486,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 
 let botCount = 0
+
+function contains(str, arr) {
+  return (arr.some(element => {
+      if (str?.includes(element)) {
+          return true;
+      }
+      return false;
+  }))
+};
 
 const ppplbot = (chatId, botToken) => {
   let token = botToken;
@@ -5500,7 +6523,6 @@ function parseError(
   let error = 'UnknownError';
 
   const extractMessage = (data) => {
-    console.log(typeof data);
     if (Array.isArray(data)) {
       const messages = data.map((item) => extractMessage(item));
       return messages.filter((message) => message !== undefined).join(', ');
@@ -5525,7 +6547,6 @@ function parseError(
   };
 
   if (err.response) {
-    console.log("Checking in response")
     const response = err.response;
     status =
       response.data?.status ||
@@ -5547,7 +6568,6 @@ function parseError(
       err.code ||
       'Error';
   } else if (err.request) {
-    console.log("Checking in request")
     status = err.status || 'NO_RESPONSE';
     message = err.data?.message ||
       err.data?.errors ||
@@ -5557,7 +6577,6 @@ function parseError(
       err.message || 'The request was triggered but no response was received';
     error = err.name || err.code || 'NoResponseError';
   } else if (err.message) {
-    console.log("Checking in error")
     status = err.status || 'UNKNOWN';
     message = err.message;
     error = err.name || err.code || 'Error';
@@ -5723,6 +6742,16 @@ module.exports = require("body-parser");
 
 /***/ }),
 
+/***/ "class-transformer":
+/*!************************************!*\
+  !*** external "class-transformer" ***!
+  \************************************/
+/***/ ((module) => {
+
+module.exports = require("class-transformer");
+
+/***/ }),
+
 /***/ "cloudinary":
 /*!*****************************!*\
   !*** external "cloudinary" ***!
@@ -5823,6 +6852,16 @@ module.exports = require("telegram/client/uploads");
 
 /***/ }),
 
+/***/ "telegram/events":
+/*!**********************************!*\
+  !*** external "telegram/events" ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = require("telegram/events");
+
+/***/ }),
+
 /***/ "telegram/events/index.js":
 /*!*******************************************!*\
   !*** external "telegram/events/index.js" ***!
@@ -5833,6 +6872,16 @@ module.exports = require("telegram/events/index.js");
 
 /***/ }),
 
+/***/ "telegram/extensions/Logger":
+/*!*********************************************!*\
+  !*** external "telegram/extensions/Logger" ***!
+  \*********************************************/
+/***/ ((module) => {
+
+module.exports = require("telegram/extensions/Logger");
+
+/***/ }),
+
 /***/ "telegram/sessions":
 /*!************************************!*\
   !*** external "telegram/sessions" ***!
@@ -5840,6 +6889,16 @@ module.exports = require("telegram/events/index.js");
 /***/ ((module) => {
 
 module.exports = require("telegram/sessions");
+
+/***/ }),
+
+/***/ "telegram/tl":
+/*!******************************!*\
+  !*** external "telegram/tl" ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = require("telegram/tl");
 
 /***/ }),
 

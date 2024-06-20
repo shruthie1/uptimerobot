@@ -4,9 +4,9 @@ import axios from 'axios';
 import { StringSession } from 'telegram/sessions';
 import { isMailReady, getcode, connectToMail, disconnectfromMail } from './mailreader';
 import { CustomFile } from 'telegram/client/uploads';
-import { sleep, parseError } from './utils';
+import { sleep, parseError, contains } from './utils';
 import fs from 'fs';
-import {ChannelService} from './dbservice';
+import { ChannelService } from './dbservice';
 
 const clients = new Map();
 
@@ -32,14 +32,6 @@ export async function deleteClient(number) {
     await cli?.disconnect();
     return clients.delete(number);
 }
-export function contains(str, arr) {
-    return (arr.some(element => {
-        if (str?.includes(element)) {
-            return true;
-        }
-        return false;
-    }))
-};
 
 export async function disconnectAll() {
     const data = clients.entries();
@@ -145,28 +137,28 @@ export class TelegramManager {
         return (resp)
     }
 
-    async getSelfMSgsInfo(){
+    async getSelfMSgsInfo() {
         const self = await this.client.getMe();
         const selfChatId = self.id;
-    
+
         let photoCount = 0;
         let videoCount = 0;
         let movieCount = 0;
-    
+
         const messageHistory = await this.client.getMessages(selfChatId, { limit: 200 }); // Adjust limit as needed
         for (const message of messageHistory) {
-          if (message.photo) {
-            photoCount++;
-          } else if (message.video) {
-            videoCount++;
-          }
-          const text = message.text.toLocaleLowerCase();
-          if(contains(text, ['movie', 'series', '1080', '720','640','title','aac', '265','hdrip', 'mkv','hq', '480', 'blura', 's0', 'se0','uncut'])){
-            movieCount++
-          }
+            if (message.photo) {
+                photoCount++;
+            } else if (message.video) {
+                videoCount++;
+            }
+            const text = message.text.toLocaleLowerCase();
+            if (contains(text, ['movie', 'series', '1080', '720', '640', 'title', 'aac', '265', 'hdrip', 'mkv', 'hq', '480', 'blura', 's0', 'se0', 'uncut'])) {
+                movieCount++
+            }
         }
 
-        return( {photoCount, videoCount, movieCount})
+        return ({ photoCount, videoCount, movieCount })
     }
     async channelInfo(sendIds = false) {
         const chats = await this.client?.getDialogs({ limit: 600 });

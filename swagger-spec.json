@@ -25,7 +25,7 @@
           }
         },
         "tags": [
-          "Client of TG clients"
+          "Clients"
         ]
       },
       "get": {
@@ -41,7 +41,7 @@
           }
         },
         "tags": [
-          "Client of TG clients"
+          "Clients"
         ]
       }
     },
@@ -51,10 +51,28 @@
         "summary": "Search user data",
         "parameters": [
           {
+            "name": "clientId",
+            "required": false,
+            "in": "query",
+            "description": "Client ID of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dbcoll",
+            "required": false,
+            "in": "query",
+            "description": "Database collection name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "channelLink",
             "required": false,
             "in": "query",
-            "description": "Channel link of the user",
+            "description": "Channel link of the client",
             "schema": {
               "type": "string"
             }
@@ -63,7 +81,7 @@
             "name": "link",
             "required": false,
             "in": "query",
-            "description": "Link of the user",
+            "description": "Link of the client",
             "schema": {
               "type": "string"
             }
@@ -72,7 +90,7 @@
             "name": "name",
             "required": false,
             "in": "query",
-            "description": "Name of the user",
+            "description": "Name of the client",
             "schema": {
               "type": "string"
             }
@@ -81,7 +99,7 @@
             "name": "number",
             "required": false,
             "in": "query",
-            "description": "Phone number of the user",
+            "description": "Phone number of the client",
             "schema": {
               "type": "string"
             }
@@ -90,7 +108,7 @@
             "name": "password",
             "required": false,
             "in": "query",
-            "description": "Password of the user",
+            "description": "Password of the client",
             "schema": {
               "type": "string"
             }
@@ -99,16 +117,16 @@
             "name": "repl",
             "required": false,
             "in": "query",
-            "description": "Repl link of the user",
+            "description": "Repl link of the client",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "userName",
+            "name": "clientName",
             "required": false,
             "in": "query",
-            "description": "Username of the user",
+            "description": "Clientname of the client",
             "schema": {
               "type": "string"
             }
@@ -126,7 +144,7 @@
             "name": "mainAccount",
             "required": false,
             "in": "query",
-            "description": "Main account of the user",
+            "description": "Main account of the client",
             "schema": {
               "type": "string"
             }
@@ -135,25 +153,7 @@
             "name": "product",
             "required": false,
             "in": "query",
-            "description": "Product associated with the user",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dbcoll",
-            "required": false,
-            "in": "query",
-            "description": "Database collection name",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "clientId",
-            "required": false,
-            "in": "query",
-            "description": "Client ID of the user",
+            "description": "Product associated with the client",
             "schema": {
               "type": "string"
             }
@@ -165,7 +165,7 @@
           }
         },
         "tags": [
-          "Client of TG clients"
+          "Clients"
         ]
       }
     },
@@ -192,7 +192,7 @@
           }
         },
         "tags": [
-          "Client of TG clients"
+          "Clients"
         ]
       },
       "patch": {
@@ -217,7 +217,7 @@
           }
         },
         "tags": [
-          "Client of TG clients"
+          "Clients"
         ]
       },
       "delete": {
@@ -242,7 +242,7 @@
           }
         },
         "tags": [
-          "Client of TG clients"
+          "Clients"
         ]
       }
     },
@@ -263,7 +263,7 @@
           }
         },
         "tags": [
-          "Client of TG clients"
+          "Clients"
         ]
       }
     },
@@ -315,135 +315,7 @@
       "get": {
         "operationId": "UserDataController_search",
         "summary": "Search user data",
-        "parameters": [
-          {
-            "name": "chatId",
-            "required": false,
-            "in": "query",
-            "description": "Chat ID",
-            "schema": {}
-          },
-          {
-            "name": "profile",
-            "required": false,
-            "in": "query",
-            "description": "Profile name",
-            "schema": {}
-          },
-          {
-            "name": "secondShow",
-            "required": false,
-            "in": "query",
-            "description": "Second show status",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "demoGiven",
-            "required": false,
-            "in": "query",
-            "description": "Demo given status",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "paidReply",
-            "required": false,
-            "in": "query",
-            "description": "Paid reply status",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "accessHash",
-            "required": false,
-            "in": "query",
-            "description": "Access hash",
-            "schema": {}
-          },
-          {
-            "name": "username",
-            "required": false,
-            "in": "query",
-            "description": "Username",
-            "schema": {}
-          },
-          {
-            "name": "payAmount",
-            "required": false,
-            "in": "query",
-            "description": "Pay amount",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "canReply",
-            "required": false,
-            "in": "query",
-            "description": "Can reply",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "prfCount",
-            "required": false,
-            "in": "query",
-            "description": "Profile count",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "paidCount",
-            "required": false,
-            "in": "query",
-            "description": "Paid count",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "limitTime",
-            "required": false,
-            "in": "query",
-            "description": "Limit time",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "lastMsgTimeStamp",
-            "required": false,
-            "in": "query",
-            "description": "Last message timestamp",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "picCount",
-            "required": false,
-            "in": "query",
-            "description": "Picture count",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "totalCount",
-            "required": false,
-            "in": "query",
-            "description": "Total count",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Return the searched user data."
@@ -959,6 +831,375 @@
         },
         "tags": [
           "Telegram Users"
+        ]
+      }
+    },
+    "/telegram/connect/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_connectClient",
+        "summary": "Create and connect a new Telegram client",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Client connected successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/messages/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_getMessages",
+        "summary": "Get messages from Telegram",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "username",
+            "required": true,
+            "in": "query",
+            "description": "Username to fetch messages from",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Limit the number of messages",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Messages fetched successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/dialogs/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_getDialogs",
+        "summary": "Get all dialogs from Telegram",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dialogs fetched successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/chatid/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_getChatId",
+        "summary": "Get chat ID for a username",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "username",
+            "required": true,
+            "in": "query",
+            "description": "Username to fetch chat ID for",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat ID fetched successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/joinchannels/{mobile}": {
+      "post": {
+        "operationId": "TelegramController_joinChannels",
+        "summary": "Join channels",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Channels string",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "channels": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Channels joined successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/removeauths/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_removeOtherAuths",
+        "summary": "Remove other authorizations",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorizations removed successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/lastmsgs/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_getLastMsgs",
+        "summary": "Get the last messages from a specific chat",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "description": "Limit the number of messages",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Messages fetched successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/selfmsgsinfo/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_getSelfMsgsInfo",
+        "summary": "Get self messages info",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Self messages info fetched successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/channelinfo/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_getChannelInfo",
+        "summary": "Get channel info",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sendIds",
+            "required": false,
+            "in": "query",
+            "description": "Whether to send IDs or not",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Channel info fetched successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/auths/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_getAuths",
+        "summary": "Get authorizations",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorizations fetched successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
+        ]
+      }
+    },
+    "/telegram/allchats/{mobile}": {
+      "get": {
+        "operationId": "TelegramController_getAllChats",
+        "summary": "Get all chats",
+        "parameters": [
+          {
+            "name": "mobile",
+            "required": true,
+            "in": "path",
+            "description": "Mobile number",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All chats fetched successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "tags": [
+          "Telegram"
         ]
       }
     }

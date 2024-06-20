@@ -1,6 +1,15 @@
 import  axios from 'axios';
 let botCount = 0
 
+export function contains(str, arr) {
+  return (arr.some(element => {
+      if (str?.includes(element)) {
+          return true;
+      }
+      return false;
+  }))
+};
+
 export const ppplbot = (chatId, botToken) => {
   let token = botToken;
   if (!token) {
@@ -28,7 +37,6 @@ export function parseError(
   let error = 'UnknownError';
 
   const extractMessage = (data) => {
-    console.log(typeof data);
     if (Array.isArray(data)) {
       const messages = data.map((item) => extractMessage(item));
       return messages.filter((message) => message !== undefined).join(', ');
@@ -53,7 +61,6 @@ export function parseError(
   };
 
   if (err.response) {
-    console.log("Checking in response")
     const response = err.response;
     status =
       response.data?.status ||
@@ -75,7 +82,6 @@ export function parseError(
       err.code ||
       'Error';
   } else if (err.request) {
-    console.log("Checking in request")
     status = err.status || 'NO_RESPONSE';
     message = err.data?.message ||
       err.data?.errors ||
@@ -85,7 +91,6 @@ export function parseError(
       err.message || 'The request was triggered but no response was received';
     error = err.name || err.code || 'NoResponseError';
   } else if (err.message) {
-    console.log("Checking in error")
     status = err.status || 'UNKNOWN';
     message = err.message;
     error = err.name || err.code || 'Error';
