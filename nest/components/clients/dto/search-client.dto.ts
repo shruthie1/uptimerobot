@@ -2,6 +2,14 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, TransformFnParams } from 'class-transformer';
 
 export class SearchClientDto {
+    @ApiPropertyOptional({ description: 'Client ID of the client' })
+    @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
+    clientId?: string;
+    
+    @ApiPropertyOptional({ description: 'Database collection name' })
+    @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
+    dbcoll?: string;
+
     @ApiPropertyOptional({ description: 'Channel link of the client' })
     channelLink?: string;
 
@@ -32,12 +40,4 @@ export class SearchClientDto {
 
     @ApiPropertyOptional({ description: 'Product associated with the client' })
     product?: string;
-
-    @ApiPropertyOptional({ description: 'Database collection name' })
-    @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
-    dbcoll?: string;
-
-    @ApiPropertyOptional({ description: 'Client ID of the client' })
-    @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
-    clientId?: string;
 }
