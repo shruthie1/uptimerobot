@@ -1,4 +1,5 @@
 import Imap from 'imap';
+import { parseError } from '../../utils';
 
 export class MailReader {
     private static instance: MailReader;
@@ -41,10 +42,10 @@ export class MailReader {
     }
 
     public async connectToMail(): Promise<void> {
-        this.result = '';
         await new Promise<void>((resolve, reject) => {
             this.imap.connect((err) => {
                 if (err) {
+                    console.log(parseError(err))
                     reject(err);
                     return;
                 }
@@ -55,10 +56,10 @@ export class MailReader {
     }
 
     public async disconnectFromMail(): Promise<void> {
-        this.result = '';
         await new Promise<void>((resolve, reject) => {
             this.imap.end((err) => {
                 if (err) {
+                    console.log(parseError(err))
                     reject(err);
                     return;
                 }
@@ -77,92 +78,97 @@ export class MailReader {
             throw new Error('Mail reader is not ready. Call connectToMail() first.');
         }
 
-        await this.openInbox();
-
-        const searchCriteria = [['FROM', 'noreply@telegram.org']];
-        const fetchOptions = {
-            bodies: ['HEADER', 'TEXT'],
-            markSeen: true,
-        };
-
         try {
-            const results: any = await new Promise((resolve, reject) => {
-                this.imap.search(searchCriteria, (err, results) => {
-                    if (err) {
-                        reject(err);
-                        return;
-                    }
-                    resolve(results);
+            await this.openInbox();
+
+            const searchCriteria = [['FROM', 'noreply@telegram.org']];
+            const fetchOptions = {
+                bodies: ['HEADER', 'TEXT'],
+                markSeen: true,
+            };
+
+            try {
+                const results: any = await new Promise((resolve, reject) => {
+                    this.imap.search(searchCriteria, (err, results) => {
+                        if (err) {
+                            console.log(parseError(err))
+                            reject(err);
+                            return;
+                        }
+                        resolve(results);
+                    });
                 });
-            });
 
-            if (results.length > 0) {
-                const fetch = this.imap.fetch([results[results.length - 1]], fetchOptions);
-                await new Promise<void>((resolve, reject) => {
-                    fetch.on('message', (msg, seqno) => {
-                        const emailData: string[] = [];
+                if (results.length > 0) {
+                    const fetch = this.imap.fetch([results[results.length - 1]], fetchOptions);
+                    await new Promise<void>((resolve, reject) => {
+                        fetch.on('message', (msg, seqno) => {
+                            const emailData: string[] = [];
 
-                        msg.on('body', (stream, info) => {
-                            let buffer = '';
-                            stream.on('data', (chunk) => {
-                                buffer += chunk.toString('utf8');
-                            });
+                            msg.on('body', (stream, info) => {
+                                let buffer = '';
+                                stream.on('data', (chunk) => {
+                                    buffer += chunk.toString('utf8');
+                                });
 
-                            stream.on('end', () => {
-                                if (info.which === 'TEXT') {
-                                    emailData.push(buffer);
-                                }
-                                this.imap.seq.addFlags([seqno], '\\Deleted', (err) => {
-                                    if (err) {
-                                        reject(err);
-                                        return;
+                                stream.on('end', () => {
+                                    if (info.which === 'TEXT') {
+                                        emailData.push(buffer);
                                     }
-                                    this.imap.expunge((err) => {
+                                    this.imap.seq.addFlags([seqno], '\\Deleted', (err) => {
                                         if (err) {
                                             reject(err);
                                             return;
                                         }
-                                        console.log(`Deleted message`);
+                                        this.imap.expunge((err) => {
+                                            if (err) {
+                                                reject(err);
+                                                return;
+                                            }
+                                            console.log(`Deleted message`);
+                                        });
                                     });
                                 });
                             });
+
+                            msg.once('end', () => {
+                                console.log(`Email #${seqno}, Latest ${results[length - 1]}`);
+                                console.log('EmailDataLength:', emailData.length);
+                                console.log('Mail:', emailData[emailData.length - 1].split('.'));
+                                this.result = this.fetchNumbersFromString(
+                                    emailData[emailData.length - 1].split('.')[0]
+                                );
+                                resolve();
+                            });
                         });
 
-                        msg.once('end', () => {
-                            console.log(`Email #${seqno}, Latest ${results[length - 1]}`);
-                            console.log('EmailDataLength:', emailData.length);
-                            console.log('Mail:', emailData[emailData.length - 1].split('.'));
-                            this.result = this.fetchNumbersFromString(
-                                emailData[emailData.length - 1].split('.')[0]
-                            );
+                        fetch.once('end', () => {
+                            console.log('Fetched mails');
                             resolve();
                         });
                     });
-
-                    fetch.once('end', () => {
-                        console.log('Fetched mails');
-                        resolve();
-                    });
-                });
-            } else {
-                console.log('No new emails found');
+                } else {
+                    console.log('No new emails found');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                throw err; // Re-throw the error for caller to handle
+            } finally {
+                if (this.result.length > 4) {
+                    await this.disconnectFromMail();
+                }
             }
-        } catch (err) {
-            console.error('Error:', err);
-            throw err; // Re-throw the error for caller to handle
-        } finally {
-            if (this.result.length > 4) {
-                await this.disconnectFromMail();
-            }
+            return this.result;
+        } catch (error) {
+            const errorDetails = parseError(error);
+            throw Error(errorDetails.message)
         }
-
-        return this.result;
     }
-
     private async openInbox(): Promise<void> {
         await new Promise<void>((resolve, reject) => {
             this.imap.openBox('INBOX', false, (err) => {
                 if (err) {
+                    console.log(parseError(err))
                     reject(err);
                     return;
                 }
