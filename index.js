@@ -35,6 +35,11 @@ const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
+
+process.on('uncaughtException', (reason, promise) => {
+  console.error(promise, reason);
+});
+
 process.on('exit', async () => {
   await ChannelService.getInstance().closeConnection();
   await disconnectAll();

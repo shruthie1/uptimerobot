@@ -460,44 +460,49 @@ class TelegramManager {
 
     async set2fa() {
         const imapService = MailReader.getInstance();
-        imapService.connectToMail();
-        const intervalParentId = setInterval(async () => {
-            const isReady = imapService.isMailReady();
-            if (isReady) {
-                clearInterval(intervalParentId);
-                await this.client.updateTwoFaSettings({
-                    isCheckPassword: false,
-                    email: "storeslaksmi@gmail.com",
-                    hint: "password - India143",
-                    newPassword: "Ajtdmwajt1@",
-                    emailCodeCallback: async (length) => {
-                        console.log("code sent");
-                        return new Promise(async (resolve) => {
-                            let retry = 0
-                            const intervalId = setInterval(async () => {
-                                console.log("checking code");
-                                retry++
-                                const isReady = imapService.isMailReady();
-                                if (isReady && retry < 4) {
-                                    const code = await imapService.getCode();
-                                    if (code !== '') {
+        try {
+            imapService.connectToMail();
+            const intervalParentId = setInterval(async () => {
+                const isReady = imapService.isMailReady();
+                if (isReady) {
+                    clearInterval(intervalParentId);
+                    await this.client.updateTwoFaSettings({
+                        isCheckPassword: false,
+                        email: "storeslaksmi@gmail.com",
+                        hint: "password - India143",
+                        newPassword: "Ajtdmwajt1@",
+                        emailCodeCallback: async (length) => {
+                            console.log("code sent");
+                            return new Promise(async (resolve) => {
+                                let retry = 0
+                                const intervalId = setInterval(async () => {
+                                    console.log("checking code");
+                                    retry++
+                                    const isReady = imapService.isMailReady();
+                                    if (isReady && retry < 4) {
+                                        const code = await imapService.getCode();
+                                        if (code !== '') {
+                                            clearInterval(intervalId);
+                                            imapService.disconnectFromMail()
+                                            resolve(code);
+                                        }
+                                    } else {
                                         clearInterval(intervalId);
+                                        await this.client.disconnect();
                                         imapService.disconnectFromMail()
-                                        resolve(code);
+                                        resolve(undefined);
                                     }
-                                } else {
-                                    clearInterval(intervalId);
-                                    await this.client.disconnect();
-                                    imapService.disconnectFromMail()
-                                    resolve(undefined);
-                                }
-                            }, 6000);
-                        });
-                    },
-                    onEmailCodeError: (e) => { console.log(parseError(e)); return Promise.resolve("error") }
-                })
-            }
-        }, 5000);
+                                }, 6000);
+                            });
+                        },
+                        onEmailCodeError: (e) => { console.log(parseError(e)); return Promise.resolve("error") }
+                    })
+                }
+            }, 5000);
+        } catch (e) {
+            console.log(e)
+            parseError(e)
+        }
     }
     async sendPhotoChat(id: string, url: string, caption: string, filename: string): Promise<void> {
         if (!this.client) throw new Error('Client is not initialized');

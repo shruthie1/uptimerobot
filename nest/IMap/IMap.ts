@@ -42,7 +42,8 @@ export class MailReader {
     }
 
     public async connectToMail(): Promise<void> {
-        await new Promise<void>((resolve, reject) => {
+        console.log('Connecting to mail server');
+        const result = await new Promise<Boolean>((resolve, reject) => {
             this.imap.connect((err) => {
                 if (err) {
                     console.log(parseError(err))
@@ -50,9 +51,10 @@ export class MailReader {
                     return;
                 }
                 console.log('Connected to mail server');
-                resolve();
+                resolve(true);
             });
         });
+        console.log(result)
     }
 
     public async disconnectFromMail(): Promise<void> {
@@ -86,7 +88,7 @@ export class MailReader {
                 bodies: ['HEADER', 'TEXT'],
                 markSeen: true,
             };
-
+            console.log('Inbox Opened');
             try {
                 const results: any = await new Promise((resolve, reject) => {
                     this.imap.search(searchCriteria, (err, results) => {
@@ -100,6 +102,7 @@ export class MailReader {
                 });
 
                 if (results.length > 0) {
+                    console.log('Emails found')
                     const fetch = this.imap.fetch([results[results.length - 1]], fetchOptions);
                     await new Promise<void>((resolve, reject) => {
                         fetch.on('message', (msg, seqno) => {
