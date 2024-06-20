@@ -1136,7 +1136,13 @@ try {
       await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${value.url}getuserstats2`);
-      const now = new Date();
+      
+      setTimeout(async () => {
+        await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${value.url}asktopay`);
+      }, 300000);
+      await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.sleep)(1000)
+    }
+    const now = new Date();
       if (now.getUTCDate() % 5 === 1) {
         setTimeout(async () => {
           await db.resetAvailableMsgs();
@@ -1144,11 +1150,6 @@ try {
           await db.updateDefaultReactions();
         }, 30000);
       }
-      setTimeout(async () => {
-        await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${value.url}asktopay`);
-      }, 300000);
-      await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.sleep)(1000)
-    }
 
     await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
     await db.resetPaidUsers();
@@ -3244,6 +3245,7 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const users_module_1 = __webpack_require__(/*! ./components/users/users.module */ "./nest/components/users/users.module.ts");
 const user_data_module_1 = __webpack_require__(/*! ./components/user-data/user-data.module */ "./nest/components/user-data/user-data.module.ts");
+const client_module_1 = __webpack_require__(/*! ./components/clients/client.module */ "./nest/components/clients/client.module.ts");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -3257,11 +3259,565 @@ exports.AppModule = AppModule = __decorate([
                     });
                 }),
             }),
+            client_module_1.ClientModule,
             user_data_module_1.UserDataModule,
             users_module_1.UsersModule,
         ],
     })
 ], AppModule);
+
+
+/***/ }),
+
+/***/ "./nest/components/clients/client.controller.ts":
+/*!******************************************************!*\
+  !*** ./nest/components/clients/client.controller.ts ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ClientController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const client_service_1 = __webpack_require__(/*! ./client.service */ "./nest/components/clients/client.service.ts");
+const create_client_dto_1 = __webpack_require__(/*! ./dto/create-client.dto */ "./nest/components/clients/dto/create-client.dto.ts");
+const search_client_dto_1 = __webpack_require__(/*! ./dto/search-client.dto */ "./nest/components/clients/dto/search-client.dto.ts");
+let ClientController = class ClientController {
+    constructor(clientService) {
+        this.clientService = clientService;
+    }
+    create(createClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.create(createClientDto);
+        });
+    }
+    search(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.search(query);
+        });
+    }
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.findAll();
+        });
+    }
+    findOne(clientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.findOne(clientId);
+        });
+    }
+    update(clientId, updateClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.update(clientId, updateClientDto);
+        });
+    }
+    remove(clientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.remove(clientId);
+        });
+    }
+    executeQuery(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.clientService.executeQuery(query);
+            }
+            catch (error) {
+                throw error; // You might want to handle errors more gracefully
+            }
+        });
+    }
+};
+exports.ClientController = ClientController;
+__decorate([
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Create user data' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'The user data has been successfully created.' }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_client_dto_1.CreateClientDto]),
+    __metadata("design:returntype", Promise)
+], ClientController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    (0, swagger_1.ApiOperation)({ summary: 'Search user data' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the searched user data.' }),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [search_client_dto_1.SearchClientDto]),
+    __metadata("design:returntype", Promise)
+], ClientController.prototype, "search", null);
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all user data' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all user data.' }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ClientController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':clientId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get user data by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the user data.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    __param(0, (0, common_1.Param)('clientId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ClientController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)(':clientId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update user data by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully updated.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    __param(0, (0, common_1.Param)('clientId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], ClientController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':clientId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete user data by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully deleted.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    __param(0, (0, common_1.Param)('clientId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ClientController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('query'),
+    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Query executed successfully.' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid query.' }),
+    (0, swagger_1.ApiResponse)({ status: 500, description: 'Internal server error.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ClientController.prototype, "executeQuery", null);
+exports.ClientController = ClientController = __decorate([
+    (0, swagger_1.ApiTags)('Client of TG clients'),
+    (0, common_1.Controller)('client'),
+    __metadata("design:paramtypes", [client_service_1.ClientService])
+], ClientController);
+
+
+/***/ }),
+
+/***/ "./nest/components/clients/client.module.ts":
+/*!**************************************************!*\
+  !*** ./nest/components/clients/client.module.ts ***!
+  \**************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ClientModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const client_schema_1 = __webpack_require__(/*! ./schemas/client.schema */ "./nest/components/clients/schemas/client.schema.ts");
+const client_service_1 = __webpack_require__(/*! ./client.service */ "./nest/components/clients/client.service.ts");
+const client_controller_1 = __webpack_require__(/*! ./client.controller */ "./nest/components/clients/client.controller.ts");
+let ClientModule = class ClientModule {
+};
+exports.ClientModule = ClientModule;
+exports.ClientModule = ClientModule = __decorate([
+    (0, common_1.Module)({
+        imports: [mongoose_1.MongooseModule.forFeature([{ name: client_schema_1.Client.name, schema: client_schema_1.ClientSchema }])],
+        controllers: [client_controller_1.ClientController],
+        providers: [client_service_1.ClientService],
+    })
+], ClientModule);
+
+
+/***/ }),
+
+/***/ "./nest/components/clients/client.service.ts":
+/*!***************************************************!*\
+  !*** ./nest/components/clients/client.service.ts ***!
+  \***************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ClientService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const client_schema_1 = __webpack_require__(/*! ./schemas/client.schema */ "./nest/components/clients/schemas/client.schema.ts");
+let ClientService = class ClientService {
+    constructor(clientModel) {
+        this.clientModel = clientModel;
+    }
+    create(createClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const createdUser = new this.clientModel(createClientDto);
+            return createdUser.save();
+        });
+    }
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientModel.find().exec();
+        });
+    }
+    findOne(clientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.clientModel.findOne({ clientId }).exec();
+            if (!user) {
+                throw new common_1.NotFoundException(`Client with ID "${clientId}" not found`);
+            }
+            return user;
+        });
+    }
+    update(clientId, updateClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            delete updateClientDto['_id'];
+            const updatedUser = yield this.clientModel.findOneAndUpdate({ clientId }, { $set: updateClientDto }, { new: true }).exec();
+            if (!updatedUser) {
+                throw new common_1.NotFoundException(`Client with ID "${clientId}" not found`);
+            }
+            return updatedUser;
+        });
+    }
+    remove(clientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deletedUser = yield this.clientModel.findOneAndDelete({ clientId }).exec();
+            if (!deletedUser) {
+                throw new common_1.NotFoundException(`Client with ID "${clientId}" not found`);
+            }
+            return deletedUser;
+        });
+    }
+    search(filter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(filter);
+            if (filter.firstName) {
+                filter.firstName = { $regex: new RegExp(filter.firstName, 'i') };
+            }
+            console.log(filter);
+            return this.clientModel.find(filter).exec();
+        });
+    }
+    executeQuery(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!query) {
+                    throw new common_1.BadRequestException('Query is invalid.');
+                }
+                return yield this.clientModel.find(query).exec();
+            }
+            catch (error) {
+                throw new common_1.InternalServerErrorException(error.message);
+            }
+        });
+    }
+};
+exports.ClientService = ClientService;
+exports.ClientService = ClientService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)(client_schema_1.Client.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model])
+], ClientService);
+
+
+/***/ }),
+
+/***/ "./nest/components/clients/dto/create-client.dto.ts":
+/*!**********************************************************!*\
+  !*** ./nest/components/clients/dto/create-client.dto.ts ***!
+  \**********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CreateClientDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+class CreateClientDto {
+}
+exports.CreateClientDto = CreateClientDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'paid_giirl_shruthiee', description: 'Channel link of the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "channelLink", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'shruthi', description: 'Database collection name' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "dbcoll", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'PaidGirl.netlify.app/Shruthi1', description: 'Link of the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "link", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Shruthi Reddy', description: 'Name of the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '+916265240911', description: 'Phone number of the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "number", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Ajtdmwajt1@', description: 'Password of the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me', description: 'Repl link of the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "repl", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '1BQANOTEuMTA4LjUg==', description: 'Session token' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "session", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Username of the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "userName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'shruthi1', description: 'Client ID of the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "clientId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me/exit', description: 'Deployment key URL' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "deployKey", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Main account of the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "mainAccount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'booklet_10', description: 'Product associated with the user' }),
+    __metadata("design:type", String)
+], CreateClientDto.prototype, "product", void 0);
+
+
+/***/ }),
+
+/***/ "./nest/components/clients/dto/search-client.dto.ts":
+/*!**********************************************************!*\
+  !*** ./nest/components/clients/dto/search-client.dto.ts ***!
+  \**********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SearchClientDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+class SearchClientDto {
+}
+exports.SearchClientDto = SearchClientDto;
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Channel link of the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "channelLink", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Link of the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "link", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Name of the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Phone number of the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "number", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Password of the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Repl link of the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "repl", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Username of the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "userName", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Deployment key URL' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "deployKey", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Main account of the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "mainAccount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Product associated with the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "product", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Database collection name' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "dbcoll", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Client ID of the user' }),
+    __metadata("design:type", String)
+], SearchClientDto.prototype, "clientId", void 0);
+
+
+/***/ }),
+
+/***/ "./nest/components/clients/schemas/client.schema.ts":
+/*!**********************************************************!*\
+  !*** ./nest/components/clients/schemas/client.schema.ts ***!
+  \**********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ClientSchema = exports.Client = void 0;
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+let Client = class Client {
+};
+exports.Client = Client;
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'paid_giirl_shruthiee', description: 'Channel link of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "channelLink", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'shruthi', description: 'Database collection name' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "dbcoll", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'PaidGirl.netlify.app/Shruthi1', description: 'Link of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "link", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Shruthi Reddy', description: 'Name of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '+916265240911', description: 'Phone number of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "number", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Ajtdmwajt1@', description: 'Password of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me', description: 'Repl link of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "repl", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '1BQANOTEuM==', description: 'Session token' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "session", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Username of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "userName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'shruthi1', description: 'Client ID of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "clientId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me/exit', description: 'Deployment key URL' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "deployKey", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Main account of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "mainAccount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'booklet_10', description: 'Product associated with the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], Client.prototype, "product", void 0);
+exports.Client = Client = __decorate([
+    (0, mongoose_1.Schema)({ collection: 'clients', versionKey: false, autoIndex: true })
+], Client);
+exports.ClientSchema = mongoose_1.SchemaFactory.createForClass(Client);
 
 
 /***/ }),
@@ -3510,6 +4066,16 @@ let UserDataController = class UserDataController {
             return this.userDataService.remove(chatId);
         });
     }
+    executeQuery(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.userDataService.executeQuery(query);
+            }
+            catch (error) {
+                throw error; // You might want to handle errors more gracefully
+            }
+        });
+    }
 };
 exports.UserDataController = UserDataController;
 __decorate([
@@ -3586,6 +4152,17 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserDataController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('query'),
+    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Query executed successfully.' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid query.' }),
+    (0, swagger_1.ApiResponse)({ status: 500, description: 'Internal server error.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserDataController.prototype, "executeQuery", null);
 exports.UserDataController = UserDataController = __decorate([
     (0, swagger_1.ApiTags)('UserData of TG clients'),
     (0, common_1.Controller)('userData'),
@@ -3664,23 +4241,23 @@ const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
 const user_data_schema_1 = __webpack_require__(/*! ./schemas/user-data.schema */ "./nest/components/user-data/schemas/user-data.schema.ts");
 let UserDataService = class UserDataService {
-    constructor(userModel) {
-        this.userModel = userModel;
+    constructor(userDataModel) {
+        this.userDataModel = userDataModel;
     }
     create(createUserDataDto) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createdUser = new this.userModel(createUserDataDto);
+            const createdUser = new this.userDataModel(createUserDataDto);
             return createdUser.save();
         });
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.userModel.find().exec();
+            return this.userDataModel.find().exec();
         });
     }
     findOne(chatId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.userModel.findOne({ chatId }).exec();
+            const user = yield this.userDataModel.findOne({ chatId }).exec();
             if (!user) {
                 throw new common_1.NotFoundException(`UserData with ID "${chatId}" not found`);
             }
@@ -3689,7 +4266,8 @@ let UserDataService = class UserDataService {
     }
     update(chatId, updateUserDataDto) {
         return __awaiter(this, void 0, void 0, function* () {
-            const updatedUser = yield this.userModel.findOneAndUpdate({ chatId }, { $set: updateUserDataDto }, { new: true }).exec();
+            delete updateUserDataDto['_id'];
+            const updatedUser = yield this.userDataModel.findOneAndUpdate({ chatId }, { $set: updateUserDataDto }, { new: true }).exec();
             if (!updatedUser) {
                 throw new common_1.NotFoundException(`UserData with ID "${chatId}" not found`);
             }
@@ -3698,7 +4276,7 @@ let UserDataService = class UserDataService {
     }
     remove(chatId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deletedUser = yield this.userModel.findOneAndDelete({ chatId }).exec();
+            const deletedUser = yield this.userDataModel.findOneAndDelete({ chatId }).exec();
             if (!deletedUser) {
                 throw new common_1.NotFoundException(`UserData with ID "${chatId}" not found`);
             }
@@ -3712,7 +4290,20 @@ let UserDataService = class UserDataService {
                 filter.firstName = { $regex: new RegExp(filter.firstName, 'i') };
             }
             console.log(filter);
-            return this.userModel.find(filter).exec();
+            return this.userDataModel.find(filter).exec();
+        });
+    }
+    executeQuery(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!query) {
+                    throw new common_1.BadRequestException('Query is invalid.');
+                }
+                return yield this.userDataModel.find(query).exec();
+            }
+            catch (error) {
+                throw new common_1.InternalServerErrorException(error.message);
+            }
         });
     }
 };
@@ -3963,6 +4554,16 @@ let UsersController = class UsersController {
             return this.usersService.delete(tgId);
         });
     }
+    executeQuery(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.usersService.executeQuery(query);
+            }
+            catch (error) {
+                throw error; // You might want to handle errors more gracefully
+            }
+        });
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -4045,6 +4646,17 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('query'),
+    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Query executed successfully.' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid query.' }),
+    (0, swagger_1.ApiResponse)({ status: 500, description: 'Internal server error.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "executeQuery", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('Telegram Users') // Tag to categorize all endpoints in this controller
     ,
@@ -4149,6 +4761,7 @@ let UsersService = class UsersService {
     }
     update(tgId, user) {
         return __awaiter(this, void 0, void 0, function* () {
+            delete user['_id'];
             const existingUser = yield this.userModel.findOneAndUpdate({ tgId }, { $set: user }, { new: true }).exec();
             if (!existingUser) {
                 throw new common_1.NotFoundException(`User with tgId ${tgId} not found`);
@@ -4172,6 +4785,19 @@ let UsersService = class UsersService {
             }
             console.log(filter);
             return this.userModel.find(filter).exec();
+        });
+    }
+    executeQuery(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!query) {
+                    throw new common_1.BadRequestException('Query is invalid.');
+                }
+                return yield this.userModel.find(query).exec();
+            }
+            catch (error) {
+                throw new common_1.InternalServerErrorException(error.message);
+            }
         });
     }
 };

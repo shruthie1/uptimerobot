@@ -1,60 +1,60 @@
 import { Controller, Get, Post, Body, Param, Delete, Query, Patch } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
-import { UserDataService } from './user-data.service';
-import { CreateUserDataDto } from './dto/create-user-data.dto';
-import { UserData } from './schemas/user-data.schema';
+import { ClientService } from './client.service';
+import { CreateClientDto } from './dto/create-client.dto';
+import { Client } from './schemas/client.schema';
+import { SearchClientDto } from './dto/search-client.dto';
 
-@ApiTags('UserData of TG clients')
-@Controller('userData')
-export class UserDataController {
-  constructor(private readonly userDataService: UserDataService) {}
+@ApiTags('Clients')
+@Controller('client')
+export class ClientController {
+  constructor(private readonly clientService: ClientService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create user data' })
   @ApiResponse({ status: 201, description: 'The user data has been successfully created.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async create(@Body() createUserDataDto: CreateUserDataDto): Promise<UserData> {
-    return this.userDataService.create(createUserDataDto);
+  async create(@Body() createClientDto: CreateClientDto): Promise<Client> {
+    return this.clientService.create(createClientDto);
   }
 
   @Get('search')
   @ApiOperation({ summary: 'Search user data' })
   @ApiResponse({ status: 200, description: 'Return the searched user data.' })
-
-  async search(@Query() query: any): Promise<UserData[]> {
-    return this.userDataService.search(query);
+  async search(@Query() query: SearchClientDto): Promise<Client[]> {
+    return this.clientService.search(query);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all user data' })
   @ApiResponse({ status: 200, description: 'Return all user data.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async findAll(): Promise<UserData[]> {
-    return this.userDataService.findAll();
+  async findAll(): Promise<Client[]> {
+    return this.clientService.findAll();
   }
 
-  @Get(':chatId')
+  @Get(':clientId')
   @ApiOperation({ summary: 'Get user data by ID' })
   @ApiResponse({ status: 200, description: 'Return the user data.' })
   @ApiResponse({ status: 404, description: 'User data not found.' })
-  async findOne(@Param('chatId') chatId: string): Promise<UserData> {
-    return this.userDataService.findOne(chatId);
+  async findOne(@Param('clientId') clientId: string): Promise<Client> {
+    return this.clientService.findOne(clientId);
   }
 
-  @Patch(':chatId')
+  @Patch(':clientId')
   @ApiOperation({ summary: 'Update user data by ID' })
   @ApiResponse({ status: 200, description: 'The user data has been successfully updated.' })
   @ApiResponse({ status: 404, description: 'User data not found.' })
-  async update(@Param('chatId') chatId: string, @Body() updateUserDataDto: Partial<UserData>): Promise<UserData> {
-    return this.userDataService.update(chatId, updateUserDataDto);
+  async update(@Param('clientId') clientId: string, @Body() updateClientDto: Partial<Client>): Promise<Client> {
+    return this.clientService.update(clientId, updateClientDto);
   }
 
-  @Delete(':chatId')
+  @Delete(':clientId')
   @ApiOperation({ summary: 'Delete user data by ID' })
   @ApiResponse({ status: 200, description: 'The user data has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'User data not found.' })
-  async remove(@Param('chatId') chatId: string): Promise<UserData> {
-    return this.userDataService.remove(chatId);
+  async remove(@Param('clientId') clientId: string): Promise<Client> {
+    return this.clientService.remove(clientId);
   }
 
   @Post('query')
@@ -64,7 +64,7 @@ export class UserDataController {
   @ApiResponse({ status: 500, description: 'Internal server error.' })
   async executeQuery(@Body() query: any): Promise<any> {
     try {
-      return await this.userDataService.executeQuery(query);
+      return await this.clientService.executeQuery(query);
     } catch (error) {
       throw error;  // You might want to handle errors more gracefully
     }

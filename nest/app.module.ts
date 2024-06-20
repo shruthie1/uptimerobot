@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './components/users/users.module';
 import { UserDataModule } from './components/user-data/user-data.module';
+import { ClientModule } from './components/clients/client.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { UserDataModule } from './components/user-data/user-data.module';
         uri: process.env.mongouri,
       }),
     }),
+    ClientModule,
     UserDataModule,
     UsersModule,
   ],

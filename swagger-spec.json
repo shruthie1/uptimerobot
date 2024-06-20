@@ -1,6 +1,272 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/client": {
+      "post": {
+        "operationId": "ClientController_create",
+        "summary": "Create user data",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The user data has been successfully created."
+          },
+          "403": {
+            "description": "Forbidden."
+          }
+        },
+        "tags": [
+          "Client of TG clients"
+        ]
+      },
+      "get": {
+        "operationId": "ClientController_findAll",
+        "summary": "Get all user data",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Return all user data."
+          },
+          "403": {
+            "description": "Forbidden."
+          }
+        },
+        "tags": [
+          "Client of TG clients"
+        ]
+      }
+    },
+    "/client/search": {
+      "get": {
+        "operationId": "ClientController_search",
+        "summary": "Search user data",
+        "parameters": [
+          {
+            "name": "channelLink",
+            "required": false,
+            "in": "query",
+            "description": "Channel link of the user",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "link",
+            "required": false,
+            "in": "query",
+            "description": "Link of the user",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Name of the user",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "number",
+            "required": false,
+            "in": "query",
+            "description": "Phone number of the user",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "required": false,
+            "in": "query",
+            "description": "Password of the user",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repl",
+            "required": false,
+            "in": "query",
+            "description": "Repl link of the user",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userName",
+            "required": false,
+            "in": "query",
+            "description": "Username of the user",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deployKey",
+            "required": false,
+            "in": "query",
+            "description": "Deployment key URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mainAccount",
+            "required": false,
+            "in": "query",
+            "description": "Main account of the user",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "product",
+            "required": false,
+            "in": "query",
+            "description": "Product associated with the user",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dbcoll",
+            "required": false,
+            "in": "query",
+            "description": "Database collection name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": false,
+            "in": "query",
+            "description": "Client ID of the user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the searched user data."
+          }
+        },
+        "tags": [
+          "Client of TG clients"
+        ]
+      }
+    },
+    "/client/{clientId}": {
+      "get": {
+        "operationId": "ClientController_findOne",
+        "summary": "Get user data by ID",
+        "parameters": [
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the user data."
+          },
+          "404": {
+            "description": "User data not found."
+          }
+        },
+        "tags": [
+          "Client of TG clients"
+        ]
+      },
+      "patch": {
+        "operationId": "ClientController_update",
+        "summary": "Update user data by ID",
+        "parameters": [
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user data has been successfully updated."
+          },
+          "404": {
+            "description": "User data not found."
+          }
+        },
+        "tags": [
+          "Client of TG clients"
+        ]
+      },
+      "delete": {
+        "operationId": "ClientController_remove",
+        "summary": "Delete user data by ID",
+        "parameters": [
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user data has been successfully deleted."
+          },
+          "404": {
+            "description": "User data not found."
+          }
+        },
+        "tags": [
+          "Client of TG clients"
+        ]
+      }
+    },
+    "/client/query": {
+      "post": {
+        "operationId": "ClientController_executeQuery",
+        "summary": "Execute a custom MongoDB query",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Query executed successfully."
+          },
+          "400": {
+            "description": "Invalid query."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "Client of TG clients"
+        ]
+      }
+    },
     "/userData": {
       "post": {
         "operationId": "UserDataController_create",
@@ -25,7 +291,7 @@
           }
         },
         "tags": [
-          "userData"
+          "UserData of TG clients"
         ]
       },
       "get": {
@@ -41,7 +307,7 @@
           }
         },
         "tags": [
-          "userData"
+          "UserData of TG clients"
         ]
       }
     },
@@ -50,6 +316,13 @@
         "operationId": "UserDataController_search",
         "summary": "Search user data",
         "parameters": [
+          {
+            "name": "chatId",
+            "required": false,
+            "in": "query",
+            "description": "Chat ID",
+            "schema": {}
+          },
           {
             "name": "profile",
             "required": false,
@@ -169,13 +442,6 @@
             "schema": {
               "type": "number"
             }
-          },
-          {
-            "name": "chatId",
-            "required": false,
-            "in": "query",
-            "description": "Chat ID",
-            "schema": {}
           }
         ],
         "responses": {
@@ -184,17 +450,17 @@
           }
         },
         "tags": [
-          "userData"
+          "UserData of TG clients"
         ]
       }
     },
-    "/userData/{id}": {
+    "/userData/{chatId}": {
       "get": {
         "operationId": "UserDataController_findOne",
         "summary": "Get user data by ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "chatId",
             "required": true,
             "in": "path",
             "schema": {
@@ -211,15 +477,15 @@
           }
         },
         "tags": [
-          "userData"
+          "UserData of TG clients"
         ]
       },
-      "put": {
+      "patch": {
         "operationId": "UserDataController_update",
         "summary": "Update user data by ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "chatId",
             "required": true,
             "in": "path",
             "schema": {
@@ -227,16 +493,6 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateUserDataDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "The user data has been successfully updated."
@@ -246,7 +502,7 @@
           }
         },
         "tags": [
-          "userData"
+          "UserData of TG clients"
         ]
       },
       "delete": {
@@ -254,7 +510,7 @@
         "summary": "Delete user data by ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "chatId",
             "required": true,
             "in": "path",
             "schema": {
@@ -271,7 +527,28 @@
           }
         },
         "tags": [
-          "userData"
+          "UserData of TG clients"
+        ]
+      }
+    },
+    "/userData/query": {
+      "post": {
+        "operationId": "UserDataController_executeQuery",
+        "summary": "Execute a custom MongoDB query",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Query executed successfully."
+          },
+          "400": {
+            "description": "Invalid query."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "UserData of TG clients"
         ]
       }
     },
@@ -296,7 +573,7 @@
           }
         },
         "tags": [
-          "Users"
+          "Telegram Users"
         ]
       },
       "get": {
@@ -309,7 +586,7 @@
           }
         },
         "tags": [
-          "Users"
+          "Telegram Users"
         ]
       }
     },
@@ -589,7 +866,7 @@
           }
         },
         "tags": [
-          "Users"
+          "Telegram Users"
         ]
       }
     },
@@ -614,7 +891,7 @@
           }
         },
         "tags": [
-          "Users"
+          "Telegram Users"
         ]
       },
       "patch": {
@@ -637,7 +914,7 @@
           }
         },
         "tags": [
-          "Users"
+          "Telegram Users"
         ]
       },
       "delete": {
@@ -660,7 +937,28 @@
           }
         },
         "tags": [
-          "Users"
+          "Telegram Users"
+        ]
+      }
+    },
+    "/users/query": {
+      "post": {
+        "operationId": "UsersController_executeQuery",
+        "summary": "Execute a custom MongoDB query",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Query executed successfully."
+          },
+          "400": {
+            "description": "Invalid query."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "Telegram Users"
         ]
       }
     }
@@ -675,6 +973,91 @@
   "servers": [],
   "components": {
     "schemas": {
+      "CreateClientDto": {
+        "type": "object",
+        "properties": {
+          "channelLink": {
+            "type": "string",
+            "example": "paid_giirl_shruthiee",
+            "description": "Channel link of the user"
+          },
+          "dbcoll": {
+            "type": "string",
+            "example": "shruthi",
+            "description": "Database collection name"
+          },
+          "link": {
+            "type": "string",
+            "example": "PaidGirl.netlify.app/Shruthi1",
+            "description": "Link of the user"
+          },
+          "name": {
+            "type": "string",
+            "example": "Shruthi Reddy",
+            "description": "Name of the user"
+          },
+          "number": {
+            "type": "string",
+            "example": "+916265240911",
+            "description": "Phone number of the user"
+          },
+          "password": {
+            "type": "string",
+            "example": "Ajtdmwajt1@",
+            "description": "Password of the user"
+          },
+          "repl": {
+            "type": "string",
+            "example": "https://shruthi1.glitch.me",
+            "description": "Repl link of the user"
+          },
+          "session": {
+            "type": "string",
+            "example": "1BQANOTEuMTA4LjUg==",
+            "description": "Session token"
+          },
+          "userName": {
+            "type": "string",
+            "example": "ShruthiRedd2",
+            "description": "Username of the user"
+          },
+          "clientId": {
+            "type": "string",
+            "example": "shruthi1",
+            "description": "Client ID of the user"
+          },
+          "deployKey": {
+            "type": "string",
+            "example": "https://shruthi1.glitch.me/exit",
+            "description": "Deployment key URL"
+          },
+          "mainAccount": {
+            "type": "string",
+            "example": "ShruthiRedd2",
+            "description": "Main account of the user"
+          },
+          "product": {
+            "type": "string",
+            "example": "booklet_10",
+            "description": "Product associated with the user"
+          }
+        },
+        "required": [
+          "channelLink",
+          "dbcoll",
+          "link",
+          "name",
+          "number",
+          "password",
+          "repl",
+          "session",
+          "userName",
+          "clientId",
+          "deployKey",
+          "mainAccount",
+          "product"
+        ]
+      },
       "CreateUserDataDto": {
         "type": "object",
         "properties": {
@@ -771,86 +1154,6 @@
           "secondShow",
           "profile"
         ]
-      },
-      "UpdateUserDataDto": {
-        "type": "object",
-        "properties": {
-          "chatId": {
-            "type": "string",
-            "example": "5787751360",
-            "description": "Chat ID"
-          },
-          "totalCount": {
-            "type": "number",
-            "example": 1,
-            "description": "Total count"
-          },
-          "picCount": {
-            "type": "number",
-            "example": 0,
-            "description": "Picture count"
-          },
-          "lastMsgTimeStamp": {
-            "type": "number",
-            "example": 1718802722566,
-            "description": "Last message timestamp"
-          },
-          "limitTime": {
-            "type": "number",
-            "example": 1718802742567,
-            "description": "Limit time"
-          },
-          "paidCount": {
-            "type": "number",
-            "example": 0,
-            "description": "Paid count"
-          },
-          "prfCount": {
-            "type": "number",
-            "example": 0,
-            "description": "Profile count"
-          },
-          "canReply": {
-            "type": "number",
-            "example": 1,
-            "description": "Can reply"
-          },
-          "payAmount": {
-            "type": "number",
-            "example": 0,
-            "description": "Pay amount"
-          },
-          "username": {
-            "type": "string",
-            "example": "بـِـعٰ۬ێډ الۿٰٕقاوٰ۬ێ ٴ🦅",
-            "description": "Username"
-          },
-          "accessHash": {
-            "type": "string",
-            "example": "-7250939091939055173",
-            "description": "Access hash"
-          },
-          "paidReply": {
-            "type": "boolean",
-            "example": true,
-            "description": "Paid reply status"
-          },
-          "demoGiven": {
-            "type": "boolean",
-            "example": false,
-            "description": "Demo given status"
-          },
-          "secondShow": {
-            "type": "boolean",
-            "example": false,
-            "description": "Second show status"
-          },
-          "profile": {
-            "type": "string",
-            "example": "sneha",
-            "description": "Profile name"
-          }
-        }
       },
       "User": {
         "type": "object",
