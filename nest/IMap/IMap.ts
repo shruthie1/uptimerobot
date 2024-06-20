@@ -102,8 +102,9 @@ export class MailReader {
                 });
 
                 if (results.length > 0) {
-                    console.log('Emails found')
-                    const fetch = this.imap.fetch([results[results.length - 1]], fetchOptions);
+                    console.log('Emails found', results.length)
+                    const length = results.length
+                    const fetch = this.imap.fetch([results[length-1]], fetchOptions);
                     await new Promise<void>((resolve, reject) => {
                         fetch.on('message', (msg, seqno) => {
                             const emailData: string[] = [];
@@ -156,15 +157,13 @@ export class MailReader {
             } catch (err) {
                 console.error('Error:', err);
                 throw err; // Re-throw the error for caller to handle
-            } finally {
-                if (this.result.length > 4) {
-                    await this.disconnectFromMail();
-                }
             }
+            console.log('returning result:',this.result)
             return this.result;
         } catch (error) {
+            console.log('In Error');
             const errorDetails = parseError(error);
-            throw Error(errorDetails.message)
+            return undefined
         }
     }
     private async openInbox(): Promise<void> {

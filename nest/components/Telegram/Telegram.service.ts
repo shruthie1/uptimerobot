@@ -338,7 +338,7 @@ class TelegramManager {
                 const res = await this.client.invoke(new Api.account.UpdateUsername({ username }));
                 console.log(`Removed Username successfully.`);
             } catch (error) {
-                throw error
+                console.log(error)
             }
         } else {
             while (true) {
@@ -481,10 +481,13 @@ class TelegramManager {
                                     const isReady = imapService.isMailReady();
                                     if (isReady && retry < 4) {
                                         const code = await imapService.getCode();
-                                        if (code !== '') {
+                                        console.log('Code: ', code)
+                                        if (code) {
                                             clearInterval(intervalId);
                                             imapService.disconnectFromMail()
                                             resolve(code);
+                                        }else{
+                                            console.log('Code: ', code) 
                                         }
                                     } else {
                                         clearInterval(intervalId);
@@ -492,7 +495,7 @@ class TelegramManager {
                                         imapService.disconnectFromMail()
                                         resolve(undefined);
                                     }
-                                }, 6000);
+                                }, 10000);
                             });
                         },
                         onEmailCodeError: (e) => { console.log(parseError(e)); return Promise.resolve("error") }

