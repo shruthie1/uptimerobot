@@ -1192,7 +1192,7 @@ app.get('/updatePrivacy/:number', async (req, res, next) => {
 });
 
 app.get('/forward*', async (req, res) => {
-  let targetHost = 'https://ramyaaa1.onrender.com';
+  let targetHost = 'https://ramyaaa.onrender.com';
   if (req.query.host) {
     targetHost = req.query.host;
   }
