@@ -7,7 +7,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { ActiveChannel } from './schemas/active-channel.schema';
 import { AddReactionDto } from './dto/add-reaction.dto';
 
-@ApiTags('active-channels')
+@ApiTags('Active Channels')
 @Controller('active-channels')
 export class ActiveChannelsController {
   constructor(private readonly activeChannelsService: ActiveChannelsService) { }

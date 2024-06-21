@@ -1298,6 +1298,670 @@
           "Telegram"
         ]
       }
+    },
+    "/bufferclient": {
+      "post": {
+        "operationId": "BufferClientController_create",
+        "summary": "Create user data",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBufferClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The user data has been successfully created."
+          },
+          "403": {
+            "description": "Forbidden."
+          }
+        },
+        "tags": [
+          "BufferClients"
+        ]
+      },
+      "get": {
+        "operationId": "BufferClientController_findAll",
+        "summary": "Get all user data",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Return all user data."
+          },
+          "403": {
+            "description": "Forbidden."
+          }
+        },
+        "tags": [
+          "BufferClients"
+        ]
+      }
+    },
+    "/bufferclient/search": {
+      "get": {
+        "operationId": "BufferClientController_search",
+        "summary": "Search user data",
+        "parameters": [
+          {
+            "name": "clientId",
+            "required": false,
+            "in": "query",
+            "description": "Client ID of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dbcoll",
+            "required": false,
+            "in": "query",
+            "description": "Database collection name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "channelLink",
+            "required": false,
+            "in": "query",
+            "description": "Channel link of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "link",
+            "required": false,
+            "in": "query",
+            "description": "Link of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "description": "Name of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "number",
+            "required": false,
+            "in": "query",
+            "description": "Phone number of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "required": false,
+            "in": "query",
+            "description": "Password of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repl",
+            "required": false,
+            "in": "query",
+            "description": "Repl link of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientName",
+            "required": false,
+            "in": "query",
+            "description": "Clientname of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deployKey",
+            "required": false,
+            "in": "query",
+            "description": "Deployment key URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mainAccount",
+            "required": false,
+            "in": "query",
+            "description": "Main account of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "product",
+            "required": false,
+            "in": "query",
+            "description": "Product associated with the client",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the searched user data."
+          }
+        },
+        "tags": [
+          "BufferClients"
+        ]
+      }
+    },
+    "/bufferclient/{bufferClientId}": {
+      "get": {
+        "operationId": "BufferClientController_findOne",
+        "summary": "Get user data by ID",
+        "parameters": [
+          {
+            "name": "bufferClientId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the user data."
+          },
+          "404": {
+            "description": "User data not found."
+          }
+        },
+        "tags": [
+          "BufferClients"
+        ]
+      },
+      "patch": {
+        "operationId": "BufferClientController_update",
+        "summary": "Update user data by ID",
+        "parameters": [
+          {
+            "name": "bufferClientId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user data has been successfully updated."
+          },
+          "404": {
+            "description": "User data not found."
+          }
+        },
+        "tags": [
+          "BufferClients"
+        ]
+      },
+      "delete": {
+        "operationId": "BufferClientController_remove",
+        "summary": "Delete user data by ID",
+        "parameters": [
+          {
+            "name": "bufferClientId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user data has been successfully deleted."
+          },
+          "404": {
+            "description": "User data not found."
+          }
+        },
+        "tags": [
+          "BufferClients"
+        ]
+      }
+    },
+    "/bufferclient/query": {
+      "post": {
+        "operationId": "BufferClientController_executeQuery",
+        "summary": "Execute a custom MongoDB query",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Query executed successfully."
+          },
+          "400": {
+            "description": "Invalid query."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        },
+        "tags": [
+          "BufferClients"
+        ]
+      }
+    },
+    "/active-channels": {
+      "post": {
+        "operationId": "ActiveChannelsController_create",
+        "summary": "Create a new active channel",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateActiveChannelDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The channel has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveChannel"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "active-channels"
+        ]
+      },
+      "get": {
+        "operationId": "ActiveChannelsController_findAll",
+        "summary": "Get all active channels",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Return all active channels",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActiveChannel"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "active-channels"
+        ]
+      }
+    },
+    "/active-channels/search": {
+      "get": {
+        "operationId": "ActiveChannelsController_search",
+        "summary": "Search channels by filters",
+        "parameters": [
+          {
+            "name": "megagroup",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "reactRestricted",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "banned",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "reactions",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "availableMsgs",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "dMRestriction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "wordRestriction",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "username",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "title",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sendMessages",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "restricted",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "participantsCount",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "canSendMsgs",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "broadcast",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "channelId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return matching channels.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActiveChannel"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "active-channels"
+        ]
+      }
+    },
+    "/active-channels/{channelId}": {
+      "get": {
+        "operationId": "ActiveChannelsController_findOne",
+        "summary": "Get an active channel by channelId",
+        "parameters": [
+          {
+            "name": "channelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the active channel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveChannel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Channel not found"
+          }
+        },
+        "tags": [
+          "active-channels"
+        ]
+      },
+      "patch": {
+        "operationId": "ActiveChannelsController_update",
+        "summary": "Update an active channel by channelId",
+        "parameters": [
+          {
+            "name": "channelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateActiveChannelDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The channel has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveChannel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Channel not found"
+          }
+        },
+        "tags": [
+          "active-channels"
+        ]
+      },
+      "delete": {
+        "operationId": "ActiveChannelsController_remove",
+        "summary": "Delete an active channel by channelId",
+        "parameters": [
+          {
+            "name": "channelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The channel has been successfully deleted."
+          },
+          "404": {
+            "description": "Channel not found"
+          }
+        },
+        "tags": [
+          "active-channels"
+        ]
+      }
+    },
+    "/active-channels/{channelId}/reactions": {
+      "post": {
+        "operationId": "ActiveChannelsController_addReaction",
+        "summary": "Add reaction to chat group",
+        "parameters": [
+          {
+            "name": "channelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddReactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "active-channels"
+        ]
+      },
+      "delete": {
+        "operationId": "ActiveChannelsController_removeReaction",
+        "summary": "Remove reaction from chat group",
+        "parameters": [
+          {
+            "name": "channelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddReactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "active-channels"
+        ]
+      }
+    },
+    "/active-channels/{channelId}/reactions/random": {
+      "get": {
+        "operationId": "ActiveChannelsController_getRandomReaction",
+        "summary": "Get a random reaction from chat group",
+        "parameters": [
+          {
+            "name": "channelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "active-channels"
+        ]
+      }
     }
   },
   "info": {
@@ -1593,6 +2257,261 @@
           "ownVideoCount",
           "contacts",
           "calls"
+        ]
+      },
+      "CreateBufferClientDto": {
+        "type": "object",
+        "properties": {
+          "channelLink": {
+            "type": "string",
+            "example": "paid_giirl_shruthiee",
+            "description": "Channel link of the user"
+          },
+          "dbcoll": {
+            "type": "string",
+            "example": "shruthi",
+            "description": "Database collection name"
+          },
+          "link": {
+            "type": "string",
+            "example": "PaidGirl.netlify.app/Shruthi1",
+            "description": "Link of the user"
+          },
+          "name": {
+            "type": "string",
+            "example": "Shruthi Reddy",
+            "description": "Name of the user"
+          },
+          "number": {
+            "type": "string",
+            "example": "+916265240911",
+            "description": "Phone number of the user"
+          },
+          "password": {
+            "type": "string",
+            "example": "Ajtdmwajt1@",
+            "description": "Password of the user"
+          },
+          "repl": {
+            "type": "string",
+            "example": "https://shruthi1.glitch.me",
+            "description": "Repl link of the user"
+          },
+          "session": {
+            "type": "string",
+            "example": "1BQANOTEuMTA4LjUg==",
+            "description": "Session token"
+          },
+          "userName": {
+            "type": "string",
+            "example": "ShruthiRedd2",
+            "description": "Username of the user"
+          },
+          "clientId": {
+            "type": "string",
+            "example": "shruthi1",
+            "description": "Client ID of the user"
+          },
+          "deployKey": {
+            "type": "string",
+            "example": "https://shruthi1.glitch.me/exit",
+            "description": "Deployment key URL"
+          },
+          "mainAccount": {
+            "type": "string",
+            "example": "ShruthiRedd2",
+            "description": "Main account of the user"
+          },
+          "product": {
+            "type": "string",
+            "example": "booklet_10",
+            "description": "Product associated with the user"
+          }
+        },
+        "required": [
+          "channelLink",
+          "dbcoll",
+          "link",
+          "name",
+          "number",
+          "password",
+          "repl",
+          "session",
+          "userName",
+          "clientId",
+          "deployKey",
+          "mainAccount",
+          "product"
+        ]
+      },
+      "CreateActiveChannelDto": {
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string"
+          },
+          "broadcast": {
+            "type": "boolean",
+            "default": false
+          },
+          "canSendMsgs": {
+            "type": "boolean",
+            "default": true
+          },
+          "participantsCount": {
+            "type": "number",
+            "default": 300
+          },
+          "restricted": {
+            "type": "boolean",
+            "default": false
+          },
+          "sendMessages": {
+            "type": "boolean",
+            "default": true
+          },
+          "reactRestricted": {
+            "type": "boolean",
+            "default": false
+          },
+          "title": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "wordRestriction": {
+            "type": "number",
+            "default": 0
+          },
+          "dMRestriction": {
+            "type": "number",
+            "default": 0
+          },
+          "availableMsgs": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reactions": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "banned": {
+            "type": "boolean",
+            "default": false
+          },
+          "megagroup": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "channelId",
+          "broadcast",
+          "canSendMsgs",
+          "participantsCount",
+          "restricted",
+          "sendMessages",
+          "reactRestricted",
+          "title",
+          "username",
+          "wordRestriction",
+          "dMRestriction",
+          "availableMsgs",
+          "reactions",
+          "banned"
+        ]
+      },
+      "ActiveChannel": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateActiveChannelDto": {
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string"
+          },
+          "broadcast": {
+            "type": "boolean",
+            "default": false
+          },
+          "canSendMsgs": {
+            "type": "boolean",
+            "default": true
+          },
+          "participantsCount": {
+            "type": "number",
+            "default": 300
+          },
+          "restricted": {
+            "type": "boolean",
+            "default": false
+          },
+          "sendMessages": {
+            "type": "boolean",
+            "default": true
+          },
+          "reactRestricted": {
+            "type": "boolean",
+            "default": false
+          },
+          "title": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "wordRestriction": {
+            "type": "number",
+            "default": 0
+          },
+          "dMRestriction": {
+            "type": "number",
+            "default": 0
+          },
+          "availableMsgs": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reactions": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "banned": {
+            "type": "boolean",
+            "default": false
+          },
+          "megagroup": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "AddReactionDto": {
+        "type": "object",
+        "properties": {
+          "reactions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "reactions"
         ]
       }
     }

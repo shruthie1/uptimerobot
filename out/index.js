@@ -3418,6 +3418,8 @@ const users_module_1 = __webpack_require__(/*! ./components/users/users.module *
 const user_data_module_1 = __webpack_require__(/*! ./components/user-data/user-data.module */ "./nest/components/user-data/user-data.module.ts");
 const client_module_1 = __webpack_require__(/*! ./components/clients/client.module */ "./nest/components/clients/client.module.ts");
 const Telegram_module_1 = __webpack_require__(/*! ./components/Telegram/Telegram.module */ "./nest/components/Telegram/Telegram.module.ts");
+const buffer_client_module_1 = __webpack_require__(/*! ./components/buffer-clients/buffer-client.module */ "./nest/components/buffer-clients/buffer-client.module.ts");
+const activechannels_module_1 = __webpack_require__(/*! ./components/activechannels/activechannels.module */ "./nest/components/activechannels/activechannels.module.ts");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -3434,7 +3436,9 @@ exports.AppModule = AppModule = __decorate([
             client_module_1.ClientModule,
             user_data_module_1.UserDataModule,
             users_module_1.UsersModule,
-            Telegram_module_1.TelegramModule
+            Telegram_module_1.TelegramModule,
+            buffer_client_module_1.BufferClientModule,
+            activechannels_module_1.ActiveChannelsModule
         ],
     })
 ], AppModule);
@@ -4558,6 +4562,238 @@ exports["default"] = TelegramConnectionManager;
 
 /***/ }),
 
+/***/ "./nest/components/activechannels/activechannels.controller.ts":
+/*!*********************************************************************!*\
+  !*** ./nest/components/activechannels/activechannels.controller.ts ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ActiveChannelsController = void 0;
+// src/activechannels/activechannels.controller.ts
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const activechannels_service_1 = __webpack_require__(/*! ./activechannels.service */ "./nest/components/activechannels/activechannels.service.ts");
+const create_active_channel_dto_1 = __webpack_require__(/*! ./dto/create-active-channel.dto */ "./nest/components/activechannels/dto/create-active-channel.dto.ts");
+const update_active_channel_dto_1 = __webpack_require__(/*! ./dto/update-active-channel.dto */ "./nest/components/activechannels/dto/update-active-channel.dto.ts");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const active_channel_schema_1 = __webpack_require__(/*! ./schemas/active-channel.schema */ "./nest/components/activechannels/schemas/active-channel.schema.ts");
+const add_reaction_dto_1 = __webpack_require__(/*! ./dto/add-reaction.dto */ "./nest/components/activechannels/dto/add-reaction.dto.ts");
+let ActiveChannelsController = class ActiveChannelsController {
+    constructor(activeChannelsService) {
+        this.activeChannelsService = activeChannelsService;
+    }
+    create(createActiveChannelDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.activeChannelsService.create(createActiveChannelDto);
+        });
+    }
+    search(query) {
+        console.log(query);
+        return this.activeChannelsService.search(query);
+    }
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.activeChannelsService.findAll();
+        });
+    }
+    findOne(channelId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.activeChannelsService.findOne(channelId);
+        });
+    }
+    update(channelId, updateActiveChannelDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.activeChannelsService.update(channelId, updateActiveChannelDto);
+        });
+    }
+    remove(channelId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.activeChannelsService.remove(channelId);
+        });
+    }
+    addReaction(channelId, addReactionDto) {
+        if (!addReactionDto.reactions) {
+            throw new common_1.BadRequestException('Reaction is required');
+        }
+        return this.activeChannelsService.addReactions(channelId, addReactionDto.reactions);
+    }
+    getRandomReaction(channelId) {
+        return this.activeChannelsService.getRandomReaction(channelId);
+    }
+    removeReaction(channelId, addReactionDto) {
+        if (!addReactionDto.reactions) {
+            throw new common_1.BadRequestException('Reaction is required');
+        }
+        return this.activeChannelsService.removeReaction(channelId, addReactionDto.reactions[0]);
+    }
+};
+exports.ActiveChannelsController = ActiveChannelsController;
+__decorate([
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new active channel' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'The channel has been successfully created.', type: active_channel_schema_1.ActiveChannel }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_active_channel_dto_1.CreateActiveChannelDto]),
+    __metadata("design:returntype", Promise)
+], ActiveChannelsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    (0, swagger_1.ApiOperation)({ summary: 'Search channels by filters' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return matching channels.', type: [active_channel_schema_1.ActiveChannel] }),
+    (0, swagger_1.ApiQuery)({ name: 'channelId', required: false, type: String }),
+    (0, swagger_1.ApiQuery)({ name: 'broadcast', required: false, type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'canSendMsgs', required: false, type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'participantsCount', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'restricted', required: false, type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'sendMessages', required: false, type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'title', required: false, type: String }),
+    (0, swagger_1.ApiQuery)({ name: 'username', required: false, type: String }),
+    (0, swagger_1.ApiQuery)({ name: 'wordRestriction', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'dMRestriction', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'availableMsgs', required: false, type: [String] }),
+    (0, swagger_1.ApiQuery)({ name: 'reactions', required: false, type: [String] }),
+    (0, swagger_1.ApiQuery)({ name: 'banned', required: false, type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'reactRestricted', required: false, type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'megagroup', required: false, type: Boolean }),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ActiveChannelsController.prototype, "search", null);
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all active channels' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all active channels', type: [active_channel_schema_1.ActiveChannel] }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ActiveChannelsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':channelId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get an active channel by channelId' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the active channel', type: active_channel_schema_1.ActiveChannel }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Channel not found' }),
+    __param(0, (0, common_1.Param)('channelId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ActiveChannelsController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)(':channelId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update an active channel by channelId' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'The channel has been successfully updated.', type: active_channel_schema_1.ActiveChannel }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Channel not found' }),
+    __param(0, (0, common_1.Param)('channelId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_active_channel_dto_1.UpdateActiveChannelDto]),
+    __metadata("design:returntype", Promise)
+], ActiveChannelsController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':channelId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete an active channel by channelId' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'The channel has been successfully deleted.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Channel not found' }),
+    __param(0, (0, common_1.Param)('channelId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ActiveChannelsController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)(':channelId/reactions'),
+    (0, swagger_1.ApiOperation)({ summary: 'Add reaction to chat group' }),
+    __param(0, (0, common_1.Param)('channelId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, add_reaction_dto_1.AddReactionDto]),
+    __metadata("design:returntype", Promise)
+], ActiveChannelsController.prototype, "addReaction", null);
+__decorate([
+    (0, common_1.Get)(':channelId/reactions/random'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get a random reaction from chat group' }),
+    __param(0, (0, common_1.Param)('channelId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ActiveChannelsController.prototype, "getRandomReaction", null);
+__decorate([
+    (0, common_1.Delete)(':channelId/reactions'),
+    (0, swagger_1.ApiOperation)({ summary: 'Remove reaction from chat group' }),
+    __param(0, (0, common_1.Param)('channelId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, add_reaction_dto_1.AddReactionDto]),
+    __metadata("design:returntype", Promise)
+], ActiveChannelsController.prototype, "removeReaction", null);
+exports.ActiveChannelsController = ActiveChannelsController = __decorate([
+    (0, swagger_1.ApiTags)('active-channels'),
+    (0, common_1.Controller)('active-channels'),
+    __metadata("design:paramtypes", [activechannels_service_1.ActiveChannelsService])
+], ActiveChannelsController);
+
+
+/***/ }),
+
+/***/ "./nest/components/activechannels/activechannels.module.ts":
+/*!*****************************************************************!*\
+  !*** ./nest/components/activechannels/activechannels.module.ts ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ActiveChannelsModule = void 0;
+// src/activechannels/activechannels.module.ts
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const activechannels_service_1 = __webpack_require__(/*! ./activechannels.service */ "./nest/components/activechannels/activechannels.service.ts");
+const activechannels_controller_1 = __webpack_require__(/*! ./activechannels.controller */ "./nest/components/activechannels/activechannels.controller.ts");
+const active_channel_schema_1 = __webpack_require__(/*! ./schemas/active-channel.schema */ "./nest/components/activechannels/schemas/active-channel.schema.ts");
+let ActiveChannelsModule = class ActiveChannelsModule {
+};
+exports.ActiveChannelsModule = ActiveChannelsModule;
+exports.ActiveChannelsModule = ActiveChannelsModule = __decorate([
+    (0, common_1.Module)({
+        imports: [
+            mongoose_1.MongooseModule.forFeature([{ name: active_channel_schema_1.ActiveChannel.name, schema: active_channel_schema_1.ActiveChannelSchema }]),
+        ],
+        controllers: [activechannels_controller_1.ActiveChannelsController],
+        providers: [activechannels_service_1.ActiveChannelsService],
+    })
+], ActiveChannelsModule);
+
+
+/***/ }),
+
 /***/ "./nest/components/activechannels/activechannels.service.ts":
 /*!******************************************************************!*\
   !*** ./nest/components/activechannels/activechannels.service.ts ***!
@@ -4667,6 +4903,142 @@ exports.ActiveChannelsService = ActiveChannelsService = __decorate([
     __param(0, (0, mongoose_1.InjectModel)(active_channel_schema_1.ActiveChannel.name)),
     __metadata("design:paramtypes", [mongoose_2.Model])
 ], ActiveChannelsService);
+
+
+/***/ }),
+
+/***/ "./nest/components/activechannels/dto/add-reaction.dto.ts":
+/*!****************************************************************!*\
+  !*** ./nest/components/activechannels/dto/add-reaction.dto.ts ***!
+  \****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AddReactionDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+class AddReactionDto {
+}
+exports.AddReactionDto = AddReactionDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: true }),
+    __metadata("design:type", Array)
+], AddReactionDto.prototype, "reactions", void 0);
+
+
+/***/ }),
+
+/***/ "./nest/components/activechannels/dto/create-active-channel.dto.ts":
+/*!*************************************************************************!*\
+  !*** ./nest/components/activechannels/dto/create-active-channel.dto.ts ***!
+  \*************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CreateActiveChannelDto = void 0;
+// src/activechannels/dto/create-activechannel.dto.ts
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+class CreateActiveChannelDto {
+}
+exports.CreateActiveChannelDto = CreateActiveChannelDto;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], CreateActiveChannelDto.prototype, "channelId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: false }),
+    __metadata("design:type", Boolean)
+], CreateActiveChannelDto.prototype, "broadcast", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: true }),
+    __metadata("design:type", Boolean)
+], CreateActiveChannelDto.prototype, "canSendMsgs", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: 300 }),
+    __metadata("design:type", Number)
+], CreateActiveChannelDto.prototype, "participantsCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: false }),
+    __metadata("design:type", Boolean)
+], CreateActiveChannelDto.prototype, "restricted", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: true }),
+    __metadata("design:type", Boolean)
+], CreateActiveChannelDto.prototype, "sendMessages", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: false }),
+    __metadata("design:type", Boolean)
+], CreateActiveChannelDto.prototype, "reactRestricted", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], CreateActiveChannelDto.prototype, "title", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], CreateActiveChannelDto.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: 0 }),
+    __metadata("design:type", Number)
+], CreateActiveChannelDto.prototype, "wordRestriction", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: 0 }),
+    __metadata("design:type", Number)
+], CreateActiveChannelDto.prototype, "dMRestriction", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: [String], default: [] }),
+    __metadata("design:type", Array)
+], CreateActiveChannelDto.prototype, "availableMsgs", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: [String], default: [] }),
+    __metadata("design:type", Array)
+], CreateActiveChannelDto.prototype, "reactions", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: false }),
+    __metadata("design:type", Boolean)
+], CreateActiveChannelDto.prototype, "banned", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: true, required: false }),
+    __metadata("design:type", Boolean)
+], CreateActiveChannelDto.prototype, "megagroup", void 0);
+
+
+/***/ }),
+
+/***/ "./nest/components/activechannels/dto/update-active-channel.dto.ts":
+/*!*************************************************************************!*\
+  !*** ./nest/components/activechannels/dto/update-active-channel.dto.ts ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UpdateActiveChannelDto = void 0;
+// src/activechannels/dto/update-activechannel.dto.ts
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const create_active_channel_dto_1 = __webpack_require__(/*! ./create-active-channel.dto */ "./nest/components/activechannels/dto/create-active-channel.dto.ts");
+class UpdateActiveChannelDto extends (0, swagger_1.PartialType)(create_active_channel_dto_1.CreateActiveChannelDto) {
+}
+exports.UpdateActiveChannelDto = UpdateActiveChannelDto;
 
 
 /***/ }),
@@ -4782,6 +5154,581 @@ exports.ActiveChannel = ActiveChannel = __decorate([
     (0, mongoose_1.Schema)({ collection: 'activeChannels', versionKey: false, autoIndex: true }) // Specify the collection name here
 ], ActiveChannel);
 exports.ActiveChannelSchema = mongoose_1.SchemaFactory.createForClass(ActiveChannel);
+
+
+/***/ }),
+
+/***/ "./nest/components/buffer-clients/buffer-client.controller.ts":
+/*!********************************************************************!*\
+  !*** ./nest/components/buffer-clients/buffer-client.controller.ts ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BufferClientController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const buffer_client_service_1 = __webpack_require__(/*! ./buffer-client.service */ "./nest/components/buffer-clients/buffer-client.service.ts");
+const create_buffer_client_dto_1 = __webpack_require__(/*! ./dto/create-buffer-client.dto */ "./nest/components/buffer-clients/dto/create-buffer-client.dto.ts");
+const search_buffer__client_dto_1 = __webpack_require__(/*! ./dto/search-buffer- client.dto */ "./nest/components/buffer-clients/dto/search-buffer- client.dto.ts");
+let BufferClientController = class BufferClientController {
+    constructor(clientService) {
+        this.clientService = clientService;
+    }
+    create(createClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.create(createClientDto);
+        });
+    }
+    search(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.search(query);
+        });
+    }
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.findAll();
+        });
+    }
+    findOne(bufferClientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.findOne(bufferClientId);
+        });
+    }
+    update(bufferClientId, updateClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.update(bufferClientId, updateClientDto);
+        });
+    }
+    remove(bufferClientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.clientService.remove(bufferClientId);
+        });
+    }
+    executeQuery(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.clientService.executeQuery(query);
+            }
+            catch (error) {
+                throw error; // You might want to handle errors more gracefully
+            }
+        });
+    }
+};
+exports.BufferClientController = BufferClientController;
+__decorate([
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Create user data' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'The user data has been successfully created.' }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_buffer_client_dto_1.CreateBufferClientDto]),
+    __metadata("design:returntype", Promise)
+], BufferClientController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    (0, swagger_1.ApiOperation)({ summary: 'Search user data' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the searched user data.' }),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [search_buffer__client_dto_1.SearchBufferClientDto]),
+    __metadata("design:returntype", Promise)
+], BufferClientController.prototype, "search", null);
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all user data' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all user data.' }),
+    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], BufferClientController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':bufferClientId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get user data by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the user data.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    __param(0, (0, common_1.Param)('bufferClientId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], BufferClientController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)(':bufferClientId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update user data by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully updated.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    __param(0, (0, common_1.Param)('bufferClientId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], BufferClientController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':bufferClientId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete user data by ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully deleted.' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    __param(0, (0, common_1.Param)('bufferClientId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], BufferClientController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('query'),
+    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Query executed successfully.' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid query.' }),
+    (0, swagger_1.ApiResponse)({ status: 500, description: 'Internal server error.' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], BufferClientController.prototype, "executeQuery", null);
+exports.BufferClientController = BufferClientController = __decorate([
+    (0, swagger_1.ApiTags)('BufferClients'),
+    (0, common_1.Controller)('bufferclient'),
+    __metadata("design:paramtypes", [buffer_client_service_1.BufferClientService])
+], BufferClientController);
+
+
+/***/ }),
+
+/***/ "./nest/components/buffer-clients/buffer-client.module.ts":
+/*!****************************************************************!*\
+  !*** ./nest/components/buffer-clients/buffer-client.module.ts ***!
+  \****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BufferClientModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const buffer_client_schema_1 = __webpack_require__(/*! ./schemas/buffer-client.schema */ "./nest/components/buffer-clients/schemas/buffer-client.schema.ts");
+const buffer_client_service_1 = __webpack_require__(/*! ./buffer-client.service */ "./nest/components/buffer-clients/buffer-client.service.ts");
+const buffer_client_controller_1 = __webpack_require__(/*! ./buffer-client.controller */ "./nest/components/buffer-clients/buffer-client.controller.ts");
+let BufferClientModule = class BufferClientModule {
+};
+exports.BufferClientModule = BufferClientModule;
+exports.BufferClientModule = BufferClientModule = __decorate([
+    (0, common_1.Module)({
+        imports: [mongoose_1.MongooseModule.forFeature([{ name: buffer_client_schema_1.BufferClient.name, schema: buffer_client_schema_1.BufferClientSchema }])],
+        controllers: [buffer_client_controller_1.BufferClientController],
+        providers: [buffer_client_service_1.BufferClientService],
+    })
+], BufferClientModule);
+
+
+/***/ }),
+
+/***/ "./nest/components/buffer-clients/buffer-client.service.ts":
+/*!*****************************************************************!*\
+  !*** ./nest/components/buffer-clients/buffer-client.service.ts ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BufferClientService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+const buffer_client_schema_1 = __webpack_require__(/*! ./schemas/buffer-client.schema */ "./nest/components/buffer-clients/schemas/buffer-client.schema.ts");
+let BufferClientService = class BufferClientService {
+    constructor(clientModel) {
+        this.clientModel = clientModel;
+        this.clientsMap = new Map();
+    }
+    create(createClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const createdUser = new this.clientModel(createClientDto);
+            return createdUser.save();
+        });
+    }
+    findAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.clientsMap.size < 3) {
+                const results = yield this.clientModel.find().exec();
+                for (const client of results) {
+                    this.clientsMap.set(client.clientId, client);
+                }
+                return results;
+            }
+            else {
+                return Array.from(this.clientsMap.values());
+            }
+        });
+    }
+    findOne(bufferClientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const client = this.clientsMap.get(bufferClientId);
+            if (client) {
+                return client;
+            }
+            else {
+                const user = yield this.clientModel.findOne({ bufferClientId }).exec();
+                this.clientsMap.set(bufferClientId, user);
+                if (!user) {
+                    throw new common_1.NotFoundException(`Client with ID "${bufferClientId}" not found`);
+                }
+                return user;
+            }
+        });
+    }
+    update(bufferClientId, updateClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            delete updateClientDto['_id'];
+            const updatedUser = yield this.clientModel.findOneAndUpdate({ bufferClientId }, { $set: updateClientDto }, { new: true }).exec();
+            this.clientsMap.set(bufferClientId, updatedUser);
+            if (!updatedUser) {
+                throw new common_1.NotFoundException(`Client with ID "${bufferClientId}" not found`);
+            }
+            return updatedUser;
+        });
+    }
+    remove(bufferClientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deletedUser = yield this.clientModel.findOneAndDelete({ bufferClientId }).exec();
+            if (!deletedUser) {
+                throw new common_1.NotFoundException(`Client with ID "${bufferClientId}" not found`);
+            }
+            return deletedUser;
+        });
+    }
+    search(filter) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(filter);
+            if (filter.firstName) {
+                filter.firstName = { $regex: new RegExp(filter.firstName, 'i') };
+            }
+            console.log(filter);
+            return this.clientModel.find(filter).exec();
+        });
+    }
+    executeQuery(query) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!query) {
+                    throw new common_1.BadRequestException('Query is invalid.');
+                }
+                return yield this.clientModel.find(query).exec();
+            }
+            catch (error) {
+                throw new common_1.InternalServerErrorException(error.message);
+            }
+        });
+    }
+};
+exports.BufferClientService = BufferClientService;
+exports.BufferClientService = BufferClientService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)(buffer_client_schema_1.BufferClient.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model])
+], BufferClientService);
+
+
+/***/ }),
+
+/***/ "./nest/components/buffer-clients/dto/create-buffer-client.dto.ts":
+/*!************************************************************************!*\
+  !*** ./nest/components/buffer-clients/dto/create-buffer-client.dto.ts ***!
+  \************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CreateBufferClientDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+class CreateBufferClientDto {
+}
+exports.CreateBufferClientDto = CreateBufferClientDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'paid_giirl_shruthiee', description: 'Channel link of the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "channelLink", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'shruthi', description: 'Database collection name' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "dbcoll", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'PaidGirl.netlify.app/Shruthi1', description: 'Link of the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "link", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Shruthi Reddy', description: 'Name of the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '+916265240911', description: 'Phone number of the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "number", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Ajtdmwajt1@', description: 'Password of the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me', description: 'Repl link of the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "repl", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '1BQANOTEuMTA4LjUg==', description: 'Session token' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "session", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Username of the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "userName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'shruthi1', description: 'Client ID of the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "clientId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me/exit', description: 'Deployment key URL' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "deployKey", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Main account of the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "mainAccount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'booklet_10', description: 'Product associated with the user' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "product", void 0);
+
+
+/***/ }),
+
+/***/ "./nest/components/buffer-clients/dto/search-buffer- client.dto.ts":
+/*!*************************************************************************!*\
+  !*** ./nest/components/buffer-clients/dto/search-buffer- client.dto.ts ***!
+  \*************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SearchBufferClientDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const class_transformer_1 = __webpack_require__(/*! class-transformer */ "class-transformer");
+class SearchBufferClientDto {
+}
+exports.SearchBufferClientDto = SearchBufferClientDto;
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Client ID of the client' }),
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "clientId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Database collection name' }),
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "dbcoll", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Channel link of the client' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "channelLink", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Link of the client' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "link", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Name of the client' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Phone number of the client' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "number", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Password of the client' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Repl link of the client' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "repl", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Clientname of the client' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "clientName", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Deployment key URL' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "deployKey", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Main account of the client' }),
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "mainAccount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Product associated with the client' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "product", void 0);
+
+
+/***/ }),
+
+/***/ "./nest/components/buffer-clients/schemas/buffer-client.schema.ts":
+/*!************************************************************************!*\
+  !*** ./nest/components/buffer-clients/schemas/buffer-client.schema.ts ***!
+  \************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.BufferClientSchema = exports.BufferClient = void 0;
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+let BufferClient = class BufferClient {
+};
+exports.BufferClient = BufferClient;
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'paid_giirl_shruthiee', description: 'Channel link of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "channelLink", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'shruthi', description: 'Database collection name' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "dbcoll", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'PaidGirl.netlify.app/Shruthi1', description: 'Link of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "link", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Shruthi Reddy', description: 'Name of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '+916265240911', description: 'Phone number of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "number", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'Ajtdmwajt1@', description: 'Password of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me', description: 'Repl link of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "repl", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: '1BQANOTEuM==', description: 'Session token' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "session", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Username of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "userName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'shruthi1', description: 'Client ID of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "clientId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me/exit', description: 'Deployment key URL' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "deployKey", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Main account of the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "mainAccount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'booklet_10', description: 'Product associated with the user' }),
+    (0, mongoose_1.Prop)({ required: true }),
+    __metadata("design:type", String)
+], BufferClient.prototype, "product", void 0);
+exports.BufferClient = BufferClient = __decorate([
+    (0, mongoose_1.Schema)({ collection: 'bufferClients', versionKey: false, autoIndex: true })
+], BufferClient);
+exports.BufferClientSchema = mongoose_1.SchemaFactory.createForClass(BufferClient);
 
 
 /***/ }),
