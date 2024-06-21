@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
+import { SearchUserDto } from './dto/search-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -39,10 +40,12 @@ export class UsersService {
       throw new NotFoundException(`User with tgId ${tgId} not found`);
     }
   }
-  async search(filter: any): Promise<User[]> {
-    console.log(filter)
+  async search(filter: SearchUserDto): Promise<User[]> {
     if (filter.firstName) {
-      filter.firstName = { $regex: new RegExp(filter.firstName,'i') }
+      filter.firstName = { $regex: new RegExp(filter.firstName,'i') } as any
+    }
+    if (filter.twoFA !== undefined) {
+      filter.twoFA = filter.twoFA as any === 'true' || filter.twoFA as any === '1' || filter.twoFA === true;
     }
     console.log(filter)
     return this.userModel.find(filter).exec();

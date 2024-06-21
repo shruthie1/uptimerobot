@@ -6509,7 +6509,7 @@ let ConfigurationService = class ConfigurationService {
     }
     update(updateClientDto) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(updateClientDto);
+            delete updateClientDto['_id'];
             const updatedUser = yield this.configurationModel.findOneAndUpdate({}, // Assuming you want to update the first document found in the collection
             { $set: Object.assign({}, updateClientDto) }, { new: true, upsert: true }).exec();
             if (!updatedUser) {
@@ -6611,6 +6611,94 @@ __decorate([
     (0, swagger_1.ApiProperty)({ example: 'sneha', description: 'Profile name' }),
     __metadata("design:type", String)
 ], CreateUserDataDto.prototype, "profile", void 0);
+
+
+/***/ }),
+
+/***/ "./nest/components/user-data/dto/search-user-data.dto.ts":
+/*!***************************************************************!*\
+  !*** ./nest/components/user-data/dto/search-user-data.dto.ts ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SearchDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const class_transformer_1 = __webpack_require__(/*! class-transformer */ "class-transformer");
+class SearchDto {
+}
+exports.SearchDto = SearchDto;
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Total count', type: Number }),
+    __metadata("design:type", Number)
+], SearchDto.prototype, "totalCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Picture count', type: Number }),
+    __metadata("design:type", Number)
+], SearchDto.prototype, "picCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Last message timestamp', type: Number }),
+    __metadata("design:type", Number)
+], SearchDto.prototype, "lastMsgTimeStamp", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Limit time', type: Number }),
+    __metadata("design:type", Number)
+], SearchDto.prototype, "limitTime", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Paid count', type: Number }),
+    __metadata("design:type", Number)
+], SearchDto.prototype, "paidCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Profile count', type: Number }),
+    __metadata("design:type", Number)
+], SearchDto.prototype, "prfCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Can reply', type: Number }),
+    __metadata("design:type", Number)
+], SearchDto.prototype, "canReply", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Pay amount', type: Number }),
+    __metadata("design:type", Number)
+], SearchDto.prototype, "payAmount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Username' }),
+    __metadata("design:type", String)
+], SearchDto.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Access hash' }),
+    __metadata("design:type", String)
+], SearchDto.prototype, "accessHash", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Paid reply status', type: Boolean }),
+    __metadata("design:type", Boolean)
+], SearchDto.prototype, "paidReply", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Demo given status', type: Boolean }),
+    __metadata("design:type", Boolean)
+], SearchDto.prototype, "demoGiven", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Second show status', type: Boolean }),
+    __metadata("design:type", Boolean)
+], SearchDto.prototype, "secondShow", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Profile name' }),
+    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
+    __metadata("design:type", String)
+], SearchDto.prototype, "profile", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Chat ID' }),
+    __metadata("design:type", String)
+], SearchDto.prototype, "chatId", void 0);
 
 
 /***/ }),
@@ -6739,6 +6827,7 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
 const user_data_service_1 = __webpack_require__(/*! ./user-data.service */ "./nest/components/user-data/user-data.service.ts");
 const create_user_data_dto_1 = __webpack_require__(/*! ./dto/create-user-data.dto */ "./nest/components/user-data/dto/create-user-data.dto.ts");
+const search_user_data_dto_1 = __webpack_require__(/*! ./dto/search-user-data.dto */ "./nest/components/user-data/dto/search-user-data.dto.ts");
 let UserDataController = class UserDataController {
     constructor(userDataService) {
         this.userDataService = userDataService;
@@ -6803,7 +6892,7 @@ __decorate([
     ,
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [search_user_data_dto_1.SearchDto]),
     __metadata("design:returntype", Promise)
 ], UserDataController.prototype, "search", null);
 __decorate([
@@ -7016,6 +7105,180 @@ exports.UserDataService = UserDataService = __decorate([
 
 /***/ }),
 
+/***/ "./nest/components/users/dto/search-user.dto.ts":
+/*!******************************************************!*\
+  !*** ./nest/components/users/dto/search-user.dto.ts ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SearchUserDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const class_transformer_1 = __webpack_require__(/*! class-transformer */ "class-transformer");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+class SearchUserDto {
+}
+exports.SearchUserDto = SearchUserDto;
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by Telegram ID' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "tgId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by mobile number' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "mobile", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by twoFA status' }),
+    (0, class_transformer_1.Transform)(({ value }) => value === 'true' || value === '1' || value === true),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], SearchUserDto.prototype, "twoFA", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by session' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "session", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by first name' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "firstName", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by last name' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "lastName", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by username' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "userName", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by channels count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "channels", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by personal chats count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "personalChats", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by demo given status' }),
+    (0, class_transformer_1.Transform)(({ value }) => value === 'true' || value === '1' || value === true),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], SearchUserDto.prototype, "demoGiven", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by messages count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "msgs", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by total chats count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "totalChats", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by last active timestamp' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "lastActive", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by date' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "date", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by last updated timestamp' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "lastUpdated", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by movie count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "movieCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by photo count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "photoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by video count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "videoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by gender' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "gender", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by username' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SearchUserDto.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by other photo count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "otherPhotoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by other video count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "otherVideoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by own photo count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "ownPhotoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Filter by own video count' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SearchUserDto.prototype, "ownVideoCount", void 0);
+
+
+/***/ }),
+
 /***/ "./nest/components/users/schemas/user.schema.ts":
 /*!******************************************************!*\
   !*** ./nest/components/users/schemas/user.schema.ts ***!
@@ -7219,6 +7482,7 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const users_service_1 = __webpack_require__(/*! ./users.service */ "./nest/components/users/users.service.ts");
 const user_schema_1 = __webpack_require__(/*! ./schemas/user.schema */ "./nest/components/users/schemas/user.schema.ts");
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const search_user_dto_1 = __webpack_require__(/*! ./dto/search-user.dto */ "./nest/components/users/dto/search-user.dto.ts");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -7266,70 +7530,41 @@ let UsersController = class UsersController {
 };
 exports.UsersController = UsersController;
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new user' }),
     (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new user' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [user_schema_1.User]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "create", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Search users based on various parameters' }),
     (0, common_1.Get)('/search'),
-    (0, swagger_1.ApiQuery)({ name: 'tgId', required: false, type: String, description: 'Filter by Telegram ID' }),
-    (0, swagger_1.ApiQuery)({ name: 'mobile', required: false, type: String, description: 'Filter by mobile number' }),
-    (0, swagger_1.ApiQuery)({ name: 'session', required: false, type: String, description: 'Filter by session' }),
-    (0, swagger_1.ApiQuery)({ name: 'firstName', required: false, type: String, description: 'Filter by first name' }),
-    (0, swagger_1.ApiQuery)({ name: 'lastName', required: false, type: String, description: 'Filter by last name' }),
-    (0, swagger_1.ApiQuery)({ name: 'userName', required: false, type: String, description: 'Filter by username' }),
-    (0, swagger_1.ApiQuery)({ name: 'channels', required: false, type: Number, description: 'Filter by channels count' }),
-    (0, swagger_1.ApiQuery)({ name: 'personalChats', required: false, type: Number, description: 'Filter by personal chats count' }),
-    (0, swagger_1.ApiQuery)({ name: 'demoGiven', required: false, type: Boolean, description: 'Filter by demo given status' }),
-    (0, swagger_1.ApiQuery)({ name: 'msgs', required: false, type: Number, description: 'Filter by messages count' }),
-    (0, swagger_1.ApiQuery)({ name: 'totalChats', required: false, type: Number, description: 'Filter by total chats count' }),
-    (0, swagger_1.ApiQuery)({ name: 'lastActive', required: false, type: Number, description: 'Filter by last active timestamp' }),
-    (0, swagger_1.ApiQuery)({ name: 'date', required: false, type: String, description: 'Filter by date' }),
-    (0, swagger_1.ApiQuery)({ name: 'lastUpdated', required: false, type: String, description: 'Filter by last updated timestamp' }),
-    (0, swagger_1.ApiQuery)({ name: 'movieCount', required: false, type: Number, description: 'Filter by movie count' }),
-    (0, swagger_1.ApiQuery)({ name: 'photoCount', required: false, type: Number, description: 'Filter by photo count' }),
-    (0, swagger_1.ApiQuery)({ name: 'videoCount', required: false, type: Number, description: 'Filter by video count' }),
-    (0, swagger_1.ApiQuery)({ name: 'gender', required: false, type: String, description: 'Filter by gender' }),
-    (0, swagger_1.ApiQuery)({ name: 'username', required: false, type: String, description: 'Filter by username' }),
-    (0, swagger_1.ApiQuery)({ name: 'otherPhotoCount', required: false, type: Number, description: 'Filter by other photo count' }),
-    (0, swagger_1.ApiQuery)({ name: 'otherVideoCount', required: false, type: Number, description: 'Filter by other video count' }),
-    (0, swagger_1.ApiQuery)({ name: 'ownPhotoCount', required: false, type: Number, description: 'Filter by own photo count' }),
-    (0, swagger_1.ApiQuery)({ name: 'ownVideoCount', required: false, type: Number, description: 'Filter by own video count' }),
-    (0, swagger_1.ApiQuery)({ name: 'contacts', required: false, type: Number, description: 'Filter by contacts count' }),
-    (0, swagger_1.ApiQuery)({ name: 'calls.outgoing', required: false, type: Number, description: 'Filter by outgoing call count' }),
-    (0, swagger_1.ApiQuery)({ name: 'calls.incoming', required: false, type: Number, description: 'Filter by incoming call count' }),
-    (0, swagger_1.ApiQuery)({ name: 'calls.video', required: false, type: Number, description: 'Filter by video call count' }),
-    (0, swagger_1.ApiQuery)({ name: 'calls.chatCallCounts', required: false, type: [String], description: 'Filter by chat call counts' }),
-    (0, swagger_1.ApiQuery)({ name: 'calls.totalCalls', required: false, type: Number, description: 'Filter by total call count' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Search users based on various parameters' }),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [search_user_dto_1.SearchUserDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "search", null);
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Get all users' }),
     (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all users' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)(':tgId'),
     (0, swagger_1.ApiOperation)({ summary: 'Get a user by tgId' }),
     (0, swagger_1.ApiParam)({ name: 'tgId', description: 'The Telegram ID of the user', type: String }),
-    (0, common_1.Get)(':tgId'),
     __param(0, (0, common_1.Param)('tgId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findOne", null);
 __decorate([
+    (0, common_1.Patch)(':tgId'),
     (0, swagger_1.ApiOperation)({ summary: 'Update a user by tgId' }),
     (0, swagger_1.ApiParam)({ name: 'tgId', description: 'The Telegram ID of the user', type: String }),
-    (0, common_1.Patch)(':tgId'),
     __param(0, (0, common_1.Param)('tgId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -7337,9 +7572,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "update", null);
 __decorate([
+    (0, common_1.Delete)(':tgId'),
     (0, swagger_1.ApiOperation)({ summary: 'Delete a user by tgId' }),
     (0, swagger_1.ApiParam)({ name: 'tgId', description: 'The Telegram ID of the user', type: String }),
-    (0, common_1.Delete)(':tgId'),
     __param(0, (0, common_1.Param)('tgId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -7479,9 +7714,11 @@ let UsersService = class UsersService {
     }
     search(filter) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(filter);
             if (filter.firstName) {
                 filter.firstName = { $regex: new RegExp(filter.firstName, 'i') };
+            }
+            if (filter.twoFA !== undefined) {
+                filter.twoFA = filter.twoFA === 'true' || filter.twoFA === '1' || filter.twoFA === true;
             }
             console.log(filter);
             return this.userModel.find(filter).exec();
@@ -8427,6 +8664,16 @@ module.exports = require("body-parser");
 /***/ ((module) => {
 
 module.exports = require("class-transformer");
+
+/***/ }),
+
+/***/ "class-validator":
+/*!**********************************!*\
+  !*** external "class-validator" ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = require("class-validator");
 
 /***/ }),
 
