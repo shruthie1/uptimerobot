@@ -155,7 +155,7 @@ export class TelegramController {
     async setAsBufferClient(
         @Param('mobile') mobile: string,
     ) {
-        const user = this.usersService.search({mobile})[0];
+        const user = (await this.usersService.search({mobile}))[0];
         if (!user) {
             throw new BadRequestException('user not found');
         }
