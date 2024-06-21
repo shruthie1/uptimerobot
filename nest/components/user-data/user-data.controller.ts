@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { UserDataService } from './user-data.service';
 import { CreateUserDataDto } from './dto/create-user-data.dto';
 import { UserData } from './schemas/user-data.schema';
+import { SearchDto } from './dto/search-user-data.dto';
 
 @ApiTags('UserData of TG clients')
 @Controller('userData')
@@ -21,7 +22,7 @@ export class UserDataController {
   @ApiOperation({ summary: 'Search user data' })
   //@apiresponse({ status: 200, description: 'Return the searched user data.' })
 
-  async search(@Query() query: any): Promise<UserData[]> {
+  async search(@Query() query: SearchDto): Promise<UserData[]> {
     return this.userDataService.search(query);
   }
 

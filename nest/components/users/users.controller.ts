@@ -19,6 +19,7 @@ export class UsersController {
   @Get('/search')
   @ApiQuery({ name: 'tgId', required: false, type: String, description: 'Filter by Telegram ID' })
   @ApiQuery({ name: 'mobile', required: false, type: String, description: 'Filter by mobile number' })
+  @ApiQuery({ name: 'twoFA', required: false, type: Boolean, description: 'Filter by twoFA status' })
   @ApiQuery({ name: 'session', required: false, type: String, description: 'Filter by session' })
   @ApiQuery({ name: 'firstName', required: false, type: String, description: 'Filter by first name' })
   @ApiQuery({ name: 'lastName', required: false, type: String, description: 'Filter by last name' })
@@ -40,12 +41,6 @@ export class UsersController {
   @ApiQuery({ name: 'otherVideoCount', required: false, type: Number, description: 'Filter by other video count' })
   @ApiQuery({ name: 'ownPhotoCount', required: false, type: Number, description: 'Filter by own photo count' })
   @ApiQuery({ name: 'ownVideoCount', required: false, type: Number, description: 'Filter by own video count' })
-  @ApiQuery({ name: 'contacts', required: false, type: Number, description: 'Filter by contacts count' })
-  @ApiQuery({ name: 'calls.outgoing', required: false, type: Number, description: 'Filter by outgoing call count' })
-  @ApiQuery({ name: 'calls.incoming', required: false, type: Number, description: 'Filter by incoming call count' })
-  @ApiQuery({ name: 'calls.video', required: false, type: Number, description: 'Filter by video call count' })
-  @ApiQuery({ name: 'calls.chatCallCounts', required: false, type: [String], description: 'Filter by chat call counts' })
-  @ApiQuery({ name: 'calls.totalCalls', required: false, type: Number, description: 'Filter by total call count' })
   async search(@Query() queryParams: Partial<User>) {
     return this.usersService.search(queryParams);
   }
