@@ -1,6 +1,44 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/Configuration": {
+      "get": {
+        "operationId": "ConfigurationController_findOne",
+        "summary": "Get configuration data",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Configuration"
+        ]
+      },
+      "patch": {
+        "operationId": "ConfigurationController_update",
+        "summary": "Update configuration",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Configuration"
+        ]
+      }
+    },
     "/active-channels": {
       "post": {
         "operationId": "ActiveChannelsController_create",
@@ -1960,6 +1998,10 @@
   "servers": [],
   "components": {
     "schemas": {
+      "Object": {
+        "type": "object",
+        "properties": {}
+      },
       "CreateActiveChannelDto": {
         "type": "object",
         "properties": {

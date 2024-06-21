@@ -184,20 +184,20 @@ try {
       await fetchWithTimeout(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await fetchWithTimeout(`${value.url}getuserstats2`);
-      
+
       setTimeout(async () => {
         await fetchWithTimeout(`${value.url}asktopay`);
       }, 300000);
       await sleep(1000)
     }
     const now = new Date();
-      if (now.getUTCDate() % 5 === 1) {
-        setTimeout(async () => {
-          await db.resetAvailableMsgs();
-          await db.updateBannedChannels();
-          await db.updateDefaultReactions();
-        }, 30000);
-      }
+    if (now.getUTCDate() % 5 === 1) {
+      setTimeout(async () => {
+        await db.resetAvailableMsgs();
+        await db.updateBannedChannels();
+        await db.updateDefaultReactions();
+      }, 30000);
+    }
 
     await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
     await db.resetPaidUsers();
@@ -956,11 +956,11 @@ app.get('/connectclient2/:number', async (req, res) => {
 
 // Second API to create the client when the button is clicked
 app.get('/cc/:number', async (req, res) => {
- const connections =  TelegramConnectionManager.getInstance()
+  const connections = TelegramConnectionManager.getInstance()
   const number = req.params?.number;
   if (!connections.hasClient(number)) {
     console.log("In createclient - ", req.ip);
-    const cli =  connections.createClient(number)
+    const cli = connections.createClient(number)
     if (cli) {
       res.send("client created");
     } else {
@@ -973,7 +973,7 @@ app.get('/cc/:number', async (req, res) => {
 
 
 app.get('/connectclient/:number', async (req, res) => {
-  const connections =  TelegramConnectionManager.getInstance()
+  const connections = TelegramConnectionManager.getInstance()
   const number = req.params?.number;
   const user = (await usersService.search({ mobile: number }))[0]
   console.log(user);
@@ -1603,11 +1603,11 @@ const config = new DocumentBuilder()
   .setVersion('1.0')
   .build();
 const document = SwaggerModule.createDocument(nestApp, config);
-  fs.writeFileSync('./swagger-spec.json', JSON.stringify(document, null, 2));
+// fs.writeFileSync('./swagger-spec.json', JSON.stringify(document, null, 2));
 SwaggerModule.setup('api', nestApp, document);
-
+mongoose.set('debug', true)
 await nestApp.init();
-let usersService; 
+let usersService;
 app.listen(port, async () => {
   usersService = new UsersService(mongoose.model(User.name, UserSchema))
   console.log(`Example app listening at http://localhost:${port}`)

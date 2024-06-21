@@ -6,6 +6,7 @@ import { ClientModule } from './components/clients/client.module';
 import { TelegramModule } from './components/Telegram/Telegram.module';
 import { BufferClientModule } from './components/buffer-clients/buffer-client.module';
 import { ActiveChannelsModule } from './components/activechannels/activechannels.module';
+import { ConfigurationModule } from './components/confguration/configuration.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ActiveChannelsModule } from './components/activechannels/activechannels
         uri: process.env.mongouri,
       }),
     }),
+    ConfigurationModule,
     ActiveChannelsModule,
     ClientModule,
     UserDataModule,

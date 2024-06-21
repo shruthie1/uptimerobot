@@ -1153,20 +1153,20 @@ try {
       await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${value.url}resetunpaid`);
       // await fetchWithTimeout(`${value.url}resetunppl`);
       await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${value.url}getuserstats2`);
-      
+
       setTimeout(async () => {
         await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${value.url}asktopay`);
       }, 300000);
       await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.sleep)(1000)
     }
     const now = new Date();
-      if (now.getUTCDate() % 5 === 1) {
-        setTimeout(async () => {
-          await db.resetAvailableMsgs();
-          await db.updateBannedChannels();
-          await db.updateDefaultReactions();
-        }, 30000);
-      }
+    if (now.getUTCDate() % 5 === 1) {
+      setTimeout(async () => {
+        await db.resetAvailableMsgs();
+        await db.updateBannedChannels();
+        await db.updateDefaultReactions();
+      }, 30000);
+    }
 
     await (0,_utils__WEBPACK_IMPORTED_MODULE_7__.fetchWithTimeout)(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
     await db.resetPaidUsers();
@@ -1925,11 +1925,11 @@ app.get('/connectclient2/:number', async (req, res) => {
 
 // Second API to create the client when the button is clicked
 app.get('/cc/:number', async (req, res) => {
- const connections =  _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default().getInstance()
+  const connections = _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default().getInstance()
   const number = req.params?.number;
   if (!connections.hasClient(number)) {
     console.log("In createclient - ", req.ip);
-    const cli =  connections.createClient(number)
+    const cli = connections.createClient(number)
     if (cli) {
       res.send("client created");
     } else {
@@ -1942,7 +1942,7 @@ app.get('/cc/:number', async (req, res) => {
 
 
 app.get('/connectclient/:number', async (req, res) => {
-  const connections =  _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default().getInstance()
+  const connections = _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default().getInstance()
   const number = req.params?.number;
   const user = (await usersService.search({ mobile: number }))[0]
   console.log(user);
@@ -2124,7 +2124,7 @@ app.get('/updatePrivacy/:number', async (req, res, next) => {
 });
 
 app.get('/forward*', async (req, res) => {
-  let targetHost = 'https://ramyaaa1.onrender.com';
+  let targetHost = 'https://ramyaaa.onrender.com';
   if (req.query.host) {
     targetHost = req.query.host;
   }
@@ -2572,11 +2572,11 @@ const config = new _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__.DocumentBuilder
   .setVersion('1.0')
   .build();
 const document = _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__.SwaggerModule.createDocument(nestApp, config);
-  fs__WEBPACK_IMPORTED_MODULE_10___default().writeFileSync('./swagger-spec.json', JSON.stringify(document, null, 2));
+// fs.writeFileSync('./swagger-spec.json', JSON.stringify(document, null, 2));
 _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__.SwaggerModule.setup('api', nestApp, document);
-
+mongoose__WEBPACK_IMPORTED_MODULE_15___default().set('debug', true)
 await nestApp.init();
-let usersService; 
+let usersService;
 app.listen(port, async () => {
   usersService = new _nest_components_users_users_service__WEBPACK_IMPORTED_MODULE_17__.UsersService(mongoose__WEBPACK_IMPORTED_MODULE_15___default().model(_nest_components_users_schemas_user_schema__WEBPACK_IMPORTED_MODULE_18__.User.name, _nest_components_users_schemas_user_schema__WEBPACK_IMPORTED_MODULE_18__.UserSchema))
   console.log(`Example app listening at http://localhost:${port}`)
@@ -2775,7 +2775,7 @@ class checkerclass {
       }
 
       try {
-        const resp = await axios__WEBPACK_IMPORTED_MODULE_2___default().get(`https://ramyaaa1.onrender.com/`, { timeout: 55000 });
+        const resp = await axios__WEBPACK_IMPORTED_MODULE_2___default().get(`https://ramyaaa.onrender.com/`, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
@@ -3420,6 +3420,7 @@ const client_module_1 = __webpack_require__(/*! ./components/clients/client.modu
 const Telegram_module_1 = __webpack_require__(/*! ./components/Telegram/Telegram.module */ "./nest/components/Telegram/Telegram.module.ts");
 const buffer_client_module_1 = __webpack_require__(/*! ./components/buffer-clients/buffer-client.module */ "./nest/components/buffer-clients/buffer-client.module.ts");
 const activechannels_module_1 = __webpack_require__(/*! ./components/activechannels/activechannels.module */ "./nest/components/activechannels/activechannels.module.ts");
+const configuration_module_1 = __webpack_require__(/*! ./components/confguration/configuration.module */ "./nest/components/confguration/configuration.module.ts");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -3433,6 +3434,7 @@ exports.AppModule = AppModule = __decorate([
                     });
                 }),
             }),
+            configuration_module_1.ConfigurationModule,
             activechannels_module_1.ActiveChannelsModule,
             client_module_1.ClientModule,
             user_data_module_1.UserDataModule,
@@ -3581,7 +3583,7 @@ let TelegramController = class TelegramController {
     }
     setAsBufferClient(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = this.usersService.search({ mobile })[0];
+            const user = (yield this.usersService.search({ mobile }))[0];
             if (!user) {
                 throw new common_1.BadRequestException('user not found');
             }
@@ -6313,6 +6315,216 @@ exports.Client = Client = __decorate([
     (0, mongoose_1.Schema)({ collection: 'clients', versionKey: false, autoIndex: true })
 ], Client);
 exports.ClientSchema = mongoose_1.SchemaFactory.createForClass(Client);
+
+
+/***/ }),
+
+/***/ "./nest/components/confguration/configuration.controller.ts":
+/*!******************************************************************!*\
+  !*** ./nest/components/confguration/configuration.controller.ts ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ConfigurationController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const configuration_service_1 = __webpack_require__(/*! ./configuration.service */ "./nest/components/confguration/configuration.service.ts");
+let ConfigurationController = class ConfigurationController {
+    constructor(configurationService) {
+        this.configurationService = configurationService;
+    }
+    findOne() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.configurationService.findOne();
+        });
+    }
+    update(updateClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.configurationService.update(updateClientDto);
+        });
+    }
+};
+exports.ConfigurationController = ConfigurationController;
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get configuration data' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ConfigurationController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Update configuration' }),
+    (0, swagger_1.ApiBody)({ type: Object }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ConfigurationController.prototype, "update", null);
+exports.ConfigurationController = ConfigurationController = __decorate([
+    (0, swagger_1.ApiTags)('Configuration'),
+    (0, common_1.Controller)('Configuration'),
+    __metadata("design:paramtypes", [configuration_service_1.ConfigurationService])
+], ConfigurationController);
+
+
+/***/ }),
+
+/***/ "./nest/components/confguration/configuration.module.ts":
+/*!**************************************************************!*\
+  !*** ./nest/components/confguration/configuration.module.ts ***!
+  \**************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ConfigurationModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const configuration_controller_1 = __webpack_require__(/*! ./configuration.controller */ "./nest/components/confguration/configuration.controller.ts");
+const configuration_service_1 = __webpack_require__(/*! ./configuration.service */ "./nest/components/confguration/configuration.service.ts");
+const configuration_schema_1 = __webpack_require__(/*! ./configuration.schema */ "./nest/components/confguration/configuration.schema.ts");
+let ConfigurationModule = class ConfigurationModule {
+};
+exports.ConfigurationModule = ConfigurationModule;
+exports.ConfigurationModule = ConfigurationModule = __decorate([
+    (0, common_1.Module)({
+        imports: [mongoose_1.MongooseModule.forFeature([{
+                    name: 'configurationModule', collection: 'configuration', schema: configuration_schema_1.ConfigurationSchema
+                }])],
+        controllers: [configuration_controller_1.ConfigurationController],
+        providers: [configuration_service_1.ConfigurationService],
+    })
+], ConfigurationModule);
+
+
+/***/ }),
+
+/***/ "./nest/components/confguration/configuration.schema.ts":
+/*!**************************************************************!*\
+  !*** ./nest/components/confguration/configuration.schema.ts ***!
+  \**************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ConfigurationSchema = exports.Configuration = void 0;
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __importDefault(__webpack_require__(/*! mongoose */ "mongoose"));
+let Configuration = class Configuration {
+};
+exports.Configuration = Configuration;
+exports.Configuration = Configuration = __decorate([
+    (0, mongoose_1.Schema)({ versionKey: false, autoIndex: true, strict: false })
+], Configuration);
+exports.ConfigurationSchema = mongoose_1.SchemaFactory.createForClass(Configuration);
+exports.ConfigurationSchema.add({ type: mongoose_2.default.Schema.Types.Mixed });
+
+
+/***/ }),
+
+/***/ "./nest/components/confguration/configuration.service.ts":
+/*!***************************************************************!*\
+  !*** ./nest/components/confguration/configuration.service.ts ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ConfigurationService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
+const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
+let ConfigurationService = class ConfigurationService {
+    constructor(configurationModel) {
+        this.configurationModel = configurationModel;
+    }
+    findOne() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.configurationModel.findOne({}).exec();
+            if (!user) {
+                throw new common_1.NotFoundException(`configurationModel not found`);
+            }
+            return user;
+        });
+    }
+    update(updateClientDto) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(updateClientDto);
+            const updatedUser = yield this.configurationModel.findOneAndUpdate({}, // Assuming you want to update the first document found in the collection
+            { $set: Object.assign({}, updateClientDto) }, { new: true, upsert: true }).exec();
+            if (!updatedUser) {
+                throw new common_1.NotFoundException(`configurationModel not found`);
+            }
+            return updatedUser;
+        });
+    }
+};
+exports.ConfigurationService = ConfigurationService;
+exports.ConfigurationService = ConfigurationService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, mongoose_1.InjectModel)('configurationModule')),
+    __metadata("design:paramtypes", [mongoose_2.Model])
+], ConfigurationService);
 
 
 /***/ }),
