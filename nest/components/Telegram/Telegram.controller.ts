@@ -19,8 +19,8 @@ export class TelegramController {
     @Get('connect/:mobile')
     @ApiOperation({ summary: 'Create and connect a new Telegram client' })
     @ApiParam({ name: 'mobile', description: 'Mobile number', required: true })
-    @ApiResponse({ status: 201, description: 'Client connected successfully' })
-    @ApiResponse({ status: 400, description: 'Bad request' })
+    //@apiresponse({ status: 201, description: 'Client connected successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
     async connectClient(@Param('mobile') mobile: string): Promise<string> {
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         if (!telegramManager) {
@@ -34,8 +34,8 @@ export class TelegramController {
     @ApiParam({ name: 'mobile', description: 'Mobile number', required: true })
     @ApiQuery({ name: 'username', description: 'Username to fetch messages from', required: true })
     @ApiQuery({ name: 'limit', description: 'Limit the number of messages', required: false })
-    @ApiResponse({ status: 200, description: 'Messages fetched successfully' })
-    @ApiResponse({ status: 400, description: 'Bad request' })
+    //@apiresponse({ status: 200, description: 'Messages fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
     async getMessages(@Param('mobile') mobile: string, @Query('username') username: string, @Query('limit') limit: number = 8) {
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         return telegramManager.getMessages(username, limit);
@@ -45,8 +45,8 @@ export class TelegramController {
     @ApiOperation({ summary: 'Get chat ID for a username' })
     @ApiParam({ name: 'mobile', description: 'Mobile number', required: true })
     @ApiQuery({ name: 'username', description: 'Username to fetch chat ID for', required: true })
-    @ApiResponse({ status: 200, description: 'Chat ID fetched successfully' })
-    @ApiResponse({ status: 400, description: 'Bad request' })
+    //@apiresponse({ status: 200, description: 'Chat ID fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
     async getChatId(@Param('mobile') mobile: string, @Query('username') username: string) {
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         return await telegramManager.getchatId(username);
@@ -56,8 +56,8 @@ export class TelegramController {
     @ApiOperation({ summary: 'Join channels' })
     @ApiParam({ name: 'mobile', description: 'Mobile number', required: true })
     @ApiBody({ description: 'Channels string', schema: { type: 'object', properties: { channels: { type: 'string' } } } })
-    @ApiResponse({ status: 200, description: 'Channels joined successfully' })
-    @ApiResponse({ status: 400, description: 'Bad request' })
+    //@apiresponse({ status: 200, description: 'Channels joined successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
     async joinChannels(@Param('mobile') mobile: string, @Body('channels') channels: string) {
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         telegramManager.joinChannels(channels);
@@ -67,8 +67,8 @@ export class TelegramController {
     @Get('removeauths/:mobile')
     @ApiOperation({ summary: 'Remove other authorizations' })
     @ApiParam({ name: 'mobile', description: 'Mobile number', required: true })
-    @ApiResponse({ status: 200, description: 'Authorizations removed successfully' })
-    @ApiResponse({ status: 400, description: 'Bad request' })
+    //@apiresponse({ status: 200, description: 'Authorizations removed successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
     async removeOtherAuths(@Param('mobile') mobile: string) {
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         await telegramManager.removeOtherAuths();
@@ -78,8 +78,8 @@ export class TelegramController {
     @Get('selfmsgsinfo/:mobile')
     @ApiOperation({ summary: 'Get self messages info' })
     @ApiParam({ name: 'mobile', description: 'Mobile number', required: true })
-    @ApiResponse({ status: 200, description: 'Self messages info fetched successfully' })
-    @ApiResponse({ status: 400, description: 'Bad request' })
+    //@apiresponse({ status: 200, description: 'Self messages info fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
     async getSelfMsgsInfo(@Param('mobile') mobile: string) {
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         return await telegramManager.getSelfMSgsInfo();
@@ -89,8 +89,8 @@ export class TelegramController {
     @ApiOperation({ summary: 'Get channel info' })
     @ApiParam({ name: 'mobile', description: 'Mobile number', required: true })
     @ApiQuery({ name: 'sendIds', description: 'Whether to send IDs or not', required: false })
-    @ApiResponse({ status: 200, description: 'Channel info fetched successfully' })
-    @ApiResponse({ status: 400, description: 'Bad request' })
+    //@apiresponse({ status: 200, description: 'Channel info fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
     async getChannelInfo(@Param('mobile') mobile: string, @Query('sendIds') sendIds: boolean = false) {
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         return await telegramManager.channelInfo(sendIds);
@@ -99,8 +99,8 @@ export class TelegramController {
     @Get('auths/:mobile')
     @ApiOperation({ summary: 'Get authorizations' })
     @ApiParam({ name: 'mobile', description: 'Mobile number', required: true })
-    @ApiResponse({ status: 200, description: 'Authorizations fetched successfully' })
-    @ApiResponse({ status: 400, description: 'Bad request' })
+    //@apiresponse({ status: 200, description: 'Authorizations fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
     async getAuths(@Param('mobile') mobile: string) {
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         return await telegramManager.getAuths();
@@ -109,8 +109,8 @@ export class TelegramController {
     @Get('set2Fa/:mobile')
     @ApiOperation({ summary: 'Set 2Fa' })
     @ApiParam({ name: 'mobile', description: 'Mobile number', required: true })
-    @ApiResponse({ status: 200, description: '2Fa set successfully' })
-    @ApiResponse({ status: 400, description: 'Bad request' })
+    //@apiresponse({ status: 200, description: '2Fa set successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
     async set2Fa(@Param('mobile') mobile: string) {
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         try {

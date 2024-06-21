@@ -14,13 +14,11 @@ export class ActiveChannelsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new active channel' })
-  @ApiResponse({ status: 201, description: 'The channel has been successfully created.', type: ActiveChannel })
   async create(@Body() createActiveChannelDto: CreateActiveChannelDto) {
     return this.activeChannelsService.create(createActiveChannelDto);
   }
   @Get('search')
   @ApiOperation({ summary: 'Search channels by filters' })
-  @ApiResponse({ status: 200, description: 'Return matching channels.', type: [ActiveChannel] })
   @ApiQuery({ name: 'channelId', required: false, type: String })
   @ApiQuery({ name: 'broadcast', required: false, type: Boolean })
   @ApiQuery({ name: 'canSendMsgs', required: false, type: Boolean })
@@ -43,31 +41,30 @@ export class ActiveChannelsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all active channels' })
-  @ApiResponse({ status: 200, description: 'Return all active channels', type: [ActiveChannel] })
   async findAll() {
     return this.activeChannelsService.findAll();
   }
 
   @Get(':channelId')
   @ApiOperation({ summary: 'Get an active channel by channelId' })
-  @ApiResponse({ status: 200, description: 'Return the active channel', type: ActiveChannel })
-  @ApiResponse({ status: 404, description: 'Channel not found' })
+  //@apiresponse({ status: 200, description: 'Return the active channel', type: ActiveChannel })
+  //@apiresponse({ status: 404, description: 'Channel not found' })
   async findOne(@Param('channelId') channelId: string) {
     return this.activeChannelsService.findOne(channelId);
   }
 
   @Patch(':channelId')
   @ApiOperation({ summary: 'Update an active channel by channelId' })
-  @ApiResponse({ status: 200, description: 'The channel has been successfully updated.', type: ActiveChannel })
-  @ApiResponse({ status: 404, description: 'Channel not found' })
+  //@apiresponse({ status: 200, description: 'The channel has been successfully updated.', type: ActiveChannel })
+  //@apiresponse({ status: 404, description: 'Channel not found' })
   async update(@Param('channelId') channelId: string, @Body() updateActiveChannelDto: UpdateActiveChannelDto) {
     return this.activeChannelsService.update(channelId, updateActiveChannelDto);
   }
 
   @Delete(':channelId')
   @ApiOperation({ summary: 'Delete an active channel by channelId' })
-  @ApiResponse({ status: 200, description: 'The channel has been successfully deleted.' })
-  @ApiResponse({ status: 404, description: 'Channel not found' })
+  //@apiresponse({ status: 200, description: 'The channel has been successfully deleted.' })
+  //@apiresponse({ status: 404, description: 'Channel not found' })
   async remove(@Param('channelId') channelId: string) {
     return this.activeChannelsService.remove(channelId);
   }

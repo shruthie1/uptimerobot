@@ -3479,6 +3479,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TelegramController = void 0;
+const buffer_client_service_1 = __webpack_require__(/*! ./../buffer-clients/buffer-client.service */ "./nest/components/buffer-clients/buffer-client.service.ts");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
 const users_service_1 = __webpack_require__(/*! ../users/users.service */ "./nest/components/users/users.service.ts"); // Adjust the import path accordingly
@@ -3486,8 +3487,9 @@ const TelegramConnectionManager_1 = __importDefault(__webpack_require__(/*! ./Te
 const utils_1 = __webpack_require__(/*! ../../../utils */ "./utils.js");
 const cloudinary_1 = __webpack_require__(/*! ../../../cloudinary */ "./cloudinary.js");
 let TelegramController = class TelegramController {
-    constructor(usersService) {
+    constructor(usersService, bufferClientService) {
         this.usersService = usersService;
+        this.bufferClientService = bufferClientService;
     }
     connectClient(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -3579,6 +3581,10 @@ let TelegramController = class TelegramController {
     }
     setAsBufferClient(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
+            const user = this.usersService.search({ mobile })[0];
+            if (!user) {
+                throw new common_1.BadRequestException('user not found');
+            }
             const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
             try {
                 yield telegramManager.set2fa();
@@ -3591,6 +3597,7 @@ let TelegramController = class TelegramController {
                 yield (0, utils_1.sleep)(5000);
                 yield telegramManager.deleteProfilePhotos();
                 yield (0, utils_1.sleep)(5000);
+                yield this.bufferClientService.create(user);
                 return "Client set as buffer successfully";
             }
             catch (error) {
@@ -3806,7 +3813,9 @@ exports.TelegramController = TelegramController = __decorate([
     (0, common_1.Controller)('telegram'),
     (0, swagger_1.ApiTags)('Telegram'),
     __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
-    __metadata("design:paramtypes", [users_service_1.UsersService])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
+    __metadata("design:paramtypes", [users_service_1.UsersService,
+        buffer_client_service_1.BufferClientService])
 ], TelegramController);
 
 
@@ -3830,12 +3839,13 @@ exports.TelegramModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const Telegram_controller_1 = __webpack_require__(/*! ./Telegram.controller */ "./nest/components/Telegram/Telegram.controller.ts");
 const users_module_1 = __webpack_require__(/*! ../users/users.module */ "./nest/components/users/users.module.ts");
+const buffer_client_module_1 = __webpack_require__(/*! ../buffer-clients/buffer-client.module */ "./nest/components/buffer-clients/buffer-client.module.ts");
 let TelegramModule = class TelegramModule {
 };
 exports.TelegramModule = TelegramModule;
 exports.TelegramModule = TelegramModule = __decorate([
     (0, common_1.Module)({
-        imports: [users_module_1.UsersModule],
+        imports: [users_module_1.UsersModule, buffer_client_module_1.BufferClientModule],
         controllers: [Telegram_controller_1.TelegramController],
         // providers:[UsersService]
     })
@@ -4749,7 +4759,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ActiveChannelsController.prototype, "removeReaction", null);
 exports.ActiveChannelsController = ActiveChannelsController = __decorate([
-    (0, swagger_1.ApiTags)('active-channels'),
+    (0, swagger_1.ApiTags)('Active Channels'),
     (0, common_1.Controller)('active-channels'),
     __metadata("design:paramtypes", [activechannels_service_1.ActiveChannelsService])
 ], ActiveChannelsController);
@@ -5310,8 +5320,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], BufferClientController.prototype, "executeQuery", null);
 exports.BufferClientController = BufferClientController = __decorate([
-    (0, swagger_1.ApiTags)('BufferClients'),
-    (0, common_1.Controller)('bufferclient'),
+    (0, swagger_1.ApiTags)('Buffer Clients'),
+    (0, common_1.Controller)('bufferclients'),
     __metadata("design:paramtypes", [buffer_client_service_1.BufferClientService])
 ], BufferClientController);
 
@@ -5387,64 +5397,45 @@ const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
 const buffer_client_schema_1 = __webpack_require__(/*! ./schemas/buffer-client.schema */ "./nest/components/buffer-clients/schemas/buffer-client.schema.ts");
 let BufferClientService = class BufferClientService {
-    constructor(clientModel) {
-        this.clientModel = clientModel;
-        this.clientsMap = new Map();
+    constructor(bufferClientModel) {
+        this.bufferClientModel = bufferClientModel;
     }
-    create(createClientDto) {
+    create(bufferClient) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createdUser = new this.clientModel(createClientDto);
-            return createdUser.save();
+            const newUser = new this.bufferClientModel(bufferClient);
+            return newUser.save();
         });
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.clientsMap.size < 3) {
-                const results = yield this.clientModel.find().exec();
-                for (const client of results) {
-                    this.clientsMap.set(client.clientId, client);
-                }
-                return results;
-            }
-            else {
-                return Array.from(this.clientsMap.values());
-            }
+            return this.bufferClientModel.find().exec();
         });
     }
-    findOne(bufferClientId) {
+    findOne(tgId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const client = this.clientsMap.get(bufferClientId);
-            if (client) {
-                return client;
+            const user = yield this.bufferClientModel.findOne({ tgId }).exec();
+            if (!user) {
+                throw new common_1.NotFoundException(`User with tgId ${tgId} not found`);
             }
-            else {
-                const user = yield this.clientModel.findOne({ bufferClientId }).exec();
-                this.clientsMap.set(bufferClientId, user);
-                if (!user) {
-                    throw new common_1.NotFoundException(`Client with ID "${bufferClientId}" not found`);
-                }
-                return user;
-            }
+            return user;
         });
     }
-    update(bufferClientId, updateClientDto) {
+    update(tgId, user) {
         return __awaiter(this, void 0, void 0, function* () {
-            delete updateClientDto['_id'];
-            const updatedUser = yield this.clientModel.findOneAndUpdate({ bufferClientId }, { $set: updateClientDto }, { new: true }).exec();
-            this.clientsMap.set(bufferClientId, updatedUser);
-            if (!updatedUser) {
-                throw new common_1.NotFoundException(`Client with ID "${bufferClientId}" not found`);
+            delete user['_id'];
+            const existingUser = yield this.bufferClientModel.findOneAndUpdate({ tgId }, { $set: user }, { new: true }).exec();
+            if (!existingUser) {
+                throw new common_1.NotFoundException(`User with tgId ${tgId} not found`);
             }
-            return updatedUser;
+            return existingUser;
         });
     }
-    remove(bufferClientId) {
+    remove(tgId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deletedUser = yield this.clientModel.findOneAndDelete({ bufferClientId }).exec();
-            if (!deletedUser) {
-                throw new common_1.NotFoundException(`Client with ID "${bufferClientId}" not found`);
+            const result = yield this.bufferClientModel.deleteOne({ tgId }).exec();
+            if (result.deletedCount === 0) {
+                throw new common_1.NotFoundException(`User with tgId ${tgId} not found`);
             }
-            return deletedUser;
         });
     }
     search(filter) {
@@ -5454,7 +5445,7 @@ let BufferClientService = class BufferClientService {
                 filter.firstName = { $regex: new RegExp(filter.firstName, 'i') };
             }
             console.log(filter);
-            return this.clientModel.find(filter).exec();
+            return this.bufferClientModel.find(filter).exec();
         });
     }
     executeQuery(query) {
@@ -5463,7 +5454,7 @@ let BufferClientService = class BufferClientService {
                 if (!query) {
                     throw new common_1.BadRequestException('Query is invalid.');
                 }
-                return yield this.clientModel.find(query).exec();
+                return yield this.bufferClientModel.find(query).exec();
             }
             catch (error) {
                 throw new common_1.InternalServerErrorException(error.message);
@@ -5504,57 +5495,114 @@ class CreateBufferClientDto {
 }
 exports.CreateBufferClientDto = CreateBufferClientDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'paid_giirl_shruthiee', description: 'Channel link of the user' }),
+    (0, swagger_1.ApiProperty)({ description: 'Mobile number of the user', example: '917330803480' }),
     __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "channelLink", void 0);
+], CreateBufferClientDto.prototype, "mobile", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'shruthi', description: 'Database collection name' }),
-    __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "dbcoll", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'PaidGirl.netlify.app/Shruthi1', description: 'Link of the user' }),
-    __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "link", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Shruthi Reddy', description: 'Name of the user' }),
-    __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "name", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: '+916265240911', description: 'Phone number of the user' }),
-    __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "number", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Ajtdmwajt1@', description: 'Password of the user' }),
-    __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "password", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me', description: 'Repl link of the user' }),
-    __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "repl", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: '1BQANOTEuMTA4LjUg==', description: 'Session token' }),
+    (0, swagger_1.ApiProperty)({ description: 'Session information of the user', example: 'string' }),
     __metadata("design:type", String)
 ], CreateBufferClientDto.prototype, "session", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Username of the user' }),
+    (0, swagger_1.ApiProperty)({ description: 'First name of the user', example: 'Praveen' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "firstName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Last name of the user', example: null }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "lastName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Username of the user', example: null }),
     __metadata("design:type", String)
 ], CreateBufferClientDto.prototype, "userName", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'shruthi1', description: 'Client ID of the user' }),
-    __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "clientId", void 0);
+    (0, swagger_1.ApiProperty)({ description: 'Number of channels', example: 56 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "channels", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me/exit', description: 'Deployment key URL' }),
-    __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "deployKey", void 0);
+    (0, swagger_1.ApiProperty)({ description: 'Number of personal chats', example: 74 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "personalChats", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Main account of the user' }),
-    __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "mainAccount", void 0);
+    (0, swagger_1.ApiProperty)({ description: 'Boolean flag indicating if demo was given', example: false }),
+    __metadata("design:type", Boolean)
+], CreateBufferClientDto.prototype, "demoGiven", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'booklet_10', description: 'Product associated with the user' }),
+    (0, swagger_1.ApiProperty)({ description: 'Number of messages', example: 0 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "msgs", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Total number of chats', example: 195 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "totalChats", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Timestamp of last active', example: 1718260523 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "lastActive", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Date of creation in YYYY-MM-DD format', example: '2024-06-03' }),
     __metadata("design:type", String)
-], CreateBufferClientDto.prototype, "product", void 0);
+], CreateBufferClientDto.prototype, "date", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Telegram ID of the user', example: '2022068676' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "tgId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Timestamp of last update', example: '2024-06-13' }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "lastUpdated", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Number of movies', example: 0 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "movieCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Number of photos', example: 0 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "photoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Number of videos', example: 0 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "videoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Gender of the user', example: null }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "gender", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Username of the user', example: null }),
+    __metadata("design:type", String)
+], CreateBufferClientDto.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Number of other photos', example: 0 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "otherPhotoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Number of other videos', example: 0 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "otherVideoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Number of own photos', example: 0 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "ownPhotoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Number of own videos', example: 0 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "ownVideoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'Number of contacts', example: 105 }),
+    __metadata("design:type", Number)
+], CreateBufferClientDto.prototype, "contacts", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Call details of the user',
+        example: {
+            outgoing: 1,
+            incoming: 0,
+            video: 1,
+            chatCallCounts: [],
+            totalCalls: 1,
+        },
+    }),
+    __metadata("design:type", Object)
+], CreateBufferClientDto.prototype, "calls", void 0);
 
 
 /***/ }),
@@ -5578,61 +5626,118 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SearchBufferClientDto = void 0;
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-const class_transformer_1 = __webpack_require__(/*! class-transformer */ "class-transformer");
 class SearchBufferClientDto {
 }
 exports.SearchBufferClientDto = SearchBufferClientDto;
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Client ID of the client' }),
-    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Mobile number of the user', example: '917330803480' }),
     __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "clientId", void 0);
+], SearchBufferClientDto.prototype, "mobile", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Database collection name' }),
-    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Session information of the user', example: 'string' }),
     __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "dbcoll", void 0);
+], SearchBufferClientDto.prototype, "session", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Channel link of the client' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'First name of the user', example: 'Praveen' }),
     __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "channelLink", void 0);
+], SearchBufferClientDto.prototype, "firstName", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Link of the client' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Last name of the user', example: null }),
     __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "link", void 0);
+], SearchBufferClientDto.prototype, "lastName", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Name of the client' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Username of the user', example: null }),
     __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "name", void 0);
+], SearchBufferClientDto.prototype, "userName", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Phone number of the client' }),
-    __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "number", void 0);
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of channels', example: 56 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "channels", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Password of the client' }),
-    __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "password", void 0);
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of personal chats', example: 74 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "personalChats", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Repl link of the client' }),
-    __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "repl", void 0);
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Boolean flag indicating if demo was given', example: false }),
+    __metadata("design:type", Boolean)
+], SearchBufferClientDto.prototype, "demoGiven", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Clientname of the client' }),
-    __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "clientName", void 0);
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of messages', example: 0 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "msgs", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Deployment key URL' }),
-    __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "deployKey", void 0);
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Total number of chats', example: 195 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "totalChats", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Main account of the client' }),
-    (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim().toLowerCase()),
-    __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "mainAccount", void 0);
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Timestamp of last active', example: 1718260523 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "lastActive", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ description: 'Product associated with the client' }),
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Date of creation in YYYY-MM-DD format', example: '2024-06-03' }),
     __metadata("design:type", String)
-], SearchBufferClientDto.prototype, "product", void 0);
+], SearchBufferClientDto.prototype, "date", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Telegram ID of the user', example: '2022068676' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "tgId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Timestamp of last update', example: '2024-06-13' }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "lastUpdated", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of movies', example: 0 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "movieCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of photos', example: 0 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "photoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of videos', example: 0 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "videoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Gender of the user', example: null }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "gender", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Username of the user', example: null }),
+    __metadata("design:type", String)
+], SearchBufferClientDto.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of other photos', example: 0 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "otherPhotoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of other videos', example: 0 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "otherVideoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of own photos', example: 0 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "ownPhotoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of own videos', example: 0 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "ownVideoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ description: 'Number of contacts', example: 105 }),
+    __metadata("design:type", Number)
+], SearchBufferClientDto.prototype, "contacts", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Call details of the user',
+        example: {
+            outgoing: 1,
+            incoming: 0,
+            video: 1,
+            chatCallCounts: [],
+            totalCalls: 1,
+        },
+    }),
+    __metadata("design:type", Object)
+], SearchBufferClientDto.prototype, "calls", void 0);
 
 
 /***/ }),
@@ -5653,78 +5758,151 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BufferClientSchema = exports.BufferClient = void 0;
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const mongoose_2 = __importDefault(__webpack_require__(/*! mongoose */ "mongoose"));
 let BufferClient = class BufferClient {
 };
 exports.BufferClient = BufferClient;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'paid_giirl_shruthiee', description: 'Channel link of the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
-], BufferClient.prototype, "channelLink", void 0);
+], BufferClient.prototype, "mobile", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'shruthi', description: 'Database collection name' }),
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], BufferClient.prototype, "dbcoll", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'PaidGirl.netlify.app/Shruthi1', description: 'Link of the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], BufferClient.prototype, "link", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Shruthi Reddy', description: 'Name of the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], BufferClient.prototype, "name", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: '+916265240911', description: 'Phone number of the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], BufferClient.prototype, "number", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Ajtdmwajt1@', description: 'Password of the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], BufferClient.prototype, "password", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me', description: 'Repl link of the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], BufferClient.prototype, "repl", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: '1BQANOTEuM==', description: 'Session token' }),
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], BufferClient.prototype, "session", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Username of the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], BufferClient.prototype, "firstName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], BufferClient.prototype, "lastName", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
 ], BufferClient.prototype, "userName", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'shruthi1', description: 'Client ID of the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], BufferClient.prototype, "clientId", void 0);
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "channels", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'https://shruthi1.glitch.me/exit', description: 'Deployment key URL' }),
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], BufferClient.prototype, "deployKey", void 0);
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "personalChats", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'ShruthiRedd2', description: 'Main account of the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
-], BufferClient.prototype, "mainAccount", void 0);
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Boolean)
+], BufferClient.prototype, "demoGiven", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'booklet_10', description: 'Product associated with the user' }),
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "msgs", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "totalChats", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "lastActive", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
     __metadata("design:type", String)
-], BufferClient.prototype, "product", void 0);
+], BufferClient.prototype, "date", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], BufferClient.prototype, "tgId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], BufferClient.prototype, "lastUpdated", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "movieCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "photoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "videoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], BufferClient.prototype, "gender", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], BufferClient.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "otherPhotoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "otherVideoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "ownPhotoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "ownVideoCount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Number)
+], BufferClient.prototype, "contacts", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, mongoose_1.Prop)({
+        type: mongoose_2.default.Schema.Types.Mixed,
+        default: {
+            outgoing: 0,
+            incoming: 0,
+            video: 0,
+            chatCallCounts: [],
+            totalCalls: 0,
+        },
+    }),
+    __metadata("design:type", Object)
+], BufferClient.prototype, "calls", void 0);
 exports.BufferClient = BufferClient = __decorate([
     (0, mongoose_1.Schema)({ collection: 'bufferClients', versionKey: false, autoIndex: true })
 ], BufferClient);

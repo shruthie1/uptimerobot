@@ -14,12 +14,12 @@ import { ActiveChannelsModule } from './components/activechannels/activechannels
         uri: process.env.mongouri,
       }),
     }),
+    ActiveChannelsModule,
     ClientModule,
     UserDataModule,
     UsersModule,
     TelegramModule,
     BufferClientModule,
-    ActiveChannelsModule
   ],
 })
 export class AppModule { }

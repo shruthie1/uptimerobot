@@ -79,9 +79,9 @@ export class UsersController {
 
   @Post('query')
   @ApiOperation({ summary: 'Execute a custom MongoDB query' })
-  @ApiResponse({ status: 200, description: 'Query executed successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid query.' })
-  @ApiResponse({ status: 500, description: 'Internal server error.' })
+  //@apiresponse({ status: 200, description: 'Query executed successfully.' })
+  //@apiresponse({ status: 400, description: 'Invalid query.' })
+  //@apiresponse({ status: 500, description: 'Internal server error.' })
   async executeQuery(@Body() query: any): Promise<any> {
     try {
       return await this.usersService.executeQuery(query);
