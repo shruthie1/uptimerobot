@@ -16,7 +16,7 @@ export class ConfigurationService {
     }
 
     async update(updateClientDto: any): Promise<any> {
-        console.log(updateClientDto)
+        delete updateClientDto['_id']
         const updatedUser = await this.configurationModel.findOneAndUpdate(
             {}, // Assuming you want to update the first document found in the collection
             { $set: {...updateClientDto} },
