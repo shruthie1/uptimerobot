@@ -6,75 +6,57 @@ import { CreateBufferClientDto } from './dto/create-buffer-client.dto';
 
 @Injectable()
 export class BufferClientService {
-    private clientsMap: Map<string, BufferClient> = new Map();
-    constructor(@InjectModel(BufferClient.name) private clientModel: Model<BufferClientDocument>) { }
+    constructor(@InjectModel(BufferClient.name) private bufferClientModel: Model<BufferClientDocument>) { }
 
-    async create(createClientDto: CreateBufferClientDto): Promise<BufferClient> {
-        const createdUser = new this.clientModel(createClientDto);
-        return createdUser.save();
-    }
-
-    async findAll(): Promise<BufferClient[]> {
-        if (this.clientsMap.size < 3) {
-            const results: BufferClient[] = await this.clientModel.find().exec();
-            for (const client of results) {
-                this.clientsMap.set(client.clientId, client)
-            }
-            return results
-        } else {
-            return Array.from(this.clientsMap.values())
+    async create(bufferClient: CreateBufferClientDto): Promise<BufferClient> {
+        const newUser = new this.bufferClientModel(bufferClient);
+        return newUser.save();
+      }
+    
+      async findAll(): Promise<BufferClient[]> {
+        return this.bufferClientModel.find().exec();
+      }
+    
+      async findOne(tgId: string): Promise<BufferClient> {
+        const user = await this.bufferClientModel.findOne({ tgId }).exec();
+        if (!user) {
+          throw new NotFoundException(`User with tgId ${tgId} not found`);
         }
-    }
-
-    async findOne(bufferClientId: string): Promise<BufferClient> {
-        const client = this.clientsMap.get(bufferClientId)
-        if (client) {
-            return client;
-        } else {
-            const user = await this.clientModel.findOne({ bufferClientId }).exec();
-            this.clientsMap.set(bufferClientId, user);
-            if (!user) {
-                throw new NotFoundException(`Client with ID "${bufferClientId}" not found`);
-            }
-            return user;
+        return user;
+      }
+    
+      async update(tgId: string, user: Partial<BufferClient>): Promise<BufferClient> {
+        delete user['_id']
+        const existingUser = await this.bufferClientModel.findOneAndUpdate({ tgId }, { $set: user }, { new: true }).exec();
+        if (!existingUser) {
+          throw new NotFoundException(`User with tgId ${tgId} not found`);
         }
-    }
-
-    async update(bufferClientId: string, updateClientDto: Partial<BufferClient>): Promise<BufferClient> {
-        delete updateClientDto['_id']
-        const updatedUser = await this.clientModel.findOneAndUpdate({ bufferClientId }, { $set: updateClientDto }, { new: true }).exec();
-        this.clientsMap.set(bufferClientId, updatedUser);
-        if (!updatedUser) {
-            throw new NotFoundException(`Client with ID "${bufferClientId}" not found`);
+        return existingUser;
+      }
+    
+      async remove(tgId: string): Promise<void> {
+        const result = await this.bufferClientModel.deleteOne({ tgId }).exec();
+        if (result.deletedCount === 0) {
+          throw new NotFoundException(`User with tgId ${tgId} not found`);
         }
-        return updatedUser;
-    }
-
-    async remove(bufferClientId: string): Promise<BufferClient> {
-        const deletedUser = await this.clientModel.findOneAndDelete({ bufferClientId }).exec();
-        if (!deletedUser) {
-            throw new NotFoundException(`Client with ID "${bufferClientId}" not found`);
-        }
-        return deletedUser;
-    }
-
-    async search(filter: any): Promise<BufferClient[]> {
+      }
+      async search(filter: any): Promise<BufferClient[]> {
         console.log(filter)
         if (filter.firstName) {
-            filter.firstName = { $regex: new RegExp(filter.firstName, 'i') }
+          filter.firstName = { $regex: new RegExp(filter.firstName,'i') }
         }
         console.log(filter)
-        return this.clientModel.find(filter).exec();
-    }
-
-    async executeQuery(query: any): Promise<any> {
+        return this.bufferClientModel.find(filter).exec();
+      }
+    
+      async executeQuery(query: any): Promise<any> {
         try {
-            if (!query) {
-                throw new BadRequestException('Query is invalid.');
-            }
-            return await this.clientModel.find(query).exec();
+          if (!query) {
+            throw new BadRequestException('Query is invalid.');
+          }
+          return await this.bufferClientModel.find(query).exec();
         } catch (error) {
-            throw new InternalServerErrorException(error.message);
+          throw new InternalServerErrorException(error.message);
         }
-    }
+      }
 }

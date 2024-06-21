@@ -1,62 +1,125 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export type BufferClientDocument = BufferClient & Document;
 
 @Schema({ collection: 'bufferClients', versionKey: false, autoIndex: true })
 export class BufferClient {
-    @ApiProperty({ example: 'paid_giirl_shruthiee', description: 'Channel link of the user' })
-    @Prop({ required: true })
-    channelLink: string;
-  
-    @ApiProperty({ example: 'shruthi', description: 'Database collection name' })
-    @Prop({ required: true })
-    dbcoll: string;
-  
-    @ApiProperty({ example: 'PaidGirl.netlify.app/Shruthi1', description: 'Link of the user' })
-    @Prop({ required: true })
-    link: string;
-  
-    @ApiProperty({ example: 'Shruthi Reddy', description: 'Name of the user' })
-    @Prop({ required: true })
-    name: string;
-  
-    @ApiProperty({ example: '+916265240911', description: 'Phone number of the user' })
-    @Prop({ required: true })
-    number: string;
-  
-    @ApiProperty({ example: 'Ajtdmwajt1@', description: 'Password of the user' })
-    @Prop({ required: true })
-    password: string;
-  
-    @ApiProperty({ example: 'https://shruthi1.glitch.me', description: 'Repl link of the user' })
-    @Prop({ required: true })
-    repl: string;
-  
-    @ApiProperty({ example: '1BQANOTEuM==', description: 'Session token' })
-    @Prop({ required: true })
-    session: string;
-  
-    @ApiProperty({ example: 'ShruthiRedd2', description: 'Username of the user' })
-    @Prop({ required: true })
-    userName: string;
-  
-    @ApiProperty({ example: 'shruthi1', description: 'Client ID of the user' })
-    @Prop({ required: true })
-    clientId: string;
-  
-    @ApiProperty({ example: 'https://shruthi1.glitch.me/exit', description: 'Deployment key URL' })
-    @Prop({ required: true })
-    deployKey: string;
-  
-    @ApiProperty({ example: 'ShruthiRedd2', description: 'Main account of the user' })
-    @Prop({ required: true })
-    mainAccount: string;
-  
-    @ApiProperty({ example: 'booklet_10', description: 'Product associated with the user' })
-    @Prop({ required: true })
-    product: string;
+    @ApiProperty()
+  @Prop()
+  mobile: string;
+
+  @ApiProperty()
+  @Prop()
+  session: string;
+
+  @ApiProperty()
+  @Prop()
+  firstName: string;
+
+  @ApiProperty({ required: false })
+  @Prop()
+  lastName: string | null;
+
+  @ApiProperty({ required: false })
+  @Prop()
+  userName: string | null;
+
+  @ApiProperty()
+  @Prop()
+  channels: number;
+
+  @ApiProperty()
+  @Prop()
+  personalChats: number;
+
+  @ApiProperty()
+  @Prop()
+  demoGiven: boolean;
+
+  @ApiProperty()
+  @Prop()
+  msgs: number;
+
+  @ApiProperty()
+  @Prop()
+  totalChats: number;
+
+  @ApiProperty()
+  @Prop()
+  lastActive: number;
+
+  @ApiProperty()
+  @Prop()
+  date: string;
+
+  @ApiProperty()
+  @Prop()
+  tgId: string;
+
+  @ApiProperty()
+  @Prop()
+  lastUpdated: string;
+
+  @ApiProperty()
+  @Prop()
+  movieCount: number;
+
+  @ApiProperty()
+  @Prop()
+  photoCount: number;
+
+  @ApiProperty()
+  @Prop()
+  videoCount: number;
+
+  @ApiProperty({ required: false })
+  @Prop()
+  gender: string | null;
+
+  @ApiProperty({ required: false })
+  @Prop()
+  username: string | null;
+
+  @ApiProperty()
+  @Prop()
+  otherPhotoCount: number;
+
+  @ApiProperty()
+  @Prop()
+  otherVideoCount: number;
+
+  @ApiProperty()
+  @Prop()
+  ownPhotoCount: number;
+
+  @ApiProperty()
+  @Prop()
+  ownVideoCount: number;
+
+  @ApiProperty()
+  @Prop()
+  contacts: number;
+
+  @ApiProperty()
+  @Prop({
+    type: mongoose.Schema.Types.Mixed,
+    default: {
+      outgoing: 0,
+      incoming: 0,
+      video: 0,
+      chatCallCounts: [],
+      totalCalls: 0,
+    },
+  })
+  calls: {
+    outgoing: number;
+    incoming: number;
+    video: number;
+    chatCallCounts: any[];
+    totalCalls: number;
+  };
 }
 
 export const BufferClientSchema = SchemaFactory.createForClass(BufferClient);

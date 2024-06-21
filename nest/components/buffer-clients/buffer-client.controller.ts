@@ -53,7 +53,7 @@ export class BufferClientController {
   @ApiOperation({ summary: 'Delete user data by ID' })
   @ApiResponse({ status: 200, description: 'The user data has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'User data not found.' })
-  async remove(@Param('bufferClientId') bufferClientId: string): Promise<BufferClient> {
+  async remove(@Param('bufferClientId') bufferClientId: string): Promise<void> {
     return this.clientService.remove(bufferClientId);
   }
 

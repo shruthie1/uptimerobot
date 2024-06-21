@@ -1,3 +1,4 @@
+import { BufferClientService } from './../buffer-clients/buffer-client.service';
 import { Controller, Get, Post, Body, Param, Query, BadRequestException, Inject, forwardRef, HttpException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
 import { UsersService } from '../users/users.service'; // Adjust the import path accordingly
@@ -10,7 +11,9 @@ import { CloudinaryService } from '../../../cloudinary';
 export class TelegramController {
     constructor(
         @Inject(forwardRef(() => UsersService))
-        private usersService: UsersService
+        private usersService: UsersService,
+        @Inject(forwardRef(() => UsersService))
+        private bufferClientService: BufferClientService
     ) { }
 
     @Get('connect/:mobile')
@@ -152,6 +155,10 @@ export class TelegramController {
     async setAsBufferClient(
         @Param('mobile') mobile: string,
     ) {
+        const user = this.usersService.search({mobile})[0];
+        if (!user) {
+            throw new BadRequestException('user not found');
+        }
         const telegramManager = await TelegramConnectionManager.getInstance(this.usersService).createClient(mobile)
         try {
             await telegramManager.set2fa();
@@ -163,7 +170,8 @@ export class TelegramController {
             await telegramManager.updateProfile("Deleted Account", "Deleted Account");
             await sleep(5000)
             await telegramManager.deleteProfilePhotos();
-            await sleep(5000)
+            await sleep(5000);
+            await this.bufferClientService.create(user)
             return "Client set as buffer successfully";
         } catch (error) {
             const errorDetails = parseError(error)
