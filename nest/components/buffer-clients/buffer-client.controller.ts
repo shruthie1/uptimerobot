@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Param, Delete, Query, Patch } from '@nestj
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { BufferClientService } from './buffer-client.service';
 import { CreateBufferClientDto } from './dto/create-buffer-client.dto';
-import {BufferClient } from './schemas/buffer-client.schema';
 import { SearchBufferClientDto } from './dto/search-buffer- client.dto';
+import { User } from '../users/schemas/user.schema';
 
 @ApiTags('Buffer Clients')
 @Controller('bufferclients')
@@ -12,31 +12,31 @@ export class BufferClientController {
 
   @Post()
   @ApiOperation({ summary: 'Create user data' })
-  async create(@Body() createClientDto: CreateBufferClientDto): Promise<BufferClient> {
+  async create(@Body() createClientDto: CreateBufferClientDto): Promise<User> {
     return this.clientService.create(createClientDto);
   }
 
   @Get('search')
   @ApiOperation({ summary: 'Search user data' })
-  async search(@Query() query: SearchBufferClientDto): Promise<BufferClient[]> {
+  async search(@Query() query: SearchBufferClientDto): Promise<User[]> {
     return this.clientService.search(query);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all user data' })
-  async findAll(): Promise<BufferClient[]> {
+  async findAll(): Promise<User[]> {
     return this.clientService.findAll();
   }
 
   @Get(':bufferClientId')
   @ApiOperation({ summary: 'Get user data by ID' })
-  async findOne(@Param('bufferClientId') bufferClientId: string): Promise<BufferClient> {
+  async findOne(@Param('bufferClientId') bufferClientId: string): Promise<User> {
     return this.clientService.findOne(bufferClientId);
   }
 
   @Patch(':bufferClientId')
   @ApiOperation({ summary: 'Update user data by ID' })
-  async update(@Param('bufferClientId') bufferClientId: string, @Body() updateClientDto: Partial<BufferClient>): Promise<BufferClient> {
+  async update(@Param('bufferClientId') bufferClientId: string, @Body() updateClientDto: Partial<User>): Promise<User> {
     return this.clientService.update(bufferClientId, updateClientDto);
   }
 

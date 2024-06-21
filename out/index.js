@@ -3433,12 +3433,12 @@ exports.AppModule = AppModule = __decorate([
                     });
                 }),
             }),
+            activechannels_module_1.ActiveChannelsModule,
             client_module_1.ClientModule,
             user_data_module_1.UserDataModule,
             users_module_1.UsersModule,
             Telegram_module_1.TelegramModule,
             buffer_client_module_1.BufferClientModule,
-            activechannels_module_1.ActiveChannelsModule
         ],
     })
 ], AppModule);
@@ -3650,9 +3650,10 @@ exports.TelegramController = TelegramController;
 __decorate([
     (0, common_1.Get)('connect/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Create and connect a new Telegram client' }),
-    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Client connected successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true })
+    //@apiresponse({ status: 201, description: 'Client connected successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    ,
     __param(0, (0, common_1.Param)('mobile')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -3663,9 +3664,10 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Get messages from Telegram' }),
     (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
     (0, swagger_1.ApiQuery)({ name: 'username', description: 'Username to fetch messages from', required: true }),
-    (0, swagger_1.ApiQuery)({ name: 'limit', description: 'Limit the number of messages', required: false }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Messages fetched successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', description: 'Limit the number of messages', required: false })
+    //@apiresponse({ status: 200, description: 'Messages fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    ,
     __param(0, (0, common_1.Param)('mobile')),
     __param(1, (0, common_1.Query)('username')),
     __param(2, (0, common_1.Query)('limit')),
@@ -3677,9 +3679,10 @@ __decorate([
     (0, common_1.Get)('chatid/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Get chat ID for a username' }),
     (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiQuery)({ name: 'username', description: 'Username to fetch chat ID for', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Chat ID fetched successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, swagger_1.ApiQuery)({ name: 'username', description: 'Username to fetch chat ID for', required: true })
+    //@apiresponse({ status: 200, description: 'Chat ID fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    ,
     __param(0, (0, common_1.Param)('mobile')),
     __param(1, (0, common_1.Query)('username')),
     __metadata("design:type", Function),
@@ -3690,9 +3693,10 @@ __decorate([
     (0, common_1.Post)('joinchannels/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Join channels' }),
     (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiBody)({ description: 'Channels string', schema: { type: 'object', properties: { channels: { type: 'string' } } } }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Channels joined successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, swagger_1.ApiBody)({ description: 'Channels string', schema: { type: 'object', properties: { channels: { type: 'string' } } } })
+    //@apiresponse({ status: 200, description: 'Channels joined successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    ,
     __param(0, (0, common_1.Param)('mobile')),
     __param(1, (0, common_1.Body)('channels')),
     __metadata("design:type", Function),
@@ -3702,9 +3706,10 @@ __decorate([
 __decorate([
     (0, common_1.Get)('removeauths/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Remove other authorizations' }),
-    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Authorizations removed successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true })
+    //@apiresponse({ status: 200, description: 'Authorizations removed successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    ,
     __param(0, (0, common_1.Param)('mobile')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -3713,9 +3718,10 @@ __decorate([
 __decorate([
     (0, common_1.Get)('selfmsgsinfo/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Get self messages info' }),
-    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Self messages info fetched successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true })
+    //@apiresponse({ status: 200, description: 'Self messages info fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    ,
     __param(0, (0, common_1.Param)('mobile')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -3725,9 +3731,10 @@ __decorate([
     (0, common_1.Get)('channelinfo/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Get channel info' }),
     (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiQuery)({ name: 'sendIds', description: 'Whether to send IDs or not', required: false }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Channel info fetched successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, swagger_1.ApiQuery)({ name: 'sendIds', description: 'Whether to send IDs or not', required: false })
+    //@apiresponse({ status: 200, description: 'Channel info fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    ,
     __param(0, (0, common_1.Param)('mobile')),
     __param(1, (0, common_1.Query)('sendIds')),
     __metadata("design:type", Function),
@@ -3737,9 +3744,10 @@ __decorate([
 __decorate([
     (0, common_1.Get)('auths/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Get authorizations' }),
-    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Authorizations fetched successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true })
+    //@apiresponse({ status: 200, description: 'Authorizations fetched successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    ,
     __param(0, (0, common_1.Param)('mobile')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -3748,9 +3756,10 @@ __decorate([
 __decorate([
     (0, common_1.Get)('set2Fa/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Set 2Fa' }),
-    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: '2Fa set successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, swagger_1.ApiParam)({ name: 'mobile', description: 'Mobile number', required: true })
+    //@apiresponse({ status: 200, description: '2Fa set successfully' })
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    ,
     __param(0, (0, common_1.Param)('mobile')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -4608,7 +4617,6 @@ const activechannels_service_1 = __webpack_require__(/*! ./activechannels.servic
 const create_active_channel_dto_1 = __webpack_require__(/*! ./dto/create-active-channel.dto */ "./nest/components/activechannels/dto/create-active-channel.dto.ts");
 const update_active_channel_dto_1 = __webpack_require__(/*! ./dto/update-active-channel.dto */ "./nest/components/activechannels/dto/update-active-channel.dto.ts");
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-const active_channel_schema_1 = __webpack_require__(/*! ./schemas/active-channel.schema */ "./nest/components/activechannels/schemas/active-channel.schema.ts");
 const add_reaction_dto_1 = __webpack_require__(/*! ./dto/add-reaction.dto */ "./nest/components/activechannels/dto/add-reaction.dto.ts");
 let ActiveChannelsController = class ActiveChannelsController {
     constructor(activeChannelsService) {
@@ -4663,7 +4671,6 @@ exports.ActiveChannelsController = ActiveChannelsController;
 __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new active channel' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'The channel has been successfully created.', type: active_channel_schema_1.ActiveChannel }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_active_channel_dto_1.CreateActiveChannelDto]),
@@ -4672,7 +4679,6 @@ __decorate([
 __decorate([
     (0, common_1.Get)('search'),
     (0, swagger_1.ApiOperation)({ summary: 'Search channels by filters' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return matching channels.', type: [active_channel_schema_1.ActiveChannel] }),
     (0, swagger_1.ApiQuery)({ name: 'channelId', required: false, type: String }),
     (0, swagger_1.ApiQuery)({ name: 'broadcast', required: false, type: Boolean }),
     (0, swagger_1.ApiQuery)({ name: 'canSendMsgs', required: false, type: Boolean }),
@@ -4696,16 +4702,16 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all active channels' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all active channels', type: [active_channel_schema_1.ActiveChannel] }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ActiveChannelsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':channelId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get an active channel by channelId' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the active channel', type: active_channel_schema_1.ActiveChannel }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Channel not found' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get an active channel by channelId' })
+    //@apiresponse({ status: 200, description: 'Return the active channel', type: ActiveChannel })
+    //@apiresponse({ status: 404, description: 'Channel not found' })
+    ,
     __param(0, (0, common_1.Param)('channelId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -4713,9 +4719,10 @@ __decorate([
 ], ActiveChannelsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':channelId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Update an active channel by channelId' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'The channel has been successfully updated.', type: active_channel_schema_1.ActiveChannel }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Channel not found' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Update an active channel by channelId' })
+    //@apiresponse({ status: 200, description: 'The channel has been successfully updated.', type: ActiveChannel })
+    //@apiresponse({ status: 404, description: 'Channel not found' })
+    ,
     __param(0, (0, common_1.Param)('channelId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -4724,9 +4731,10 @@ __decorate([
 ], ActiveChannelsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':channelId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete an active channel by channelId' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'The channel has been successfully deleted.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Channel not found' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete an active channel by channelId' })
+    //@apiresponse({ status: 200, description: 'The channel has been successfully deleted.' })
+    //@apiresponse({ status: 404, description: 'Channel not found' })
+    ,
     __param(0, (0, common_1.Param)('channelId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -5252,8 +5260,6 @@ exports.BufferClientController = BufferClientController;
 __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create user data' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'The user data has been successfully created.' }),
-    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_buffer_client_dto_1.CreateBufferClientDto]),
@@ -5262,7 +5268,6 @@ __decorate([
 __decorate([
     (0, common_1.Get)('search'),
     (0, swagger_1.ApiOperation)({ summary: 'Search user data' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the searched user data.' }),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [search_buffer__client_dto_1.SearchBufferClientDto]),
@@ -5271,8 +5276,6 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all user data' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all user data.' }),
-    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
@@ -5280,8 +5283,6 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':bufferClientId'),
     (0, swagger_1.ApiOperation)({ summary: 'Get user data by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the user data.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
     __param(0, (0, common_1.Param)('bufferClientId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -5290,8 +5291,6 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':bufferClientId'),
     (0, swagger_1.ApiOperation)({ summary: 'Update user data by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully updated.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
     __param(0, (0, common_1.Param)('bufferClientId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -5301,8 +5300,6 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':bufferClientId'),
     (0, swagger_1.ApiOperation)({ summary: 'Delete user data by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully deleted.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
     __param(0, (0, common_1.Param)('bufferClientId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -5311,9 +5308,6 @@ __decorate([
 __decorate([
     (0, common_1.Post)('query'),
     (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Query executed successfully.' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid query.' }),
-    (0, swagger_1.ApiResponse)({ status: 500, description: 'Internal server error.' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -5345,15 +5339,15 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BufferClientModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
-const buffer_client_schema_1 = __webpack_require__(/*! ./schemas/buffer-client.schema */ "./nest/components/buffer-clients/schemas/buffer-client.schema.ts");
 const buffer_client_service_1 = __webpack_require__(/*! ./buffer-client.service */ "./nest/components/buffer-clients/buffer-client.service.ts");
 const buffer_client_controller_1 = __webpack_require__(/*! ./buffer-client.controller */ "./nest/components/buffer-clients/buffer-client.controller.ts");
+const user_schema_1 = __webpack_require__(/*! ../users/schemas/user.schema */ "./nest/components/users/schemas/user.schema.ts");
 let BufferClientModule = class BufferClientModule {
 };
 exports.BufferClientModule = BufferClientModule;
 exports.BufferClientModule = BufferClientModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: buffer_client_schema_1.BufferClient.name, schema: buffer_client_schema_1.BufferClientSchema }])],
+        imports: [mongoose_1.MongooseModule.forFeature([{ name: 'bufferClientModule', schema: user_schema_1.UserSchema, collection: 'bufferClients' }])],
         controllers: [buffer_client_controller_1.BufferClientController],
         providers: [buffer_client_service_1.BufferClientService],
     })
@@ -5395,7 +5389,6 @@ exports.BufferClientService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
-const buffer_client_schema_1 = __webpack_require__(/*! ./schemas/buffer-client.schema */ "./nest/components/buffer-clients/schemas/buffer-client.schema.ts");
 let BufferClientService = class BufferClientService {
     constructor(bufferClientModel) {
         this.bufferClientModel = bufferClientModel;
@@ -5465,7 +5458,7 @@ let BufferClientService = class BufferClientService {
 exports.BufferClientService = BufferClientService;
 exports.BufferClientService = BufferClientService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)(buffer_client_schema_1.BufferClient.name)),
+    __param(0, (0, mongoose_1.InjectModel)('bufferClientModule')),
     __metadata("design:paramtypes", [mongoose_2.Model])
 ], BufferClientService);
 
@@ -5742,175 +5735,6 @@ __decorate([
 
 /***/ }),
 
-/***/ "./nest/components/buffer-clients/schemas/buffer-client.schema.ts":
-/*!************************************************************************!*\
-  !*** ./nest/components/buffer-clients/schemas/buffer-client.schema.ts ***!
-  \************************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.BufferClientSchema = exports.BufferClient = void 0;
-const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
-const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-const mongoose_2 = __importDefault(__webpack_require__(/*! mongoose */ "mongoose"));
-let BufferClient = class BufferClient {
-};
-exports.BufferClient = BufferClient;
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "mobile", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "session", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "firstName", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "lastName", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "userName", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "channels", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "personalChats", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Boolean)
-], BufferClient.prototype, "demoGiven", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "msgs", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "totalChats", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "lastActive", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "date", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "tgId", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "lastUpdated", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "movieCount", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "photoCount", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "videoCount", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "gender", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", String)
-], BufferClient.prototype, "username", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "otherPhotoCount", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "otherVideoCount", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "ownPhotoCount", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "ownVideoCount", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)(),
-    __metadata("design:type", Number)
-], BufferClient.prototype, "contacts", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, mongoose_1.Prop)({
-        type: mongoose_2.default.Schema.Types.Mixed,
-        default: {
-            outgoing: 0,
-            incoming: 0,
-            video: 0,
-            chatCallCounts: [],
-            totalCalls: 0,
-        },
-    }),
-    __metadata("design:type", Object)
-], BufferClient.prototype, "calls", void 0);
-exports.BufferClient = BufferClient = __decorate([
-    (0, mongoose_1.Schema)({ collection: 'bufferClients', versionKey: false, autoIndex: true })
-], BufferClient);
-exports.BufferClientSchema = mongoose_1.SchemaFactory.createForClass(BufferClient);
-
-
-/***/ }),
-
 /***/ "./nest/components/clients/client.controller.ts":
 /*!******************************************************!*\
   !*** ./nest/components/clients/client.controller.ts ***!
@@ -5994,9 +5818,10 @@ let ClientController = class ClientController {
 exports.ClientController = ClientController;
 __decorate([
     (0, common_1.Post)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Create user data' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'The user data has been successfully created.' }),
-    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Create user data' })
+    //@apiresponse({ status: 201, description: 'The user data has been successfully created.' })
+    //@apiresponse({ status: 403, description: 'Forbidden.' })
+    ,
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_client_dto_1.CreateClientDto]),
@@ -6004,8 +5829,9 @@ __decorate([
 ], ClientController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)('search'),
-    (0, swagger_1.ApiOperation)({ summary: 'Search user data' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the searched user data.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Search user data' })
+    //@apiresponse({ status: 200, description: 'Return the searched user data.' })
+    ,
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [search_client_dto_1.SearchClientDto]),
@@ -6013,18 +5839,20 @@ __decorate([
 ], ClientController.prototype, "search", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Get all user data' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all user data.' }),
-    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all user data' })
+    //@apiresponse({ status: 200, description: 'Return all user data.' })
+    //@apiresponse({ status: 403, description: 'Forbidden.' })
+    ,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ClientController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':clientId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get user data by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the user data.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get user data by ID' })
+    //@apiresponse({ status: 200, description: 'Return the user data.' })
+    //@apiresponse({ status: 404, description: 'User data not found.' })
+    ,
     __param(0, (0, common_1.Param)('clientId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -6032,9 +5860,10 @@ __decorate([
 ], ClientController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':clientId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Update user data by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully updated.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Update user data by ID' })
+    //@apiresponse({ status: 200, description: 'The user data has been successfully updated.' })
+    //@apiresponse({ status: 404, description: 'User data not found.' })
+    ,
     __param(0, (0, common_1.Param)('clientId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -6043,9 +5872,10 @@ __decorate([
 ], ClientController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':clientId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete user data by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully deleted.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete user data by ID' })
+    //@apiresponse({ status: 200, description: 'The user data has been successfully deleted.' })
+    //@apiresponse({ status: 404, description: 'User data not found.' })
+    ,
     __param(0, (0, common_1.Param)('clientId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -6053,10 +5883,11 @@ __decorate([
 ], ClientController.prototype, "remove", null);
 __decorate([
     (0, common_1.Post)('query'),
-    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Query executed successfully.' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid query.' }),
-    (0, swagger_1.ApiResponse)({ status: 500, description: 'Internal server error.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' })
+    //@apiresponse({ status: 200, description: 'Query executed successfully.' })
+    //@apiresponse({ status: 400, description: 'Invalid query.' })
+    //@apiresponse({ status: 500, description: 'Internal server error.' })
+    ,
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -6744,9 +6575,10 @@ let UserDataController = class UserDataController {
 exports.UserDataController = UserDataController;
 __decorate([
     (0, common_1.Post)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Create user data' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'The user data has been successfully created.' }),
-    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Create user data' })
+    //@apiresponse({ status: 201, description: 'The user data has been successfully created.' })
+    //@apiresponse({ status: 403, description: 'Forbidden.' })
+    ,
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_data_dto_1.CreateUserDataDto]),
@@ -6754,8 +6586,9 @@ __decorate([
 ], UserDataController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)('search'),
-    (0, swagger_1.ApiOperation)({ summary: 'Search user data' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the searched user data.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Search user data' })
+    //@apiresponse({ status: 200, description: 'Return the searched user data.' })
+    ,
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -6763,18 +6596,20 @@ __decorate([
 ], UserDataController.prototype, "search", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Get all user data' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return all user data.' }),
-    (0, swagger_1.ApiResponse)({ status: 403, description: 'Forbidden.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all user data' })
+    //@apiresponse({ status: 200, description: 'Return all user data.' })
+    //@apiresponse({ status: 403, description: 'Forbidden.' })
+    ,
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UserDataController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':chatId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get user data by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Return the user data.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get user data by ID' })
+    //@apiresponse({ status: 200, description: 'Return the user data.' })
+    //@apiresponse({ status: 404, description: 'User data not found.' })
+    ,
     __param(0, (0, common_1.Param)('chatId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -6782,9 +6617,10 @@ __decorate([
 ], UserDataController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':chatId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Update user data by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully updated.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Update user data by ID' })
+    //@apiresponse({ status: 200, description: 'The user data has been successfully updated.' })
+    //@apiresponse({ status: 404, description: 'User data not found.' })
+    ,
     __param(0, (0, common_1.Param)('chatId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -6793,9 +6629,10 @@ __decorate([
 ], UserDataController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':chatId'),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete user data by ID' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'The user data has been successfully deleted.' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'User data not found.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete user data by ID' })
+    //@apiresponse({ status: 200, description: 'The user data has been successfully deleted.' })
+    //@apiresponse({ status: 404, description: 'User data not found.' })
+    ,
     __param(0, (0, common_1.Param)('chatId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -6803,10 +6640,11 @@ __decorate([
 ], UserDataController.prototype, "remove", null);
 __decorate([
     (0, common_1.Post)('query'),
-    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Query executed successfully.' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid query.' }),
-    (0, swagger_1.ApiResponse)({ status: 500, description: 'Internal server error.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' })
+    //@apiresponse({ status: 200, description: 'Query executed successfully.' })
+    //@apiresponse({ status: 400, description: 'Invalid query.' })
+    //@apiresponse({ status: 500, description: 'Internal server error.' })
+    ,
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -7297,10 +7135,11 @@ __decorate([
 ], UsersController.prototype, "remove", null);
 __decorate([
     (0, common_1.Post)('query'),
-    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Query executed successfully.' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid query.' }),
-    (0, swagger_1.ApiResponse)({ status: 500, description: 'Internal server error.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Execute a custom MongoDB query' })
+    //@apiresponse({ status: 200, description: 'Query executed successfully.' })
+    //@apiresponse({ status: 400, description: 'Invalid query.' })
+    //@apiresponse({ status: 500, description: 'Internal server error.' })
+    ,
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -7384,7 +7223,6 @@ exports.UsersService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const mongoose_1 = __webpack_require__(/*! @nestjs/mongoose */ "@nestjs/mongoose");
 const mongoose_2 = __webpack_require__(/*! mongoose */ "mongoose");
-const user_schema_1 = __webpack_require__(/*! ./schemas/user.schema */ "./nest/components/users/schemas/user.schema.ts");
 let UsersService = class UsersService {
     constructor(userModel) {
         this.userModel = userModel;
@@ -7454,7 +7292,7 @@ let UsersService = class UsersService {
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),
+    __param(0, (0, mongoose_1.InjectModel)('userModule')),
     __metadata("design:paramtypes", [mongoose_2.Model])
 ], UsersService);
 
