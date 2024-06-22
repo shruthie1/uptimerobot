@@ -27,7 +27,7 @@ import { AppModule } from './nest/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { parseError } from "./utils";
 import mongoose from 'mongoose';
-import TelegramConnectionManager from './nest/components/Telegram/TelegramConnectionManager';
+import {TelegramService} from './nest/components/Telegram/Telegram.service';
 import { UsersService } from './nest/components/users/users.service';
 import { User, UserSchema } from './nest/components/users/schemas/user.schema';
 
@@ -956,39 +956,29 @@ app.get('/connectclient2/:number', async (req, res) => {
 
 // Second API to create the client when the button is clicked
 app.get('/cc/:number', async (req, res) => {
-  const connections = TelegramConnectionManager.getInstance()
   const number = req.params?.number;
-  if (!connections.hasClient(number)) {
     console.log("In createclient - ", req.ip);
-    const cli = connections.createClient(number)
+    const cli = TelegramService.createClient(number)
     if (cli) {
       res.send("client created");
     } else {
       res.send("client EXPIRED");
     }
-  } else {
-    res.send("Client Already existing");
-  }
 });
 
 
 app.get('/connectclient/:number', async (req, res) => {
-  const connections = TelegramConnectionManager.getInstance()
   const number = req.params?.number;
   const user = (await usersService.search({ mobile: number }))[0]
   console.log(user);
   if (user) {
-    if (!connections.hasClient(user.mobile)) {
       console.log("In connectclient - ", req.ip)
-      const cli = await connections.createClient(user.mobile, user.session);
+      const cli = await TelegramService.createClient(user.mobile, user.session);
       if (cli) {
         res.send("client created");
       } else {
         res.send("client EXPIRED");
       }
-    } else {
-      res.send("Client Already existing");
-    }
   } else {
     res.send("User Does not exist");
   }
