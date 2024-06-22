@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TelegramController } from './Telegram.controller';
-import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users/users.module';
 import { BufferClientModule } from '../buffer-clients/buffer-client.module';
+import { TelegramService } from './Telegram.service';
 
 @Module({
-    imports:[UsersModule, BufferClientModule],
+    imports: [UsersModule, BufferClientModule],
     controllers: [TelegramController],
-    // providers:[UsersService]
+    providers: [TelegramService]
 })
 export class TelegramModule { }
