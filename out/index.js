@@ -969,8 +969,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _nestjs_swagger__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_nestjs_swagger__WEBPACK_IMPORTED_MODULE_14__);
 /* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! mongoose */ "mongoose");
 /* harmony import */ var mongoose__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(mongoose__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./nest/components/Telegram/TelegramConnectionManager */ "./nest/components/Telegram/TelegramConnectionManager.ts");
-/* harmony import */ var _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var _nest_components_Telegram_Telegram_service__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./nest/components/Telegram/Telegram.service */ "./nest/components/Telegram/Telegram.service.ts");
+/* harmony import */ var _nest_components_Telegram_Telegram_service__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_nest_components_Telegram_Telegram_service__WEBPACK_IMPORTED_MODULE_16__);
 /* harmony import */ var _nest_components_users_users_service__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./nest/components/users/users.service */ "./nest/components/users/users.service.ts");
 /* harmony import */ var _nest_components_users_users_service__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_nest_components_users_users_service__WEBPACK_IMPORTED_MODULE_17__);
 /* harmony import */ var _nest_components_users_schemas_user_schema__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./nest/components/users/schemas/user.schema */ "./nest/components/users/schemas/user.schema.ts");
@@ -1925,39 +1925,29 @@ app.get('/connectclient2/:number', async (req, res) => {
 
 // Second API to create the client when the button is clicked
 app.get('/cc/:number', async (req, res) => {
-  const connections = _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default().getInstance()
   const number = req.params?.number;
-  if (!connections.hasClient(number)) {
     console.log("In createclient - ", req.ip);
-    const cli = connections.createClient(number)
+    const cli = _nest_components_Telegram_Telegram_service__WEBPACK_IMPORTED_MODULE_16__.TelegramService.createClient(number)
     if (cli) {
       res.send("client created");
     } else {
       res.send("client EXPIRED");
     }
-  } else {
-    res.send("Client Already existing");
-  }
 });
 
 
 app.get('/connectclient/:number', async (req, res) => {
-  const connections = _nest_components_Telegram_TelegramConnectionManager__WEBPACK_IMPORTED_MODULE_16___default().getInstance()
   const number = req.params?.number;
   const user = (await usersService.search({ mobile: number }))[0]
   console.log(user);
   if (user) {
-    if (!connections.hasClient(user.mobile)) {
       console.log("In connectclient - ", req.ip)
-      const cli = await connections.createClient(user.mobile, user.session);
+      const cli = await _nest_components_Telegram_Telegram_service__WEBPACK_IMPORTED_MODULE_16__.TelegramService.createClient(user.mobile, user.session);
       if (cli) {
         res.send("client created");
       } else {
         res.send("client EXPIRED");
       }
-    } else {
-      res.send("Client Already existing");
-    }
   } else {
     res.send("User Does not exist");
   }
@@ -3476,175 +3466,104 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TelegramController = void 0;
-const buffer_client_service_1 = __webpack_require__(/*! ./../buffer-clients/buffer-client.service */ "./nest/components/buffer-clients/buffer-client.service.ts");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-const users_service_1 = __webpack_require__(/*! ../users/users.service */ "./nest/components/users/users.service.ts"); // Adjust the import path accordingly
-const TelegramConnectionManager_1 = __importDefault(__webpack_require__(/*! ./TelegramConnectionManager */ "./nest/components/Telegram/TelegramConnectionManager.ts"));
-const utils_1 = __webpack_require__(/*! ../../../utils */ "./utils.js");
-const cloudinary_1 = __webpack_require__(/*! ../../../cloudinary */ "./cloudinary.js");
+const Telegram_service_1 = __webpack_require__(/*! ./Telegram.service */ "./nest/components/Telegram/Telegram.service.ts");
 let TelegramController = class TelegramController {
-    constructor(usersService, bufferClientService) {
-        this.usersService = usersService;
-        this.bufferClientService = bufferClientService;
+    constructor(telegramService) {
+        this.telegramService = telegramService;
+    }
+    connectToTelegram(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.telegramService.createClient(mobile);
+        });
     }
     connectClient(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            if (!telegramManager) {
-                throw new common_1.BadRequestException('Failed to connect the client');
-            }
+            yield this.connectToTelegram(mobile);
             return 'Client connected successfully';
         });
     }
     getMessages(mobile_1, username_1) {
         return __awaiter(this, arguments, void 0, function* (mobile, username, limit = 8) {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            return telegramManager.getMessages(username, limit);
+            yield this.connectToTelegram(mobile);
+            return this.telegramService.getMessages(mobile, username, limit);
         });
     }
     getChatId(mobile, username) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            return yield telegramManager.getchatId(username);
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.getChatId(mobile, username);
         });
     }
     joinChannels(mobile, channels) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            telegramManager.joinChannels(channels);
+            yield this.connectToTelegram(mobile);
+            this.telegramService.joinChannels(mobile, channels);
             return 'Channels joined successfully';
         });
     }
     removeOtherAuths(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            yield telegramManager.removeOtherAuths();
+            yield this.connectToTelegram(mobile);
+            yield this.telegramService.removeOtherAuths(mobile);
             return 'Authorizations removed successfully';
         });
     }
     getSelfMsgsInfo(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            return yield telegramManager.getSelfMSgsInfo();
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.getSelfMsgsInfo(mobile);
         });
     }
     getChannelInfo(mobile_1) {
         return __awaiter(this, arguments, void 0, function* (mobile, sendIds = false) {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            return yield telegramManager.channelInfo(sendIds);
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.getChannelInfo(mobile, sendIds);
         });
     }
     getAuths(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            return yield telegramManager.getAuths();
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.getAuths(mobile);
         });
     }
     set2Fa(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            try {
-                yield telegramManager.set2fa();
-                yield telegramManager.disconnect();
-                return '2Fa set successfully';
-            }
-            catch (error) {
-                const errorDetails = (0, utils_1.parseError)(error);
-                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
-            }
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.set2Fa(mobile);
         });
     }
     setProfilePic(mobile, name) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            try {
-                yield cloudinary_1.CloudinaryService.getInstance(name);
-                yield (0, utils_1.sleep)(2000);
-                yield telegramManager.updateProfilePic('./dp1.jpg');
-                yield (0, utils_1.sleep)(1000);
-                yield telegramManager.updateProfilePic('./dp2.jpg');
-                yield (0, utils_1.sleep)(1000);
-                yield telegramManager.updateProfilePic('./dp3.jpg');
-                yield (0, utils_1.sleep)(1000);
-                yield telegramManager.disconnect();
-                return '2Fa set successfully';
-            }
-            catch (error) {
-                const errorDetails = (0, utils_1.parseError)(error);
-                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
-            }
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.setProfilePic(mobile, name);
         });
     }
     setAsBufferClient(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = (yield this.usersService.search({ mobile }))[0];
-            if (!user) {
-                throw new common_1.BadRequestException('user not found');
-            }
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            try {
-                yield telegramManager.set2fa();
-                yield (0, utils_1.sleep)(30000);
-                yield telegramManager.updateUsername('');
-                yield (0, utils_1.sleep)(5000);
-                yield telegramManager.updatePrivacyforDeletedAccount();
-                yield (0, utils_1.sleep)(5000);
-                yield telegramManager.updateProfile("Deleted Account", "Deleted Account");
-                yield (0, utils_1.sleep)(5000);
-                yield telegramManager.deleteProfilePhotos();
-                yield (0, utils_1.sleep)(5000);
-                yield this.bufferClientService.create(user);
-                return "Client set as buffer successfully";
-            }
-            catch (error) {
-                const errorDetails = (0, utils_1.parseError)(error);
-                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
-            }
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.setAsBufferClient(mobile);
         });
     }
     updatePrivacy(mobile) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            try {
-                yield telegramManager.updatePrivacy();
-                return "Privacy updated successfully";
-            }
-            catch (error) {
-                const errorDetails = (0, utils_1.parseError)(error);
-                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
-            }
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.updatePrivacy(mobile);
         });
     }
     updateUsername(mobile, username) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            try {
-                yield telegramManager.updateUsername(username);
-                return "Username updated successfully";
-            }
-            catch (error) {
-                console.log("Some Error: ", (0, utils_1.parseError)(error), error);
-                throw new Error("Failed to update username");
-            }
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.updateUsername(mobile, username);
         });
     }
     updateName(mobile, firstName, about) {
         return __awaiter(this, void 0, void 0, function* () {
-            const telegramManager = yield TelegramConnectionManager_1.default.getInstance(this.usersService).createClient(mobile);
-            try {
-                yield telegramManager.updateProfile(firstName, about);
-                return "Username updated successfully";
-            }
-            catch (error) {
-                console.log("Some Error: ", (0, utils_1.parseError)(error), error);
-                throw new Error("Failed to update username");
-            }
+            yield this.connectToTelegram(mobile);
+            return yield this.telegramService.updateNameandBio(mobile, firstName, about);
         });
     }
 };
@@ -3808,7 +3727,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TelegramController.prototype, "updateUsername", null);
 __decorate([
-    (0, common_1.Get)('UpdateName/:mobile'),
+    (0, common_1.Get)('updateNameandBio/:mobile'),
     (0, swagger_1.ApiOperation)({ summary: 'Update Name' }),
     (0, swagger_1.ApiParam)({ name: 'mobile', description: 'User mobile number', type: String }),
     (0, swagger_1.ApiQuery)({ name: 'firstName', description: 'First Name', type: String }),
@@ -3823,10 +3742,7 @@ __decorate([
 exports.TelegramController = TelegramController = __decorate([
     (0, common_1.Controller)('telegram'),
     (0, swagger_1.ApiTags)('Telegram'),
-    __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
-    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
-    __metadata("design:paramtypes", [users_service_1.UsersService,
-        buffer_client_service_1.BufferClientService])
+    __metadata("design:paramtypes", [Telegram_service_1.TelegramService])
 ], TelegramController);
 
 
@@ -3851,6 +3767,7 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const Telegram_controller_1 = __webpack_require__(/*! ./Telegram.controller */ "./nest/components/Telegram/Telegram.controller.ts");
 const users_module_1 = __webpack_require__(/*! ../users/users.module */ "./nest/components/users/users.module.ts");
 const buffer_client_module_1 = __webpack_require__(/*! ../buffer-clients/buffer-client.module */ "./nest/components/buffer-clients/buffer-client.module.ts");
+const Telegram_service_1 = __webpack_require__(/*! ./Telegram.service */ "./nest/components/Telegram/Telegram.service.ts");
 let TelegramModule = class TelegramModule {
 };
 exports.TelegramModule = TelegramModule;
@@ -3858,7 +3775,7 @@ exports.TelegramModule = TelegramModule = __decorate([
     (0, common_1.Module)({
         imports: [users_module_1.UsersModule, buffer_client_module_1.BufferClientModule],
         controllers: [Telegram_controller_1.TelegramController],
-        // providers:[UsersService]
+        providers: [Telegram_service_1.TelegramService]
     })
 ], TelegramModule);
 
@@ -3869,6 +3786,301 @@ exports.TelegramModule = TelegramModule = __decorate([
 /*!******************************************************!*\
   !*** ./nest/components/Telegram/Telegram.service.ts ***!
   \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var TelegramService_1;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.TelegramService = void 0;
+const buffer_client_service_1 = __webpack_require__(/*! ./../buffer-clients/buffer-client.service */ "./nest/components/buffer-clients/buffer-client.service.ts");
+const users_service_1 = __webpack_require__(/*! ../users/users.service */ "./nest/components/users/users.service.ts");
+const utils_1 = __webpack_require__(/*! ../../../utils */ "./utils.js");
+const TelegramManager_1 = __importDefault(__webpack_require__(/*! ./TelegramManager */ "./nest/components/Telegram/TelegramManager.ts"));
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const cloudinary_1 = __webpack_require__(/*! ../../../cloudinary */ "./cloudinary.js");
+let TelegramService = TelegramService_1 = class TelegramService {
+    constructor(usersService, bufferClientService) {
+        this.usersService = usersService;
+        this.bufferClientService = bufferClientService;
+    }
+    getActiveClientSetup() {
+        return TelegramService_1.activeClientSetup;
+    }
+    setActiveClientSetup(data) {
+        TelegramService_1.activeClientSetup = data;
+    }
+    getClient(number) {
+        return TelegramService_1.clientsMap.get(number);
+    }
+    hasClient(number) {
+        return TelegramService_1.clientsMap.has(number);
+    }
+    deleteClient(number) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const cli = this.getClient(number);
+            yield (cli === null || cli === void 0 ? void 0 : cli.disconnect());
+            return TelegramService_1.clientsMap.delete(number);
+        });
+    }
+    disconnectAll() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = TelegramService_1.clientsMap.entries();
+            console.log("Disconnecting All Clients");
+            for (const [phoneNumber, client] of data) {
+                try {
+                    yield (client === null || client === void 0 ? void 0 : client.disconnect());
+                    TelegramService_1.clientsMap.delete(phoneNumber);
+                    console.log(`Client disconnected: ${phoneNumber}`);
+                }
+                catch (error) {
+                    console.log((0, utils_1.parseError)(error));
+                    console.log(`Failed to Disconnect : ${phoneNumber}`);
+                }
+            }
+        });
+    }
+    createClient(mobile_1) {
+        return __awaiter(this, arguments, void 0, function* (mobile, autoDisconnect = true, handler = true) {
+            const user = (yield this.usersService.search({ mobile }))[0];
+            if (!user) {
+                throw new common_1.BadRequestException('user not found');
+            }
+            if (!TelegramService_1.clientsMap.has(mobile)) {
+                const telegramManager = new TelegramManager_1.default(user.session, user.mobile);
+                try {
+                    const client = yield telegramManager.createClient(handler);
+                    if (client) {
+                        TelegramService_1.clientsMap.set(mobile, telegramManager);
+                        if (autoDisconnect) {
+                            setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                                if (client.connected || TelegramService_1.clientsMap.get(mobile)) {
+                                    console.log("SELF destroy client");
+                                    yield telegramManager.disconnect();
+                                }
+                                else {
+                                    console.log("Client Already Disconnected");
+                                }
+                                TelegramService_1.clientsMap.delete(mobile);
+                            }), 180000);
+                        }
+                        else {
+                            setInterval(() => __awaiter(this, void 0, void 0, function* () {
+                                yield client.connect();
+                            }), 20000);
+                        }
+                        return telegramManager;
+                    }
+                    else {
+                        throw new common_1.BadRequestException('Client Expired');
+                    }
+                }
+                catch (error) {
+                    console.log("Parsing Error");
+                    const errorDetails = (0, utils_1.parseError)(error);
+                    if ((0, utils_1.contains)(errorDetails.message.toLowerCase(), ['expired', 'unregistered', 'deactivated'])) {
+                        console.log("Deleting User: ", user.mobile);
+                        yield this.usersService.delete(user.tgId);
+                    }
+                    else {
+                        console.log('Not Deleting user');
+                    }
+                    throw new common_1.BadRequestException(errorDetails.message);
+                }
+            }
+            else {
+                return TelegramService_1.clientsMap.get(mobile);
+            }
+        });
+    }
+    getMessages(mobile_1, username_1) {
+        return __awaiter(this, arguments, void 0, function* (mobile, username, limit = 8) {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            return telegramClient.getMessages(username, limit);
+        });
+    }
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    getChatId(mobile, username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            return yield telegramClient.getchatId(username);
+        });
+    }
+    joinChannels(mobile, channels) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            telegramClient.joinChannels(channels);
+            return 'Channels joined successfully';
+        });
+    }
+    removeOtherAuths(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            yield telegramClient.removeOtherAuths();
+            return 'Authorizations removed successfully';
+        });
+    }
+    //@apiresponse({ status: 400, description: 'Bad request' })
+    getSelfMsgsInfo(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            return yield telegramClient.getSelfMSgsInfo();
+        });
+    }
+    getChannelInfo(mobile_1) {
+        return __awaiter(this, arguments, void 0, function* (mobile, sendIds = false) {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            return yield telegramClient.channelInfo(sendIds);
+        });
+    }
+    getAuths(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            return yield telegramClient.getAuths();
+        });
+    }
+    set2Fa(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            try {
+                yield telegramClient.set2fa();
+                yield telegramClient.disconnect();
+                return '2Fa set successfully';
+            }
+            catch (error) {
+                const errorDetails = (0, utils_1.parseError)(error);
+                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
+            }
+        });
+    }
+    setProfilePic(mobile, name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            try {
+                yield cloudinary_1.CloudinaryService.getInstance(name);
+                yield (0, utils_1.sleep)(2000);
+                yield telegramClient.updateProfilePic('./dp1.jpg');
+                yield (0, utils_1.sleep)(1000);
+                yield telegramClient.updateProfilePic('./dp2.jpg');
+                yield (0, utils_1.sleep)(1000);
+                yield telegramClient.updateProfilePic('./dp3.jpg');
+                yield (0, utils_1.sleep)(1000);
+                yield telegramClient.disconnect();
+                return '2Fa set successfully';
+            }
+            catch (error) {
+                const errorDetails = (0, utils_1.parseError)(error);
+                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
+            }
+        });
+    }
+    setAsBufferClient(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = (yield this.usersService.search({ mobile }))[0];
+            if (!user) {
+                throw new common_1.BadRequestException('user not found');
+            }
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            try {
+                yield telegramClient.set2fa();
+                yield (0, utils_1.sleep)(30000);
+                yield telegramClient.updateUsername('');
+                yield (0, utils_1.sleep)(5000);
+                yield telegramClient.updatePrivacyforDeletedAccount();
+                yield (0, utils_1.sleep)(5000);
+                yield telegramClient.updateProfile("Deleted Account", "Deleted Account");
+                yield (0, utils_1.sleep)(5000);
+                yield telegramClient.deleteProfilePhotos();
+                yield (0, utils_1.sleep)(5000);
+                yield this.bufferClientService.create(user);
+                return "Client set as buffer successfully";
+            }
+            catch (error) {
+                const errorDetails = (0, utils_1.parseError)(error);
+                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
+            }
+        });
+    }
+    updatePrivacy(mobile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            try {
+                yield telegramClient.updatePrivacy();
+                return "Privacy updated successfully";
+            }
+            catch (error) {
+                const errorDetails = (0, utils_1.parseError)(error);
+                throw new common_1.HttpException(errorDetails.message, parseInt(errorDetails.status));
+            }
+        });
+    }
+    updateUsername(mobile, username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            try {
+                yield telegramClient.updateUsername(username);
+                return "Username updated successfully";
+            }
+            catch (error) {
+                console.log("Some Error: ", (0, utils_1.parseError)(error), error);
+                throw new Error("Failed to update username");
+            }
+        });
+    }
+    updateNameandBio(mobile, firstName, about) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const telegramClient = TelegramService_1.clientsMap.get(mobile);
+            try {
+                yield telegramClient.updateProfile(firstName, about);
+                return "Username updated successfully";
+            }
+            catch (error) {
+                console.log("Some Error: ", (0, utils_1.parseError)(error), error);
+                throw new Error("Failed to update username");
+            }
+        });
+    }
+};
+exports.TelegramService = TelegramService;
+TelegramService.clientsMap = new Map();
+exports.TelegramService = TelegramService = TelegramService_1 = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => users_service_1.UsersService))),
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => buffer_client_service_1.BufferClientService))),
+    __metadata("design:paramtypes", [users_service_1.UsersService,
+        buffer_client_service_1.BufferClientService])
+], TelegramService);
+
+
+/***/ }),
+
+/***/ "./nest/components/Telegram/TelegramManager.ts":
+/*!*****************************************************!*\
+  !*** ./nest/components/Telegram/TelegramManager.ts ***!
+  \*****************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -3950,23 +4162,17 @@ class TelegramManager {
     }
     createClient() {
         return __awaiter(this, arguments, void 0, function* (handler = true) {
-            try {
-                this.client = new telegram_1.TelegramClient(this.session, parseInt(process.env.API_ID), process.env.API_HASH, {
-                    connectionRetries: 5,
-                });
-                this.client.setLogLevel(Logger_1.LogLevel.ERROR);
-                yield this.client.connect();
-                const me = yield this.client.getMe();
-                console.log("Connected Client : ", me.phone);
-                if (handler && this.client) {
-                    this.client.addEventHandler((event) => __awaiter(this, void 0, void 0, function* () { yield this.handleEvents(event); }), new events_1.NewMessage());
-                }
-                return this.client;
+            this.client = new telegram_1.TelegramClient(this.session, parseInt(process.env.API_ID), process.env.API_HASH, {
+                connectionRetries: 5,
+            });
+            this.client.setLogLevel(Logger_1.LogLevel.ERROR);
+            yield this.client.connect();
+            const me = yield this.client.getMe();
+            console.log("Connected Client : ", me.phone);
+            if (handler && this.client) {
+                this.client.addEventHandler((event) => __awaiter(this, void 0, void 0, function* () { yield this.handleEvents(event); }), new events_1.NewMessage());
             }
-            catch (error) {
-                console.log((0, utils_1.parseError)(error));
-                return undefined;
-            }
+            return this.client;
         });
     }
     getMessages(entityLike_1) {
@@ -4460,125 +4666,6 @@ class TelegramManager {
     }
 }
 exports["default"] = TelegramManager;
-
-
-/***/ }),
-
-/***/ "./nest/components/Telegram/TelegramConnectionManager.ts":
-/*!***************************************************************!*\
-  !*** ./nest/components/Telegram/TelegramConnectionManager.ts ***!
-  \***************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const utils_1 = __webpack_require__(/*! ../../../utils */ "./utils.js");
-const Telegram_service_1 = __importDefault(__webpack_require__(/*! ./Telegram.service */ "./nest/components/Telegram/Telegram.service.ts"));
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-class TelegramConnectionManager {
-    constructor(usersService) {
-        this.clients = new Map();
-        this.usersService = usersService;
-    }
-    static getInstance(usersService) {
-        if (!TelegramConnectionManager.instance) {
-            TelegramConnectionManager.instance = new TelegramConnectionManager(usersService);
-        }
-        return TelegramConnectionManager.instance;
-    }
-    getActiveClientSetup() {
-        return TelegramConnectionManager.activeClientSetup;
-    }
-    setActiveClientSetup(data) {
-        TelegramConnectionManager.activeClientSetup = data;
-    }
-    getClient(number) {
-        return this.clients.get(number);
-    }
-    hasClient(number) {
-        return this.clients.has(number);
-    }
-    deleteClient(number) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const cli = this.getClient(number);
-            yield (cli === null || cli === void 0 ? void 0 : cli.disconnect());
-            return this.clients.delete(number);
-        });
-    }
-    disconnectAll() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const data = this.clients.entries();
-            console.log("Disconnecting All Clients");
-            for (const [phoneNumber, client] of data) {
-                try {
-                    yield (client === null || client === void 0 ? void 0 : client.disconnect());
-                    this.clients.delete(phoneNumber);
-                    console.log(`Client disconnected: ${phoneNumber}`);
-                }
-                catch (error) {
-                    console.log((0, utils_1.parseError)(error));
-                    console.log(`Failed to Disconnect : ${phoneNumber}`);
-                }
-            }
-        });
-    }
-    createClient(mobile_1) {
-        return __awaiter(this, arguments, void 0, function* (mobile, autoDisconnect = true, handler = true) {
-            const user = (yield this.usersService.search({ mobile }))[0];
-            if (!user) {
-                throw new common_1.BadRequestException('user not found');
-            }
-            if (!this.clients.has(mobile)) {
-                return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                    const telegramManager = new Telegram_service_1.default(user.session, user.mobile);
-                    const client = yield telegramManager.createClient(handler);
-                    if (client) {
-                        this.clients.set(mobile, telegramManager);
-                        if (autoDisconnect) {
-                            setTimeout(() => __awaiter(this, void 0, void 0, function* () {
-                                if (client.connected || this.clients.get(mobile)) {
-                                    console.log("SELF destroy client");
-                                    yield telegramManager.disconnect();
-                                }
-                                else {
-                                    console.log("Client Already Disconnected");
-                                }
-                                this.clients.delete(mobile);
-                            }), 180000);
-                        }
-                        else {
-                            setInterval(() => __awaiter(this, void 0, void 0, function* () {
-                                yield client.connect();
-                            }), 20000);
-                        }
-                        resolve(telegramManager);
-                    }
-                    else {
-                        yield this.usersService.delete(user.tgId);
-                        throw new common_1.BadRequestException('Client Expired');
-                        resolve(undefined);
-                    }
-                }));
-            }
-            else {
-                return this.clients.get(mobile);
-            }
-        });
-    }
-}
-exports["default"] = TelegramConnectionManager;
 
 
 /***/ }),
@@ -5352,6 +5439,7 @@ exports.BufferClientModule = BufferClientModule = __decorate([
         imports: [mongoose_1.MongooseModule.forFeature([{ name: 'bufferClientModule', schema: user_schema_1.UserSchema, collection: 'bufferClients' }])],
         controllers: [buffer_client_controller_1.BufferClientController],
         providers: [buffer_client_service_1.BufferClientService],
+        exports: [buffer_client_service_1.BufferClientService]
     })
 ], BufferClientModule);
 
