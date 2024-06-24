@@ -271,7 +271,7 @@ app.get('/processUsers/:limit/:skip', async (req, res, next) => {
 app.get('/refreshMap', async (req, res) => {
   checkerclass.getinstance();
   await setUserMap();
-  await fetchWithTimeout(`https://shruthie.onrender.com/refreshMap`);
+  await fetchWithTimeout(`${process.env.uptimebot}/refreshMap`);
   res.send('Hello World!');
 });
 
