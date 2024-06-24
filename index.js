@@ -1796,7 +1796,7 @@ class checkerclass {
       }
 
       try {
-        const resp = await axios.get(`https://ramyaaa.onrender.com/`, { timeout: 55000 });
+        const resp = await axios.get(process.env.tgcms, { timeout: 55000 });
       }
       catch (e) {
         console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
