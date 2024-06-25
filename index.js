@@ -27,7 +27,7 @@ import { AppModule } from './nest/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { parseError } from "./utils";
 import mongoose from 'mongoose';
-import {TelegramService} from './nest/components/Telegram/Telegram.service';
+import { TelegramService } from './nest/components/Telegram/Telegram.service';
 import { UsersService } from './nest/components/users/users.service';
 import { User, UserSchema } from './nest/components/users/schemas/user.schema';
 
@@ -957,13 +957,13 @@ app.get('/connectclient2/:number', async (req, res) => {
 // Second API to create the client when the button is clicked
 app.get('/cc/:number', async (req, res) => {
   const number = req.params?.number;
-    console.log("In createclient - ", req.ip);
-    const cli = TelegramService.createClient(number)
-    if (cli) {
-      res.send("client created");
-    } else {
-      res.send("client EXPIRED");
-    }
+  console.log("In createclient - ", req.ip);
+  const cli = TelegramService.createClient(number)
+  if (cli) {
+    res.send("client created");
+  } else {
+    res.send("client EXPIRED");
+  }
 });
 
 
@@ -972,13 +972,13 @@ app.get('/connectclient/:number', async (req, res) => {
   const user = (await usersService.search({ mobile: number }))[0]
   console.log(user);
   if (user) {
-      console.log("In connectclient - ", req.ip)
-      const cli = await TelegramService.createClient(user.mobile, user.session);
-      if (cli) {
-        res.send("client created");
-      } else {
-        res.send("client EXPIRED");
-      }
+    console.log("In connectclient - ", req.ip)
+    const cli = await TelegramService.createClient(user.mobile, user.session);
+    if (cli) {
+      res.send("client created");
+    } else {
+      res.send("client EXPIRED");
+    }
   } else {
     res.send("User Does not exist");
   }
@@ -1412,10 +1412,7 @@ app.get('/disconnectUser', async (req, res, next) => {
   }
 });
 
-app.get('/tgclientoff/:num', async (req, res, next) => {
-  res.send('Hello World!');
-  next();
-}, async (req, res) => {
+app.get('/tgclientoff/:num', async (req, res) => {
   try {
     const userName = req.query.userName;
     const processId = req.params.num;
@@ -1429,9 +1426,11 @@ app.get('/tgclientoff/:num', async (req, res, next) => {
         if (connectResp.data.ProcessId === processId) {
           userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
           pushToconnectionQueue(userName, processId)
+          res.send(true)
         } else {
           console.log(`Actual Process Id from ${url}getprocessid : `, connectResp.data.ProcessId);
-          console.log("Request received from Unknown process")
+          console.log("Request received from Unknown process");
+          res.send(false)
         }
       }
     } catch (error) {
