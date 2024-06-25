@@ -1797,10 +1797,12 @@ class checkerclass {
 
       try {
         const resp = await axios.get(process.env.tgcms, { timeout: 55000 });
+        console.log(resp.data)
       }
       catch (e) {
-        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'uptime2', ` NOT Reachable`);
-        await fetchWithTimeout(`${ppplbot()}&text=uptime2  NOT Reachable`);
+        parseError(e)
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), process.env.tgcms, ` NOT Reachable`);
+        await fetchWithTimeout(`${ppplbot()}&text=${process.env.tgcms}`);
       }
       // }
       try {
