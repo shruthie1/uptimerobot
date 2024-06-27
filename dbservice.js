@@ -306,7 +306,7 @@ class ChannelService {
     }
 
     async getUsers(limit, skip = 0) {
-        const result = await this.users?.find({}, { projection: { firstName: 1, userName: 1, mobile: 1, _id: 0 } }).skip(skip).limit(limit).toArray();
+        const result = await this.users?.find({}, { projection: { firstName: 1, username: 1, mobile: 1, _id: 0 } }).skip(skip).limit(limit).toArray();
         if (result) {
             return result;
         } else {
