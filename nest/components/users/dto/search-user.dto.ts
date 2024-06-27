@@ -100,11 +100,6 @@ export class SearchUserDto {
   @IsString()
   gender?: string;
 
-  @ApiPropertyOptional({ description: 'Filter by username' })
-  @IsOptional()
-  @IsString()
-  username?: string;
-
   @ApiPropertyOptional({ description: 'Filter by other photo count' })
   @IsOptional()
   @IsNumber()

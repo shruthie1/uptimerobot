@@ -56,9 +56,6 @@ export class SearchBufferClientDto {
     @ApiPropertyOptional({ description: 'Gender of the user', example: null })
     gender?: string | null;
   
-    @ApiPropertyOptional({ description: 'Username of the user', example: null })
-    username?: string | null;
-  
     @ApiPropertyOptional({ description: 'Number of other photos', example: 0 })
     otherPhotoCount: number;
   

@@ -55,9 +55,6 @@ export class CreateUserDto {
   @ApiProperty({ description: 'Gender of the user', example: null })
   gender?: string | null;
 
-  @ApiProperty({ description: 'Username of the user', example: null })
-  username?: string | null;
-
   @ApiProperty({ description: 'Number of other photos', example: 0 })
   otherPhotoCount: number;
 

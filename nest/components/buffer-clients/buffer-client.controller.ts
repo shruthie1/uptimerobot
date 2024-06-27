@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Delete, Query, Patch } from '@nestj
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { BufferClientService } from './buffer-client.service';
 import { CreateBufferClientDto } from './dto/create-buffer-client.dto';
-import { SearchBufferClientDto } from './dto/search-buffer- client.dto';
+import { SearchBufferClientDto } from './dto/search-buffer-client.dto';
 import { User } from '../users/schemas/user.schema';
 
 @ApiTags('Buffer Clients')
