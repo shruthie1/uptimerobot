@@ -129,6 +129,7 @@ export async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
       if (axios.isCancel(error)) {
         console.log('Request canceled:', error.message, resource);
       } else if (error.response && error.response.status === 403) {
+        console.log(error)
         // await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent("Glitch DOwn")}`);
         console.log("Asking Replit");
         return await tryWithReplit(resource)
