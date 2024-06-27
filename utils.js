@@ -133,7 +133,7 @@ export async function fetchWithTimeout(resource, options = {}, maxRetries = 1) {
         console.log("Asking Replit");
         return await tryWithReplit(resource)
       } else {
-        console.error('herError:', error.message);
+        parseError(error, "here ::")
         return undefined;
       }
 
