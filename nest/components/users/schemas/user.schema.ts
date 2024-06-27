@@ -76,10 +76,6 @@ export class User extends mongoose.Document {
   @Prop()
   gender: string | null;
 
-  @ApiProperty({ required: false })
-  @Prop()
-  username: string | null;
-
   @ApiProperty()
   @Prop()
   otherPhotoCount: number;
