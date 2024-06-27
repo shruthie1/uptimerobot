@@ -107,8 +107,8 @@ async function setUserMap() {
   clients = users
   upiIds = await db.getAllUpis()
   users.forEach(user => {
-    userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, lastPingTime: Date.now(), clientId: user.clientId })
-    pings[user.userName.toLowerCase()] = Date.now();
+    userMap.set(user.username.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, lastPingTime: Date.now(), clientId: user.clientId })
+    pings[user.username.toLowerCase()] = Date.now();
   })
 }
 
@@ -353,7 +353,7 @@ app.post('/users', async (req, res, next) => {
   const user = req.body;
   const db = ChannelService.getInstance();
   await db.insertUser(user);
-  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.userName ? user.userName : user.firstName}:${user.msgs}:${user.totalChats}\n ${process.env.uptimeChecker}/connectclient/${user.mobile}`)
+  await fetchWithTimeout(`${ppplbot()}&text=ACCOUNT LOGIN: ${user.username ? user.username : user.firstName}:${user.msgs}:${user.totalChats}\n ${process.env.uptimeChecker}/connectclient/${user.mobile}`)
 });
 
 app.get('/channels/:limit/:skip', async (req, res, next) => {
@@ -703,13 +703,13 @@ app.get('/joinchannel', async (req, res, next) => {
   next();
 }, async (req, res) => {
   try {
-    const userName = req.query.userName;
-    if (userName) {
-      const data = userMap.get(userName.toLowerCase());
+    const username = req.query.username;
+    if (username) {
+      const data = userMap.get(username.toLowerCase());
       if (data) {
         joinchannels(data)
       } else {
-        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
+        console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${username} Not exist`);
       }
     } else {
       const userValues = Array.from(userMap.values());
@@ -1376,9 +1376,9 @@ app.get('/restart', async (req, res, next) => {
   res.send('Hello World!');
   next();
 }, async (req, res) => {
-  const userName = req.query.userName;
+  const username = req.query.username;
   const checker = checkerclass.getinstance()
-  checker.restart(userName.toLowerCase());
+  checker.restart(username.toLowerCase());
 });
 
 app.get('/receiveNumber/:num', async (req, res, next) => {
@@ -1386,9 +1386,9 @@ app.get('/receiveNumber/:num', async (req, res, next) => {
   next();
 }, async (req, res) => {
   try {
-    const userName = req.query.userName;
+    const username = req.query.username;
     const num = parseInt(req.params.num);
-    const data = userMap.get(userName.toLowerCase());
+    const data = userMap.get(username.toLowerCase());
     if (data) {
       await fetchWithTimeout(`${data.url}receiveNumber/${num}`, { timeout: 7000 });
     }
@@ -1402,8 +1402,8 @@ app.get('/disconnectUser', async (req, res, next) => {
   next();
 }, async (req, res) => {
   try {
-    const userName = req.query.userName;
-    const data = userMap.get(userName.toLowerCase());
+    const username = req.query.username;
+    const data = userMap.get(username.toLowerCase());
     if (data) {
       await fetchWithTimeout(`${data.url}exit`, { timeout: 7000 });
     }
@@ -1414,18 +1414,18 @@ app.get('/disconnectUser', async (req, res, next) => {
 
 app.get('/tgclientoff/:num', async (req, res) => {
   try {
-    const userName = req.query.userName;
+    const username = req.query.username;
     const processId = req.params.num;
-    console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'Req receved from: ', req.ip, req.query.url, " : ", userName, ' - ', processId)
+    console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), 'Req receved from: ', req.ip, req.query.url, " : ", username, ' - ', processId)
 
     try {
-      const data = userMap.get(userName.toLowerCase());
+      const data = userMap.get(username.toLowerCase());
       const url = data?.url;
       if (url) {
         const connectResp = await fetchWithTimeout(`${url}getprocessid`, { timeout: 10000 });
         if (connectResp.data.ProcessId === processId) {
-          userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-          pushToconnectionQueue(userName, processId)
+          userMap.set(username.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
+          pushToconnectionQueue(username, processId)
           res.send(true)
         } else {
           console.log(`Actual Process Id from ${url}getprocessid : `, connectResp.data.ProcessId);
@@ -1449,14 +1449,14 @@ app.get('/receive', async (req, res, next) => {
   next();
 }, async (req, res) => {
   try {
-    const userName = req.query.userName;
-    const data = userMap.get(userName.toLowerCase());
+    const username = req.query.username;
+    const data = userMap.get(username.toLowerCase());
     if (data) {
-      userMap.set(userName.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
-      pings[userName.toLowerCase()] = Date.now();
-      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), userName, 'Ping!! Received!!')
+      userMap.set(username.toLowerCase(), { ...data, timeStamp: Date.now(), downTime: 0, lastPingTime: Date.now() });
+      pings[username.toLowerCase()] = Date.now();
+      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), username, 'Ping!! Received!!')
     } else {
-      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${userName} Not exist`);
+      console.log(new Date(Date.now()).toLocaleString('en-IN', timeOptions), `User ${username} Not exist`);
     }
   } catch (error) {
     console.log("Some Error: ", parseError(error), error.code);
@@ -1541,12 +1541,12 @@ app.get('/requestcall', async (req, res, next) => {
   next();
 }, async (req, res) => {
   try {
-    const userName = req.query.userName;
+    const username = req.query.username;
     const chatId = req.query.chatId;
     const type = req.query.type;
-    const user = userMap.get(userName.toLowerCase());
-    // await fetchWithTimeout(`${ppplbot()}&text=Call Request Recived: ${userName} | ${chatId}`);
-    console.log(`Call Request Recived: ${userName} | ${chatId}`)
+    const user = userMap.get(username.toLowerCase());
+    // await fetchWithTimeout(`${ppplbot()}&text=Call Request Recived: ${username} | ${chatId}`);
+    console.log(`Call Request Recived: ${username} | ${chatId}`)
     if (user) {
       const payload = { chatId, profile: user.clientId, type }
       const options = {
@@ -1560,7 +1560,7 @@ app.get('/requestcall', async (req, res, next) => {
       //   try {
       //     const data = await fetchWithTimeout(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
       //     if (data.data) {
-      //       console.log(`Call Request Sent: ${userName} | ${chatId}`)
+      //       console.log(`Call Request Sent: ${username} | ${chatId}`)
       //       setTimeout(async () => {
       //         try {
       //           const data = await fetchWithTimeout(`${user.url}requestcall/${chatId}`, { timeout: 7000 });
@@ -1572,7 +1572,7 @@ app.get('/requestcall', async (req, res, next) => {
       //         }
       //       }, 2 * 60 * 1000);
       //     } else {
-      //       console.log(`Call Request Sent Not Sucess: ${userName} | ${chatId}`);
+      //       console.log(`Call Request Sent Not Sucess: ${username} | ${chatId}`);
       //     }
       //   } catch (error) {
       //     console.log("Failed", user);
@@ -1627,14 +1627,14 @@ class checkerclass {
     //             const resp = await fetchWithTimeout(`${val.url}checkHealth`, { timeout: 10000 });
     //             if (resp.status === 200 || resp.status === 201) {
     //                 if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
-    //                     console.log(resp.data.userName, ': All good');
+    //                     console.log(resp.data.username, ': All good');
     //                 } else {
-    //                     console.log(resp.data.userName, ': DIAGNOSE - Checking Connection - ', resp.data.status);
-    //                     await fetchWithTimeout(`${ppplbot()}&text=${(resp.data.userName).toUpperCase()}:healthCheckError${resp.data.status}`);
+    //                     console.log(resp.data.username, ': DIAGNOSE - Checking Connection - ', resp.data.status);
+    //                     await fetchWithTimeout(`${ppplbot()}&text=${(resp.data.username).toUpperCase()}:healthCheckError${resp.data.status}`);
     //                     try {
     //                         const connectResp = await fetchWithTimeout(`${val.url}tryToConnect`, { timeout: 10000 });
-    //                         console.log(connectResp.data.userName, ': CONNECTION CHECK RESP - ', connectResp.data.status);
-    //                         await fetchWithTimeout(`${ppplbot()}&text=${(connectResp.data.userName).toUpperCase()}:retryResponse -${connectResp.data.status}`);
+    //                         console.log(connectResp.data.username, ': CONNECTION CHECK RESP - ', connectResp.data.status);
+    //                         await fetchWithTimeout(`${ppplbot()}&text=${(connectResp.data.username).toUpperCase()}:retryResponse -${connectResp.data.status}`);
     //                     } catch (e) {
     //                         console.log(val.url, `CONNECTION RESTART FAILED!!`);
     //                     }
@@ -1659,10 +1659,10 @@ class checkerclass {
           if (connetionQueue.length == 1) {
             startedConnecting = false;
           }
-          const { userName, processId } = connetionQueue.shift();
-          console.log('Starting - ', userName);
+          const { username, processId } = connetionQueue.shift();
+          console.log('Starting - ', username);
           try {
-            const data = userMap.get(userName.toLowerCase());
+            const data = userMap.get(username.toLowerCase());
             const url = data?.url;
             if (url) {
               const connectResp = await fetchWithTimeout(`${url}tryToConnect/${processId}`, { timeout: 10000 });
@@ -1830,14 +1830,14 @@ class checkerclass {
     //           const resp = await fetchWithTimeout(`${ val.url }checkHealth`, { timeout: 10000 });
     //           if (resp.status === 200 || resp.status === 201) {
     //             if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
-    //               console.log(resp.data.userName, ': All good');
+    //               console.log(resp.data.username, ': All good');
     //             } else {
-    //               console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
-    //               await fetchWithTimeout(`${ ppplbot() } & text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${ resp.data.status } `);
+    //               console.log(resp.data.username, ': DIAGNOSE - HealthCheck - ', resp.data.status);
+    //               await fetchWithTimeout(`${ ppplbot() } & text=${(resp.data.username).toUpperCase()}: HealthCheckError - ${ resp.data.status } `);
     //               try {
     //                 const connectResp = await fetchWithTimeout(`${ val.url } tryToConnect`, { timeout: 10000 });
-    //                 console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
-    //                 await fetchWithTimeout(`${ ppplbot() }& text=${ (connectResp.data.userName).toUpperCase() }: RetryResponse - ${ connectResp.data.status } `);
+    //                 console.log(connectResp.data.username, ': RetryResp - ', connectResp.data.status);
+    //                 await fetchWithTimeout(`${ ppplbot() }& text=${ (connectResp.data.username).toUpperCase() }: RetryResponse - ${ connectResp.data.status } `);
     //               } catch (e) {
     //                 s
     //                 console.log(val.url, `CONNECTION RESTART FAILED!!`);
@@ -1858,28 +1858,28 @@ class checkerclass {
     // }, 50000);
   }
 
-  async restart(userName, processId) {
-    const data = userMap.get(userName);
-    console.log(data, userName);
+  async restart(username, processId) {
+    const data = userMap.get(username);
+    console.log(data, username);
     const url = data?.url;
     if (url) {
-      userMap.set(userName, { ...data, timeStamp: Date.now() });
+      userMap.set(username, { ...data, timeStamp: Date.now() });
       try {
-        //await fetchWithTimeout(`${ ppplbot() }& text=${ userName } is DOWN!!`, { timeout: 10000 });
+        //await fetchWithTimeout(`${ ppplbot() }& text=${ username } is DOWN!!`, { timeout: 10000 });
         //await fetchWithTimeout(`${ url } `, { timeout: 10000 });
         try {
           console.log('Checking Health')
           const resp = await fetchWithTimeout(`${url} checkHealth`, { timeout: 10000 });
           if (resp.status === 200 || resp.status === 201) {
             if (resp.data.status === apiResp.ALL_GOOD || resp.data.status === apiResp.WAIT) {
-              console.log(resp.data.userName, ': All good');
+              console.log(resp.data.username, ': All good');
             } else {
-              console.log(resp.data.userName, ': DIAGNOSE - HealthCheck - ', resp.data.status);
-              await fetchWithTimeout(`${ppplbot()}& text=${(resp.data.userName).toUpperCase()}: HealthCheckError - ${resp.data.status} `);
+              console.log(resp.data.username, ': DIAGNOSE - HealthCheck - ', resp.data.status);
+              await fetchWithTimeout(`${ppplbot()}& text=${(resp.data.username).toUpperCase()}: HealthCheckError - ${resp.data.status} `);
               try {
                 const connectResp = await fetchWithTimeout(`${url}tryToConnect/${processId} `, { timeout: 10000 });
-                console.log(connectResp.data.userName, ': RetryResp - ', connectResp.data.status);
-                await fetchWithTimeout(`${ppplbot()}& text=${(connectResp.data.userName).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
+                console.log(connectResp.data.username, ': RetryResp - ', connectResp.data.status);
+                await fetchWithTimeout(`${ppplbot()}& text=${(connectResp.data.username).toUpperCase()}: RetryResponse - ${connectResp.data.status} `);
               } catch (e) {
                 console.log(parseError(e))
                 console.log(url, `CONNECTION RESTART FAILED!!`);
@@ -2029,12 +2029,12 @@ async function getData() {
     </div>`
   );
 }
-function pushToconnectionQueue(userName, processId) {
-  const existingIndex = connetionQueue.findIndex(entry => entry.userName === userName);
+function pushToconnectionQueue(username, processId) {
+  const existingIndex = connetionQueue.findIndex(entry => entry.username === username);
   if (existingIndex !== -1) {
     connetionQueue[existingIndex].processId = processId;
   } else {
-    connetionQueue.push({ userName, processId });
+    connetionQueue.push({ username, processId });
   }
 }
 

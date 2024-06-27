@@ -22,7 +22,7 @@ export class User extends mongoose.Document {
 
   @ApiProperty({ required: false })
   @Prop()
-  userName: string | null;
+  username: string | null;
 
   @ApiProperty()
   @Prop()

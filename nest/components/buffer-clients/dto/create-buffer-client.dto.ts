@@ -14,7 +14,7 @@ export class CreateBufferClientDto {
     lastName?: string | null;
   
     @ApiProperty({ description: 'Username of the user', example: null })
-    userName?: string | null;
+    username?: string | null;
   
     @ApiProperty({ description: 'Number of channels', example: 56 })
     channels: number;
@@ -54,9 +54,6 @@ export class CreateBufferClientDto {
   
     @ApiProperty({ description: 'Gender of the user', example: null })
     gender?: string | null;
-  
-    @ApiProperty({ description: 'Username of the user', example: null })
-    username?: string | null;
   
     @ApiProperty({ description: 'Number of other photos', example: 0 })
     otherPhotoCount: number;

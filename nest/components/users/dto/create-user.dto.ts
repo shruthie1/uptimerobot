@@ -14,7 +14,7 @@ export class CreateUserDto {
   lastName?: string | null;
 
   @ApiProperty({ description: 'Username of the user', example: null })
-  userName?: string | null;
+  username?: string | null;
 
   @ApiProperty({ description: 'Number of channels', example: 56 })
   channels: number;

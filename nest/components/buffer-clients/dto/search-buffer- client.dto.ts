@@ -15,7 +15,7 @@ export class SearchBufferClientDto {
     lastName?: string | null;
   
     @ApiPropertyOptional({ description: 'Username of the user', example: null })
-    userName?: string | null;
+    username?: string | null;
   
     @ApiPropertyOptional({ description: 'Number of channels', example: 56 })
     channels: number;

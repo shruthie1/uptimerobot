@@ -37,7 +37,7 @@ export class SearchUserDto {
   @ApiPropertyOptional({ description: 'Filter by username' })
   @IsOptional()
   @IsString()
-  userName?: string;
+  username?: string;
 
   @ApiPropertyOptional({ description: 'Filter by channels count' })
   @IsOptional()
