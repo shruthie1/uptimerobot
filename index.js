@@ -85,8 +85,9 @@ async function setUserMap() {
   await fetchWithTimeout(`${ppplbot()}&text=UptimeRobot : Refreshed Map`);
   const users = await db.getAllUserClients();
   clients = users
-  upiIds = await db.getAllUpis()
+  upiIds = await db.getAllUpis();
   users.forEach(user => {
+    console.log(user)
     userMap.set(user.userName.toLowerCase(), { url: `${user.repl}/`, timeStamp: Date.now(), deployKey: user.deployKey, downTime: 0, lastPingTime: Date.now(), clientId: user.clientId })
     pings[user.userName.toLowerCase()] = Date.now();
   })
