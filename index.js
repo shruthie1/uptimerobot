@@ -148,7 +148,7 @@ try {
 
     await db.clearStats();
     // await db.calculateAvgStats();
-    await fetchWithTimeout(`${process.env.uptimeChecker}/processusers/400/0`);
+    // await fetchWithTimeout(`${process.env.uptimeChecker}/processusers/400/0`);
   })
 
   // schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
