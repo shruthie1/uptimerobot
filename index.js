@@ -127,96 +127,96 @@ function getCurrentHourIST() {
   return istHour;
 }
 const connetionQueue = [];
-try {
-  schedule.scheduleJob('test', ' 0 * * * * ', 'Asia/Kolkata', async () => {
-    console.log("Promoting.....");
-    const hour = getCurrentHourIST();
-    const db = ChannelService.getInstance();
-    // await db.clearChannelStats();
+// try {
+//   schedule.scheduleJob('test', ' 0 * * * * ', 'Asia/Kolkata', async () => {
+//     console.log("Promoting.....");
+//     const hour = getCurrentHourIST();
+//     const db = ChannelService.getInstance();
+//     // await db.clearChannelStats();
 
-    const userValues = Array.from(userMap.values());
-    for (let i = 0; i < userValues.length; i++) {
-      const value = userValues[i];
-      await fetchWithTimeout(`${value.url}assureppl`);
-      await sleep(3000);
-      await fetchWithTimeout(`${value.url}promote`);
-      await sleep(2000);
-      if (hour && hour % 3 === 0) {
-        await fetchWithTimeout(`${value.url}calltopaid`);
-      }
-    }
+//     const userValues = Array.from(userMap.values());
+//     for (let i = 0; i < userValues.length; i++) {
+//       const value = userValues[i];
+//       await fetchWithTimeout(`${value.url}assureppl`);
+//       await sleep(3000);
+//       await fetchWithTimeout(`${value.url}promote`);
+//       await sleep(2000);
+//       if (hour && hour % 3 === 0) {
+//         await fetchWithTimeout(`${value.url}calltopaid`);
+//       }
+//     }
 
-    await db.clearStats();
-    // await db.calculateAvgStats();
-    // await fetchWithTimeout(`${process.env.uptimeChecker}/processusers/400/0`);
-  })
+//     await db.clearStats();
+//     // await db.calculateAvgStats();
+//     // await fetchWithTimeout(`${process.env.uptimeChecker}/processusers/400/0`);
+//   })
 
-  // schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
-  //     const userValues = Array.from(userMap.values());
-  // for (let i = 0; i < userValues.length; i++) {
-  //   const value = userValues[i];
-  //   })
-  // })
+//   // schedule.scheduleJob('test1', ' 2 3,6,10,16,20,22 * * * ', 'Asia/Kolkata', async () => {
+//   //     const userValues = Array.from(userMap.values());
+//   // for (let i = 0; i < userValues.length; i++) {
+//   //   const value = userValues[i];
+//   //   })
+//   // })
 
-  schedule.scheduleJob('test2', '*/10 * * * *', 'Asia/Kolkata', async () => {
-    const userValues = Array.from(userMap.values());
-    for (let i = 0; i < userValues.length; i++) {
-      const value = userValues[i];
-      await fetchWithTimeout(`${value.url}markasread`);
-      await sleep(3000);
-    }
-  })
+//   schedule.scheduleJob('test2', '*/10 * * * *', 'Asia/Kolkata', async () => {
+//     const userValues = Array.from(userMap.values());
+//     for (let i = 0; i < userValues.length; i++) {
+//       const value = userValues[i];
+//       await fetchWithTimeout(`${value.url}markasread`);
+//       await sleep(3000);
+//     }
+//   })
 
-  schedule.scheduleJob('test3', ' 15 7,13,16,21,23 * * * ', 'Asia/Kolkata', async () => {
-    const userValues = Array.from(userMap.values());
-    for (let i = 0; i < userValues.length; i++) {
-      const value = userValues[i];
-      await fetchWithTimeout(`${value.url}asktopay`);
-      await sleep(3000);
-    }
+//   schedule.scheduleJob('test3', ' 15 7,13,16,21,23 * * * ', 'Asia/Kolkata', async () => {
+//     const userValues = Array.from(userMap.values());
+//     for (let i = 0; i < userValues.length; i++) {
+//       const value = userValues[i];
+//       await fetchWithTimeout(`${value.url}asktopay`);
+//       await sleep(3000);
+//     }
 
-  })
+//   })
 
-  schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
-    const db = ChannelService.getInstance();
-    for (const value of userMap.values()) {
-      await sleep(1000);
-      await fetchWithTimeout(`${value.url}resetunpaid`);
-      // await fetchWithTimeout(`${value.url}resetunppl`);
-      await fetchWithTimeout(`${value.url}getuserstats2`);
+//   schedule.scheduleJob('test3', ' 25 0 * * * ', 'Asia/Kolkata', async () => {
+//     const db = ChannelService.getInstance();
+//     for (const value of userMap.values()) {
+//       await sleep(1000);
+//       await fetchWithTimeout(`${value.url}resetunpaid`);
+//       // await fetchWithTimeout(`${value.url}resetunppl`);
+//       await fetchWithTimeout(`${value.url}getuserstats2`);
 
-      setTimeout(async () => {
-        await fetchWithTimeout(`${value.url}asktopay`);
-      }, 300000);
-      await sleep(1000)
-    }
-    const now = new Date();
-    if (now.getUTCDate() % 5 === 1) {
-      setTimeout(async () => {
-        await db.resetAvailableMsgs();
-        await db.updateBannedChannels();
-        await db.updateDefaultReactions();
-      }, 30000);
-    }
+//       setTimeout(async () => {
+//         await fetchWithTimeout(`${value.url}asktopay`);
+//       }, 300000);
+//       await sleep(1000)
+//     }
+//     const now = new Date();
+//     if (now.getUTCDate() % 5 === 1) {
+//       setTimeout(async () => {
+//         await db.resetAvailableMsgs();
+//         await db.updateBannedChannels();
+//         await db.updateDefaultReactions();
+//       }, 30000);
+//     }
 
-    await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
-    await db.resetPaidUsers();
-    await db.updateActiveChannels();
-    await db.clearStats2();
-    await db.clearAllStats();
-    await db.reinitPromoteStats();
+//     await fetchWithTimeout(`${ppplbot()}&text=${encodeURIComponent(await getPromotionStatsPlain())}`);
+//     await db.resetPaidUsers();
+//     await db.updateActiveChannels();
+//     await db.clearStats2();
+//     await db.clearAllStats();
+//     await db.reinitPromoteStats();
 
-    try {
-      const resp = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
-      const resp2 = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
-    } catch (error) {
-      console.log("Some Error: ", parseError(error), error.code)
-    }
+//     try {
+//       const resp = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/getstats`, { timeout: 55000 });
+//       const resp2 = await fetchWithTimeout(`https://mychatgpt-pg6w.onrender.com/clearstats`, { timeout: 55000 });
+//     } catch (error) {
+//       console.log("Some Error: ", parseError(error), error.code)
+//     }
 
-  })
-} catch (error) {
-  console.log("Some Error: ", parseError(error), error.code);
-}
+//   })
+// } catch (error) {
+//   console.log("Some Error: ", parseError(error), error.code);
+// }
 
 async function assure() {
   const userValues = Array.from(userMap.values());
